@@ -4,8 +4,9 @@ import fs from 'fs';
 import log from "../utils/utils";
 
 
+import Client from "ssh2-sftp-client";
 interface FTP {
-    client: ftp.Client;
+    client: Client;
     settings: FTPSettings;
 }
 
@@ -19,11 +20,11 @@ interface FTPSettings {
 
 export class FtpController implements FTP {
 
-    client: ftp.Client;
+    client: Client;
     settings: FTPSettings;
 
     constructor() {
-        this.client = new ftp.Client();
+        this.client = new Client();
 
         if (!process.env.FTP_HOST || !process.env.FTP_PORT || !process.env.FTP_USER || !process.env.FTP_PASS) {
             throw new Error("FTP settings are not set in .env file");
@@ -42,18 +43,18 @@ export class FtpController implements FTP {
 
     async upload(sourcePath: string, remotePath: string) {
         try {
-            await this.client.access(this.settings);
-            const upload = await this.client.uploadFrom(fs.createReadStream(sourcePath), remotePath);
+            await this.client.connect(this.settings);
+            const upload = await this.client.put(fs.createReadStream(sourcePath), remotePath);
             log(`Uploaded successfully`);
             return upload
         } catch (err) {
             log(`Error uploading file: ${err}`);
         }
-        this.client.close();
+        this.client.end();
     }
 
     close() {
-        this.client.close();
+        this.client.end();
     }
 
 
