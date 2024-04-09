@@ -43,7 +43,7 @@ export class FtpController implements FTP {
     async connect(options: FTPSettings) {
         log(`Connecting to ${options.host}:${options.port}`);
         try {
-            await this.client.connect(options);
+            await this.client.connect({ ...options, algorithms: { serverHostKey: ['ssh-dss'] } });
         } catch (err) {
             log('Failed to connect:', err);
         }
