@@ -1,17 +1,21 @@
 function json2csv(data: any[], headers?: string[]): string {
-    const csv = [];
+    const csv: string[] = [];
 
+    if(data.length === 0) return ""
     // Extract headers if not provided
     const fields = headers || Object.keys(data[0]);
 
+    if(!fields) return ""
     // Add header row
-    csv.push(fields.join(','));
+    //csv.push(fields.join(','));
 
     // Add data rows
     data.forEach((row) => {
         const values = fields.map((field) => {
             const value = row[field];
-            return value === null || value === undefined ? '' : String(value)
+            const escape = value === null || value === undefined ? '' : String(value)
+            const clean = escape.replace(/"|'/g, '');
+            return clean
         });
         csv.push(values.join(','));
     });
