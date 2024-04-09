@@ -13,7 +13,7 @@ interface FTP {
 interface FTPSettings {
     host: string;
     port: number;
-    user: string;
+    username: string;
     password: string;
 
 }
@@ -34,27 +34,58 @@ export class FtpController implements FTP {
         this.settings = {
             host: process.env.FTP_HOST,
             port: Number(process.env.FTP_PORT),
-            user: process.env.FTP_USER,
+            username: process.env.FTP_USER,
             password: process.env.FTP_PASS
         }
 
     }
 
-
-    async upload(sourcePath: string, remotePath: string) {
+    async connect(options: FTPSettings) {
+        log(`Connecting to ${options.host}:${options.port}`);
         try {
-            await this.client.connect(this.settings);
-            const upload = await this.client.put(fs.createReadStream(sourcePath), remotePath);
-            log(`Uploaded successfully`);
-            return upload
+            await this.client.connect(options);
         } catch (err) {
-            log(`Error uploading file: ${err}`);
+            log('Failed to connect:', err);
         }
-        this.client.end();
+    }
+    async listFiles(remoteDir: string) {
+        log(`Listing ${remoteDir} ...`);
+        let fileObjects;
+        try {
+            fileObjects = await this.client.list(remoteDir);
+        } catch (err) {
+            log('Listing failed:', err);
+        }
+
+        if (!fileObjects) return []
+        const fileNames = [];
+
+        for (const file of fileObjects) {
+            if (file.type === 'd') {
+                console.log(`${new Date(file.modifyTime).toISOString()} PRE ${file.name}`);
+            } else {
+                console.log(`${new Date(file.modifyTime).toISOString()} ${file.size} ${file.name}`);
+            }
+
+            fileNames.push(file.name);
+        }
+
+        return fileNames;
     }
 
-    close() {
-        this.client.end();
+
+    async uploadFile(localFile: string, remoteFile: string) {
+        log(`Uploading ${localFile} to ${remoteFile} ...`);
+        try {
+            await this.client.put(localFile, remoteFile);
+        } catch (err) {
+            log('Uploading failed:', err);
+        }
+    }
+
+
+    async disconnect() {
+        await this.client.end();
     }
 
 

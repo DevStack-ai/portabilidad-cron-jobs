@@ -6,11 +6,26 @@ import fs from "fs";
 import moment from "moment";
 import log from "../utils/utils";
 
-async function main() {
+(async () => {
     try {
         log(`Starting report ftp`);
         const ftp = new FtpController();
         const db = new DbController();
+
+
+        const host = process.env.FTP_HOST;
+        const port = Number(process.env.FTP_PORT);
+        const username = process.env.FTP_USER;
+        const password = process.env.FTP_PASS;
+
+        if(!host || !port || !username || !password) {
+            throw new Error("FTP settings are not set in .env file");
+        }
+
+        log(`Connecting to FTP`);
+        await ftp.connect({ host, port, username, password });
+        log(`Connected to FTP`);
+
 
         log(`Fetch from database`);
         const data = await db.getReport();
@@ -18,7 +33,7 @@ async function main() {
 
         log(`Converted to CSV`);
         const csv = json2csv(data);
-        if(!csv) {
+        if (!csv) {
             log(`No data to write`);
             return
         }
@@ -33,13 +48,12 @@ async function main() {
 
         const toPath = `${process.env.FTP_DIR}/${filename}`;
         log(`Uploading to FTP: ${toPath}`)
-        await ftp.upload(dir, toPath);
+        await ftp.uploadFile(dir, toPath);
         fs.unlinkSync(dir);
         log(`End of report ftp`)
     } catch (e) {
         console.log(e)
         log(`Error: ${e}`)
     }
-}
 
-main()
+})();
