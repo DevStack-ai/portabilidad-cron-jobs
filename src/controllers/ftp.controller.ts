@@ -44,10 +44,10 @@ export class FtpController implements FTP {
         try {
             await this.client.access(this.settings);
             const upload = await this.client.uploadFrom(fs.createReadStream(sourcePath), remotePath);
-
+            log(`Uploaded successfully`);
             return upload
         } catch (err) {
-            log(err);
+            log(`Error uploading file: ${err}`);
         }
         this.client.close();
     }

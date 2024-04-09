@@ -34,7 +34,6 @@ async function main() {
         const toPath = `${process.env.FTP_DIR}/${filename}`;
         log(`Uploading to FTP: ${toPath}`)
         await ftp.upload(dir, toPath);
-        log(`Uploaded successfully`);
         fs.unlinkSync(dir);
         log(`End of report ftp`)
     } catch (e) {
