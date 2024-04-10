@@ -49,7 +49,6 @@ import log from "../utils/utils";
         const toPath = `${process.env.FTP_DIR}/${filename}`;
         log(`Uploading to FTP: ${toPath}`)
         await ftp.uploadFile(dir, toPath);
-        fs.unlinkSync(dir);
         log(`End of report ftp`)
     } catch (e) {
         console.log(e)
