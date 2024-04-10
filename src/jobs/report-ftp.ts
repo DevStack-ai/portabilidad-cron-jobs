@@ -18,7 +18,7 @@ import log from "../utils/utils";
         const username = process.env.FTP_USER;
         const password = process.env.FTP_PASS;
 
-        if(!host || !port || !username || !password) {
+        if (!host || !port || !username || !password) {
             throw new Error("FTP settings are not set in .env file");
         }
 
@@ -43,7 +43,7 @@ import log from "../utils/utils";
         const dir = `${process.env.TMP_DIR}/${filename}`
         log(`Writing to file: ${dir}`);
 
-        fs.writeFileSync(dir, csv);
+        fs.writeFileSync(dir, csv, { encoding: 'utf-8' });
         log(`File written successfully`);
 
         const toPath = `${process.env.FTP_DIR}/${filename}`;
