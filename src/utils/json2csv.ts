@@ -16,7 +16,7 @@ function json2csv(data: any[], headers?: string[]): string {
             const escape = value === null || value === undefined ? '' : String(value)
             const clean = escape.replace(/"|'/g, '');
             const accepted = clean.normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-            return clean
+            return accepted
         });
         csv.push(values.join(','));
     });
