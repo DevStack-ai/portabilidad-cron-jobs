@@ -42,7 +42,6 @@ export class DbController {
                 ISOFT_INPUT
             WHERE
                 PRE_POST = 'POST' AND ESTADO_FTP = 1
-                    AND LENGTH(SERIE_DE_SIMCARD) = 19
                     AND SERIE_DE_SIMCARD REGEXP '^[0-9]+$';`;
 
         prisma.$disconnect();
