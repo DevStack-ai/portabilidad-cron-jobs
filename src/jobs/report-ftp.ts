@@ -8,7 +8,7 @@ import log from "../utils/utils";
 
 (async () => {
     try {
-        log(`Starting report ftp`);
+        log(`Starting report ftp ===================================================================`);
         const ftp = new FtpController();
         const db = new DbController();
 
@@ -56,7 +56,7 @@ import log from "../utils/utils";
         await db.updateReport(ids);
         log(`Database updated`);
 
-        log(`End of report ftp`)
+        log(`End of report ftp ===================================================================`)
     } catch (e) {
         console.log(e)
         log(`Error: ${e}`)
