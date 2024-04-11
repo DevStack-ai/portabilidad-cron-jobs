@@ -3,7 +3,7 @@ function json2csv(data: any[], headers?: string[]): string {
 
     if(data.length === 0) return ""
     // Extract headers if not provided
-    const fields = headers || Object.keys(data[0]);
+    const fields =  Object.keys(data[0]).filter((header) => header !== "IDISOFT");
 
     if(!fields) return ""
     // Add header row

@@ -31,6 +31,7 @@ import log from "../utils/utils";
         const data = await db.getReport();
         log(`Fetched: ${data.length} records`);
 
+        const ids = data.map((item: any) => item.IDISOFT)
         log(`Converted to CSV`);
         const csv = json2csv(data);
         if (!csv) {
@@ -49,6 +50,12 @@ import log from "../utils/utils";
         const toPath = `${process.env.FTP_DIR}/${filename}`;
         log(`Uploading to FTP: ${toPath}`)
         await ftp.uploadFile(dir, toPath);
+
+        log(`Uploaded successfully`);
+        log('Updating database');
+        await db.updateReport(ids);
+        log(`Database updated`);
+
         log(`End of report ftp`)
     } catch (e) {
         console.log(e)

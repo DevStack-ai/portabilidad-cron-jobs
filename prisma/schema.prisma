@@ -8,256 +8,57 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model admin {
-  id        Int         @id @default(autoincrement())
-  username  String?     @db.VarChar(256)
-  password  String?     @db.VarChar(256)
-  type      Int?        @default(0)
-  porta_out porta_out[]
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model ISOFT_INPUT {
+  IDISOFT               Int       @id @default(autoincrement())
+  FECHA_REGISTRO        DateTime? @default(now()) @db.DateTime(0)
+  ORIGEN                Int?
+  ESTADO_FTP            Int?      @default(0)
+  FECHA_LISTO_ENVIARFTP DateTime? @db.DateTime(0)
+  FECHA_ENVIADOFTP      DateTime? @db.DateTime(0)
+  ENVIADO_ORACLE        Int?      @default(0)
+  TRANSACTION_ID        String?   @db.VarChar(255)
+  MSISDN                String?   @db.VarChar(255)
+  ICCID                 String?   @db.VarChar(255)
+  DONOR_OP              String?   @db.VarChar(255)
+  USERID                String?   @db.VarChar(255)
+  AREA                  String?   @db.VarChar(255)
+  STATUS                String?   @db.VarChar(255)
+  ADDED_ON              String?   @db.VarChar(255)
+  PROCESSED_ON          String?   @db.VarChar(255)
+  REMARKS               String?   @db.VarChar(255)
+  PRE_POST              String?   @db.VarChar(50)
+  NUMBER_PORT           String?   @db.VarChar(255)
+  TICKET                String?   @db.VarChar(255)
+  ESTADO                String?   @db.VarChar(255)
+  CREADO                String?   @db.VarChar(255)
+  CANAL                 String?   @db.VarChar(255)
+  ETAPA_ACTUAL          String?   @db.VarChar(255)
+  AGENTE                String?   @db.VarChar(255)
+  NOMBRE_DE_CLIENTE     String?   @db.VarChar(255)
+  CEDULA                String?   @db.VarChar(255)
+  DIRECCION_ENTREGA     String?   @db.VarChar(255)
+  DIRECCION_CLIENTE     String?   @db.VarChar(255)
+  IMEI                  String?   @db.VarChar(255)
+  SERIE_DE_SIMCARD      String?   @db.VarChar(255)
+  NOMBRE_DEL_PLAN       String?   @db.VarChar(255)
+  EMAIL_DEL_CLIENTE     String?   @db.VarChar(255)
+  TIPO_DE_PLAN          String?   @db.VarChar(255)
+  TIPO_EQUIPO           String?   @db.VarChar(255)
+  GRUPO_ETAPA_FIINAL    String?   @db.VarChar(255)
+
+  @@index([ENVIADO_ORACLE], map: "ISOFT_INPUT_ENVIADO_ORACLE_IDX")
+  @@index([ESTADO_FTP], map: "ISOFT_INPUT_ESTADO_FTP_IDX")
+  @@index([MSISDN], map: "ISOFT_INPUT_MSISDN_IDX")
+  @@index([NUMBER_PORT], map: "ISOFT_INPUT_NUMBER_PORT_IDX")
+  @@index([PRE_POST], map: "ISOFT_INPUT_PRE_POST_IDX")
+  @@index([TRANSACTION_ID], map: "ISOFT_INPUT_TRANSACTION_ID_IDX")
 }
 
-model nip_request {
-  id         Int       @id @default(autoincrement())
-  phone      String    @db.VarChar(15)
-  status     Int       @default(0)
-  error_msg  String?   @db.VarChar(45)
-  created_at DateTime  @default(now()) @db.DateTime(0)
-  updated_at DateTime? @db.DateTime(0)
-  created_by Int?
-  updated_by Int?
-  user_id    Int
-  retries    Int?      @default(0)
-}
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model ISOFT_INPUT_TEMP {
+  TRANSACTION_ID Int?
 
-model port_type {
-  id            Int             @id @default(autoincrement())
-  name          String          @db.VarChar(256)
-  // porta_request porta_request[]
-}
-
-model postpaid_plan {
-  id             Int     @id @default(autoincrement())
-  name           String  @db.VarChar(256)
-  code           String  @db.VarChar(256)
-  price          String  @db.VarChar(256)
-  total_data     String? @db.VarChar(256)
-  share_data     String? @db.VarChar(256)
-  sms_all_net    Int?
-  min_all_net    Int?
-  min            Int?
-  excedent_data  String? @db.VarChar(256)
-  excedent_voice String? @db.VarChar(256)
-}
-
-model porta_request {
-  id                  Int        @id @default(autoincrement())
-  phone               String     @db.VarChar(45)
-  sgo_ported_phone    String?    @db.VarChar(45)
-  user_id             Int
-  origin              Int
-  nip                 String     @db.VarChar(45)
-  document_type       Int
-  c_provincia         Int?
-  c_folio             Int?
-  c_asiento           Int?
-  c_letra             String?    @db.VarChar(45)
-  passport            String?    @db.VarChar(256)
-  ruc                 String?    @db.VarChar(256)
-  name                String     @db.VarChar(1000)
-  contact_phone       String?    @db.VarChar(45)
-  email               String?    @db.VarChar(256)
-  provincia           Int
-  distrito            Int
-  corregimiento       Int
-  barrio              Int        @default(0)
-  address             String     @db.VarChar(256)
-  home_type           Int
-  home_number         String?    @db.VarChar(256)
-  doc_front_path      String?    @db.VarChar(512)
-  doc_back_path       String?    @db.VarChar(512)
-  spn_path            String?    @db.VarChar(512)
-  signature           String?    @db.LongText
-  rpa_status          Int        @default(0)
-  rpa_message         String?    @db.LongText
-  status              Int        @default(0)
-  nip_req_id          Int?
-  created_at          DateTime?  @db.DateTime(0)
-  updated_at          DateTime?  @db.DateTime(0)
-  created_by          Int?
-  updated_by          Int?
-  sgo_account         String?    @db.VarChar(256)
-  simcard             String?    @db.VarChar(45)
-  contrato            String?    @db.VarChar(45)
-  sgo_number          String?    @db.VarChar(45)
-  rpa_sgo_user        String?    @db.VarChar(30)
-  updated_at_sgoadmin DateTime?  @db.DateTime(0)
-  b_address           String?    @db.VarChar(256)
-  b_corregimiento     Int?
-  b_distrito          Int?
-  b_home_number       String?    @db.VarChar(256)
-  b_home_type         Int?
-  b_provincia         Int?
-  d_address           String?    @db.VarChar(256)
-  d_corregimiento     Int?
-  d_distrito          Int?
-  d_home_number       String?    @db.VarChar(256)
-  d_home_type         Int?
-  d_provincia         Int?
-  port_type_id        Int?
-  post_paid_plan_id   Int?
-  porigin             origin     @relation(fields: [origin], references: [id])
-  // port_type           port_type? @relation(fields: [port_type_id], references: [id])
-  puser               user       @relation(fields: [user_id], references: [id])
-
-  @@index([origin], map: "porta_request_origin_fkey")
-  @@index([user_id], map: "porta_request_user_id_fkey")
-  @@index([rpa_status], map: "porta_request_rpa_status_fkey")
-  // @@index([port_type_id], map: "porta_request_port_type_id_fkey")
-}
-
-model user {
-  id            Int             @id @default(autoincrement())
-  username      String          @db.VarChar(256)
-  password      String          @db.VarChar(256)
-  area          String?         @db.VarChar(256)
-  sgo_username  String?         @db.VarChar(256)
-  sgo_password  String?         @db.VarChar(256)
-  sgo_area      String?         @db.VarChar(256)
-  created_at    DateTime?       @db.DateTime(0)
-  updated_at    DateTime?       @db.DateTime(0)
-  created_by    Int?
-  updated_by    Int?
-  porta_request porta_request[]
-}
-
-model origin {
-  id            Int             @id @default(autoincrement())
-  name          String?         @db.VarChar(45)
-  created_at    String?         @default("now()") @db.VarChar(45)
-  porta_request porta_request[]
-}
-
-model location {
-  id         Int       @id @default(autoincrement())
-  id_padre   Int?
-  codigo     Int
-  nombre     String    @db.VarChar(256)
-  created_at DateTime? @db.DateTime(0)
-  nivel      Int?
-}
-
-model topologias {
-  id          Int         @id @default(autoincrement())
-  description String      @db.VarChar(256)
-  porta_out   porta_out[]
-}
-
-model porta_out_reason {
-  id          Int         @id @default(autoincrement())
-  status      Int         @unique @default(0)
-  description String?     @db.VarChar(45)
-  porta_out   porta_out[]
-}
-
-model porta_out {
-  id                 Int              @id @default(autoincrement())
-  phone              String           @db.VarChar(45)
-  token              String?          @db.VarChar(256)
-  signature          String?          @db.LongText
-  created_at         DateTime?        @db.DateTime(0)
-  updated_at         DateTime?        @db.DateTime(0)
-  poa_curr_state     String?          @db.VarChar(45)
-  poa_date           String?          @db.VarChar(45)
-  poa_lib_acct_no    Int?
-  poa_lib_os_bal     Float?
-  poa_serv_type      String?          @db.VarChar(45)
-  poa_service_no     String?          @db.VarChar(45)
-  poa_transaction_id String?          @db.VarChar(90)
-  gina_id_caso       String?          @db.VarChar(45)
-  document           String?          @db.VarChar(45)
-  name               String?          @db.VarChar(1000)
-  poa_add_date       String?          @db.VarChar(45)
-  poa_cust_type      String?          @db.VarChar(45)
-  poa_timestamp      String?          @db.VarChar(45)
-  topologia_id       Int?
-  updated_by         Int?
-  reason_id          Int              @default(0)
-  poa_message_pxs    String?          @db.LongText
-  callback_url       String?          @db.VarChar(256)
-  signed_file_url    String?          @db.VarChar(256)
-  agent_id           Int?
-  take_at            DateTime?        @db.DateTime(0)
-  agent              admin?           @relation(fields: [agent_id], references: [id])
-  reason             porta_out_reason @relation(fields: [reason_id], references: [status])
-  topologia          topologias?      @relation(fields: [topologia_id], references: [id])
-
-  @@index([topologia_id], map: "porta_out_topologia_id_fkey")
-  @@index([updated_by], map: "porta_out_updated_by_fkey")
-  @@index([reason_id], map: "porta_out_reason_id_fkey")
-  @@index([agent_id], map: "porta_out_agent_id_fkey")
-}
-
-model porta_out_apikey {
-  id         Int       @id @default(autoincrement())
-  key        String    @db.VarChar(45)
-  status     Int       @default(0)
-  created_at DateTime? @db.DateTime(0)
-  updated_at DateTime? @db.DateTime(0)
-}
-
-model rpa_status {
-  int         Int     @id @default(autoincrement())
-  description String? @db.VarChar(45)
-}
-
-model config {
-  idconfig Int     @id @default(autoincrement())
-  nombre   String? @db.VarChar(200)
-  valor    String? @db.Text
-  rol      Int?
-}
-
-model data_portout_temp {
-  iddelta          Int       @id @default(autoincrement())
-  date_            String?   @db.VarChar(200)
-  time_stamp       String?   @db.VarChar(200)
-  transaction_id   String?   @db.VarChar(200)
-  service_no       String?   @db.VarChar(200)
-  serv_type        String?   @db.VarChar(200)
-  lib_acct_no      String?   @db.VarChar(200)
-  cust_type        String?   @db.VarChar(200)
-  lib_os_bal       String?   @db.VarChar(200)
-  curr_state       String?   @db.VarChar(200)
-  message_pxs      String?   @db.Text
-  add_date         String?   @db.VarChar(200)
-  plantilla        String?   @db.Text
-  fecha            DateTime? @default(now()) @db.DateTime(0)
-  estado           Int?      @default(1)
-  tipo             Int?      @default(0)
-  cont_reenvio     Int?      @default(0)
-  fecha_envio      DateTime? @db.DateTime(0)
-  fecha_recibido   DateTime? @db.DateTime(0)
-  cont_insistencia Int?      @default(0)
-  idmensaje        String?   @db.VarChar(200)
-  idcaso           Int?
-}
-
-model porta_request_hist {
-  id         Int      @id @default(autoincrement())
-  porta_id   Int
-  status     Int
-  created_at DateTime @default(now()) @db.DateTime(0)
-
-  @@index([created_at], map: "date")
-  @@index([porta_id], map: "porta_id")
-}
-
-model porta_out_hist {
-  id         Int      @id @default(autoincrement())
-  porta_id   Int
-  status     Int
-  created_at DateTime @default(now()) @db.DateTime(0)
-
-  @@index([created_at], map: "date")
-  @@index([porta_id], map: "porta_id")
+  @@index([TRANSACTION_ID], map: "ISOFT_INPUT_TEMP_TRANSACTION_ID_IDX")
+  @@ignore
 }

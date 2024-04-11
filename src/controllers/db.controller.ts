@@ -3,6 +3,11 @@ import "dotenv/config";
 import { PrismaClient } from "@prisma/client";
 
 
+interface data {
+    data: Array<any>
+    ids: Array<number>
+}
+
 export class DbController {
 
 
@@ -12,69 +17,57 @@ export class DbController {
     async getReport(): Promise<[]> {
         const prisma = new PrismaClient();
 
-        const query = await prisma.$queryRaw`
+        const query: [] = await prisma.$queryRaw`
             SELECT 
-                pr.phone AS 'number_port',
+                IDISOFT, 
+                NUMBER_PORT AS 'number_port',
                 '' AS 'ticket',
                 '' AS 'estado',
                 '' AS 'creado',
                 '' AS 'canal',
                 '' AS etapa_actual,
                 '' AS 'agente',
-                pr.name AS 'nombre_de_cliente',
-                CONCAT(CASE
-                            WHEN
-                                pr.document_type = 1
-                            THEN
-                                CONCAT(pr.c_provincia,
-                                        pr.c_letra,
-                                        '-',
-                                        pr.c_folio,
-                                        '-',
-                                        pr.c_asiento)
-                            ELSE CONCAT(pr.passport, pr.ruc)
-                        END) AS 'cedula',
+                NOMBRE_DE_CLIENTE AS 'nombre_de_cliente',
+                CEDULA AS 'cedula',
                 '' AS 'direccion entrega',
-                REPLACE(REPLACE(CONCAT(pr.home_number,
-                                ' ',
-                                pr.address,
-                                ' ',
-                                l3.nombre,
-                                ' ',
-                                l2.nombre,
-                                ' ',
-                                l1.nombre),
-                        ',',
-                        ''),
-                    '
-                            ',
-                    '') AS 'direccion cliente',
+                DIRECCION_CLIENTE AS 'direccion cliente',
                 '' AS 'imei',
-                generadigitosensim(simcard) AS 'serie_de_simcard',
-                pp.package_id AS 'nombre_del_plan',
-                email AS 'email_del_cliente',
+                GENERADIGITOSENSIM(SERIE_DE_SIMCARD) AS 'serie_de_simcard',
+                NOMBRE_DEL_PLAN AS 'nombre_del_plan',
+                EMAIL_DEL_CLIENTE AS 'email_del_cliente',
                 '' AS 'tipo_de_plan',
                 '' AS tipo_equipo,
                 '' AS grupo_etapa_final
             FROM
-                porta_request pr
-                    JOIN
-                location l1 ON l1.id = pr.provincia
-                    JOIN
-                location l2 ON l2.id = pr.distrito
-                    JOIN
-                location l3 ON l3.id = pr.corregimiento
-                    JOIN
-                postpaid_plan pp ON pp.id = pr.post_paid_plan_id
-            where port_type_id=1
-            and ready_to_send=1
-            and LENGTH(simcard) = 19 AND simcard REGEXP '^[0-9]+$'
-            and ready_to_send_at >= DATE_SUB(NOW(), INTERVAL 5 MINUTE)
-            ORDER BY pr.id DESC;`;
+                ISOFT_INPUT
+            WHERE
+                PRE_POST = 'POST' AND ESTADO_FTP = 1
+                    AND LENGTH(SERIE_DE_SIMCARD) = 19
+                    AND SERIE_DE_SIMCARD REGEXP '^[0-9]+$';`;
 
+        prisma.$disconnect();
+        return query as []
+    }
+
+    async updateReport(ids: any[]): Promise<void> {
+
+
+        const prisma = new PrismaClient();
+
+        await prisma.iSOFT_INPUT.updateMany({
+            where: {
+                IDISOFT: {
+                    in: ids
+                },
+                ESTADO_FTP: 1
+            },
+            data: {
+                ESTADO_FTP: 2,
+                FECHA_ENVIADOFTP: new Date()
+            }
+        });
         prisma.$disconnect();
 
 
-        return query as []
     }
 }
