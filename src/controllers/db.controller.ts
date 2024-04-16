@@ -92,7 +92,7 @@ export class DbController {
 
         const query = await prisma.iSOFT_INPUT.findMany({
             where: {
-                CONTRATO_GENERADO: 9,
+                CONTRATO_GENERADO: 0,
                 CONTRACT_ID: null,
                 CONTRACT_ATTEMPTS: {
                     lt: 3
