@@ -73,7 +73,7 @@ export class PaperlessController {
         });
     }
 
-    uploadId(contractId: string, filePath: string, type: "PRE" | "POST") {
+    uploadId(contractId: string, filePath: string, type: string) {
         return new Promise(async (resolve, reject) => {
             try {
 
