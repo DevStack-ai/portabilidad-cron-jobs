@@ -1,6 +1,6 @@
 import "dotenv/config";
 
-import { PrismaClient } from "@prisma/client";
+import { ISOFT_INPUT, PrismaClient } from "@prisma/client";
 
 
 interface data {
@@ -69,5 +69,92 @@ export class DbController {
         prisma.$disconnect();
 
 
+    }
+
+    async updateField(id: number, field: string, value: any): Promise<void> {
+        const prisma = new PrismaClient();
+
+        await prisma.iSOFT_INPUT.update({
+            where: {
+                IDISOFT: id
+            },
+            data: {
+                [field]: value
+            }
+        });
+
+        prisma.$disconnect();
+    }
+
+
+    async getDataWithoutContract(): Promise<ISOFT_INPUT[]> {
+        const prisma = new PrismaClient();
+
+        const query = await prisma.iSOFT_INPUT.findMany({
+            where: {
+                ESTADO: "0",
+                CONTRACT_ID: null,
+                CONTRACT_ATTEMPTS: {
+                    lt: 3
+                },
+                STEP: 0
+            },
+            take: Number(process.env.CONTRACT_BATCH_SIZE)
+
+        })
+        return query
+    }
+
+    async getDataByStep(step: number): Promise<ISOFT_INPUT[]> {
+        const prisma = new PrismaClient();
+
+        const query = await prisma.iSOFT_INPUT.findMany({
+            where: {
+                ESTADO: "0",
+                STEP: step,
+                CONTRACT_ATTEMPTS: {
+                    lt: 3
+                }
+            },
+            take: Number(process.env.CONTRACT_BATCH_SIZE)
+
+        })
+        return query
+    }
+
+    async failedProcess(ids: number[]): Promise<void> {
+        const prisma = new PrismaClient();
+
+        await prisma.iSOFT_INPUT.updateMany({
+            where: {
+                IDISOFT: {
+                    in: ids
+                }
+            },
+            data: {
+                CONTRACT_ATTEMPTS: {
+                    increment: 1
+                },
+                // STEP: step
+            }
+        });
+
+        prisma.$disconnect();
+    }
+    async successStep(ids: number[], step: number): Promise<void> {
+        const prisma = new PrismaClient();
+
+        await prisma.iSOFT_INPUT.updateMany({
+            where: {
+                IDISOFT: {
+                    in: ids
+                }
+            },
+            data: {
+                STEP: step
+            }
+        });
+
+        prisma.$disconnect();
     }
 }

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<transaction>
+    <items>
+        <item>
+            <metadata>
+            <carrier>CWP</carrier>
+            <transactiontype>External Mobile Port Prepaid SPN</transactiontype>
+            <!-- Formulario de Solicitud de Portabilidad Numérica -->
+            <!--  1. Datos del Cliente y/o Usuario y Concesionario Actual -->
+            <request_number>755001</request_number><!-- idisoft-->
+            <date>15/04/2024</date><!-- fecha_registro-->
+            <client_name>ariel jesua hernandez monterroso</client_name><!-- nombre_del_cliente-->
+            <id>4-750-2130</id> <!-- Cedula/Pasaporte/RUC-->
+            <cedula>4-750-2130</cedula><!-- Cedula/Pasaporte/RUC-->
+            <adress>Chiriqui, BARU, PUERTO ARMUELLES, 1</adress><!-- direccion_cliente -->
+            <province>Panama</province><!-- direccion_cliente -->
+            <district>Arraijan</district><!-- direccion_cliente -->
+            <corregimiento>Vista Alegre</corregimiento><!-- direccion_cliente -->
+            <barriada>Curundu</barriada><!-- direccion_cliente -->
+            <street>1</street><!-- direccion_cliente -->
+            <house>1</house><!-- direccion_cliente -->
+            <apto></apto>
+            <ctn>67120101</ctn><!-- msisdn -->
+            <contract_lang>es</contract_lang>
+            <contact_client>67120101</contact_client><!-- msisdn -->
+            <email>erm@cwpanama.com</email><!-- email_cliente -->
+            <quantity_line>1</quantity_line><!-- quemado -->
+            <account_number>67120101</account_number><!-- msisdn -->
+            <line_one>67120101</line_one>
+            <line_two></line_two>
+            <line_tre></line_tre>
+            <line_four></line_four>
+            <more_line_true></more_line_true>
+            <more_line_false>X</more_line_false><!-- quemado -->
+            <Current_telephone_service_dealer>Digicel Panama SA</Current_telephone_service_dealer><!-- quemado -->
+            <!-- 2. Datos del Concesionario Receptor -->
+            <telephone_service_dealer>Cable and Wireless Panamá, S.A</telephone_service_dealer><!-- quemado -->
+            <telephone_contact_receiving_dealer>123</telephone_contact_receiving_dealer><!-- quemado para prepago-->
+            <mail_dealer>DLPNCWP@cwpanama.com</mail_dealer><!-- quemado -->
+             <!--3.NIP para telefonía prepagada móvil o PCS-->    
+             <nip_pcs>0000</nip_pcs><!-- quemado -->
+             <!--4.Aprobación o Rechazo -->
+             <approved_true></approved_true>
+             <approved_false></approved_false>
+             <!-- //////////-->
+             <!-- <fijo_postpaid></fijo_postpaid>
+             <fijo_prepaid></fijo_prepaid>
+             <movil_postpaid></movil_postpaid>
+             <movil_prepaid></movil_prepaid> -->
+             <!-- //////////-->
+             <last_unpaid_invoice></last_unpaid_invoice>
+             <name_not_owner_line></name_not_owner_line>
+             <telephone_not_exist></telephone_not_exist>
+             <outside_local_charging_zone></outside_local_charging_zone>
+             <fixed_concessionaire_provide_prepayment></fixed_concessionaire_provide_prepayment>
+             <!-- //////////-->
+             <outstanding_balance_last_invoice></outstanding_balance_last_invoice>
+             <name_not_owner></name_not_owner>
+             <lost_or_stolen_device></lost_or_stolen_device>
+             <phone_not_exist></phone_not_exist>
+             <wrong_nip></wrong_nip>
+             <without_nip></without_nip>
+             <!-- //////////-->
+             <client_name_represent>daniel santamaria</client_name_represent><!-- nombre_del_cliente-->
+             <dealership>Telefonica Moviles Panama S.A</dealership><!-- quemado -->
+             <!-- /////Firma/////-->
+             <client_id_represent>4-750-2130</client_id_represent><!-- Cedula/Pasaporte/RUC-->
+             <liberate_code_user></liberate_code_user>           
+            </metadata>
+        </item>
+    </items>
+</transaction>

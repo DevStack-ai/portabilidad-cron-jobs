@@ -28,6 +28,8 @@ model ISOFT_INPUT {
   PROCESSED_ON          String?   @db.VarChar(255)
   REMARKS               String?   @db.VarChar(255)
   PRE_POST              String?   @db.VarChar(50)
+  CONTRACT_ID           String?   @db.VarChar(255)
+  CONTRATO_GENERADO     Int?      @default(0)
   NUMBER_PORT           String?   @db.VarChar(255)
   TICKET                String?   @db.VarChar(255)
   ESTADO                String?   @db.VarChar(255)
@@ -46,6 +48,11 @@ model ISOFT_INPUT {
   TIPO_DE_PLAN          String?   @db.VarChar(255)
   TIPO_EQUIPO           String?   @db.VarChar(255)
   GRUPO_ETAPA_FIINAL    String?   @db.VarChar(255)
+  ERROR                 Int?      @default(100)
+  CONTRACT_ATTEMPTS     Int?      @default(0)
+  s3_spn_path           String?   @db.VarChar(256)
+  s3_front_document     String?   @db.VarChar(256)
+  STEP                  Int?      @default(0)
 
   @@index([ENVIADO_ORACLE], map: "ISOFT_INPUT_ENVIADO_ORACLE_IDX")
   @@index([ESTADO_FTP], map: "ISOFT_INPUT_ESTADO_FTP_IDX")
@@ -53,6 +60,7 @@ model ISOFT_INPUT {
   @@index([NUMBER_PORT], map: "ISOFT_INPUT_NUMBER_PORT_IDX")
   @@index([PRE_POST], map: "ISOFT_INPUT_PRE_POST_IDX")
   @@index([TRANSACTION_ID], map: "ISOFT_INPUT_TRANSACTION_ID_IDX")
+  @@index([ERROR], map: "ERROR")
 }
 
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
@@ -61,4 +69,68 @@ model ISOFT_INPUT_TEMP {
 
   @@index([TRANSACTION_ID], map: "ISOFT_INPUT_TEMP_TRANSACTION_ID_IDX")
   @@ignore
+}
+
+model MM_PICKUP_DATA {
+  id                 Int       @id @default(autoincrement())
+  idcaso             Int?
+  telefonoWa         String?   @db.VarChar(255)
+  flujo              String?   @db.VarChar(255)
+  telefonoMigrar     String?   @db.VarChar(255)
+  existePencloud     String?   @db.VarChar(255)
+  fotoSim            String?   @db.VarChar(255)
+  serieSimCard       String?   @db.VarChar(255)
+  fecha_registro     DateTime? @default(now()) @db.DateTime(0)
+  estado_extractor   Int?      @default(0)
+  fecha_extractor    DateTime? @db.DateTime(0)
+  url_foto_documento String?   @db.VarChar(1000)
+  numero_cedula      String?   @db.VarChar(100)
+
+  @@index([estado_extractor], map: "MM_PICKUP_DATA_estado_extractor_IDX")
+  @@index([idcaso], map: "MM_PICKUP_DATA_idcaso_IDX")
+  @@index([telefonoMigrar], map: "MM_PICKUP_DATA_telefonoMigrar_IDX")
+}
+
+model MM_PORTABILIDAD_CLIENTE {
+  id                                        Int       @id @default(autoincrement())
+  line_to_port                              String?   @db.VarChar(255)
+  ticket                                    String?   @db.VarChar(255)
+  estado                                    String?   @db.VarChar(255)
+  asunto                                    String?   @db.VarChar(255)
+  etapa_actual                              String?   @db.VarChar(255)
+  creado                                    String?   @db.VarChar(255)
+  usuario                                   String?   @db.VarChar(255)
+  agente                                    String?   @db.VarChar(255)
+  canal                                     String?   @db.VarChar(255)
+  tipo_de_plan                              String?   @db.VarChar(255)
+  nombre_de_cliente                         String?   @db.VarChar(255)
+  cedula                                    String?   @db.VarChar(255)
+  e_mail_del_cliente                        String?   @db.VarChar(255)
+  numero_de_contacto                        String?   @db.VarChar(255)
+  numero_de_contacto_adicional              String?   @db.VarChar(255)
+  equipo_celular_simcard                    String?   @db.VarChar(255)
+  correo_del_vendedor                       String?   @db.VarChar(255)
+  nombre_del_plan_solicitado_por_el_cliente String?   @db.VarChar(255)
+  tipo_de_incidente                         String?   @db.VarChar(255)
+  direccion_de_residencia                   String?   @db.VarChar(1000)
+  direccion_de_entrega                      String?   @db.VarChar(1000)
+  url_foto_documento                        String?   @db.VarChar(1000)
+  url_foto_sim                              String?   @db.VarChar(1000)
+  tipo_documento                            String?   @db.VarChar(255)
+  num_serie                                 String?   @db.VarChar(255)
+  compania                                  String?   @db.VarChar(255)
+  fecha_registro                            DateTime? @default(now()) @db.DateTime(0)
+  tipo_flujo                                String?   @db.VarChar(100)
+  idcaso                                    Int?
+  numerowhatsapp                            String?   @db.VarChar(100)
+  nombrewhatsapp                            String?   @db.VarChar(100)
+  packageid                                 String?   @db.VarChar(100)
+  existe_en_isoft_input                     Int?      @default(0)
+  estado_extractor                          Int?      @default(0)
+  fecha_extractor                           DateTime? @db.DateTime(0)
+
+  @@index([estado_extractor], map: "MM_PORTABILIDAD_CLIENTE_estado_extractor_IDX")
+  @@index([existe_en_isoft_input], map: "MM_PORTABILIDAD_CLIENTE_existe_en_isoft_input_IDX")
+  @@index([idcaso], map: "MM_PORTABILIDAD_CLIENTE_idcaso_IDX")
+  @@index([line_to_port], map: "MM_PORTABILIDAD_CLIENTE_line_to_port_IDX")
 }
