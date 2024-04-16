@@ -41,8 +41,9 @@ import { ISOFT_INPUT } from "@prisma/client";
                 if (typeof response.value === 'number') {
                     success_base.push({ ...rows[index], CONTRACT_ID: response.value });
                     const update = db.updateField(rows[index].IDISOFT, 'CONTRACT_ID', String(response.value));
-                    const update = db.updateField(rows[index].IDISOFT, 'CONTRATO_GENERADO', 1);
                     update_contract.push(update);
+                    const updateContract = db.updateField(rows[index].IDISOFT, 'CONTRATO_GENERADO', 1);
+                    update_contract.push(updateContract);
                 }
             } else {
                 error_base.push(rows[index]);
