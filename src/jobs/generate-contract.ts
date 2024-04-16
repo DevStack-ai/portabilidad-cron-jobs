@@ -164,10 +164,12 @@ import { ISOFT_INPUT } from "@prisma/client";
         log(`Success: ${success_invoice.length}`);
         log(`Error: ${responses_invoice.length - success_invoice.length}`);
 
-        await Promise.all([
-            db.successStep(success_invoice.map((item: any) => item.IDISOFT), 4),
-            db.failedProcess(error_spn.map((item: any) => item.IDISOFT))
-        ])
+        if (success_invoice.length > 0) {
+            await Promise.all([
+                db.successStep(success_invoice.map((item: any) => item.IDISOFT), 4),
+                db.failedProcess(error_spn.map((item: any) => item.IDISOFT))
+            ])
+        }
 
         log(`End of generate contract ===================================================================`)
     } catch (e) {
