@@ -2,8 +2,9 @@ import { DbController } from "../controllers/db.controller";
 import { PaperlessController } from "../controllers/paperless.controller";
 import log from "../utils/utils";
 import { ISOFT_INPUT } from "@prisma/client";
+import cron from "node-cron";
 
-(async () => {
+cron.schedule("*/5 * * * *", async () => {
     try {
         const db = new DbController();
         const paperless = new PaperlessController();
@@ -212,5 +213,5 @@ import { ISOFT_INPUT } from "@prisma/client";
     } catch (e) {
         log(`Error: ${e}`)
     }
+})
 
-})();
