@@ -128,7 +128,7 @@ export class DbController {
             where: {
                 CONTRATO_GENERADO: 1,
                 STEP: step,
-                PRE_POST = 'POST',
+                PRE_POST : 'POST',
                 CONTRACT_ATTEMPTS: {
                     lt: 3
                 }
