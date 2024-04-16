@@ -36,7 +36,6 @@ export function generateXMLTemplate(data: contract) {
                   <house>${data.address}</house>
                   <apto></apto>
                   <ctn>${data.ctn}</ctn>
-                  <contract_lang>es</contract_lang>
                   <contact_client>${data.ctn}</contact_client>
                   <email>${data.email}</email>
                   <quantity_line>1</quantity_line>
@@ -51,7 +50,7 @@ export function generateXMLTemplate(data: contract) {
                   <telephone_service_dealer>Cable and Wireless Panamá, S.A</telephone_service_dealer>
                   <telephone_contact_receiving_dealer>${data.type === "PRE" ? "123" : "161"}</telephone_contact_receiving_dealer>
                   <mail_dealer>DLPNCWP@cwpanama.com</mail_dealer>
-                  <nip_pcs>${data.type === "PRE" ? "" : "0000"}</nip_pcs>
+                  <nip_pcs>${data.type === "POST" ? "" : "0000"}</nip_pcs>
                   <approved_true></approved_true>
                   <approved_false></approved_false>
                   <last_unpaid_invoice></last_unpaid_invoice>

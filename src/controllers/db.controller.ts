@@ -66,7 +66,7 @@ export class DbController {
                 FECHA_ENVIADOFTP: new Date()
             }
         });
-        prisma.$disconnect();
+        await prisma.$disconnect();
 
 
     }
@@ -83,7 +83,7 @@ export class DbController {
             }
         });
 
-        prisma.$disconnect();
+        await prisma.$disconnect();
     }
 
 
@@ -94,6 +94,7 @@ export class DbController {
             where: {
                 CONTRATO_GENERADO: 9,
                 CONTRACT_ID: null,
+                IDISOFT: 790188,
                 CONTRACT_ATTEMPTS: {
                     lt: 3
                 },
@@ -102,6 +103,8 @@ export class DbController {
             take: Number(process.env.CONTRACT_BATCH_SIZE)
 
         })
+        await prisma.$disconnect();
+
         return query
     }
 
@@ -119,6 +122,8 @@ export class DbController {
             take: Number(process.env.CONTRACT_BATCH_SIZE)
 
         })
+        await prisma.$disconnect();
+
         return query
     }
 
@@ -129,7 +134,7 @@ export class DbController {
             where: {
                 CONTRATO_GENERADO: 1,
                 STEP: step,
-                PRE_POST : 'POST',
+                // PRE_POST: 'POST',
                 CONTRACT_ATTEMPTS: {
                     lt: 3
                 }
@@ -137,6 +142,8 @@ export class DbController {
             take: Number(process.env.CONTRACT_BATCH_SIZE)
 
         })
+        await prisma.$disconnect();
+
         return query
     }
 
@@ -157,7 +164,8 @@ export class DbController {
             }
         });
 
-        prisma.$disconnect();
+        await prisma.$disconnect();
+
     }
     async successStep(ids: number[], step: number): Promise<void> {
         const prisma = new PrismaClient();
@@ -173,6 +181,7 @@ export class DbController {
             }
         });
 
-        prisma.$disconnect();
+        await prisma.$disconnect();
+
     }
 }

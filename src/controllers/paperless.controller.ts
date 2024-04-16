@@ -1,9 +1,10 @@
 import "dotenv/config";
 import axios from "axios";
-import { ISOFT_INPUT, PrismaClient } from "@prisma/client";
+// import { ISOFT_INPUT, PrismaClient } from "@prisma/client";
 import fs from "fs";
 import { generateXMLTemplate } from "../utils/generatePayload";
-import { authHMAC } from "../utils/authHMAC";
+import { ISOFT_INPUT } from "@prisma/client";
+// import { authHMAC } from "../utils/authHMAC";
 
 export class PaperlessController {
 
@@ -25,6 +26,27 @@ export class PaperlessController {
         return apikey;
     }
 
+    async getSPN(input: ISOFT_INPUT): Promise<string> {
+
+        const payload = {
+            "IDISOFT": input.IDISOFT,
+            "MSISDN": input.MSISDN,
+            "DONOR_OP": input.DONOR_OP,
+            "NOMBRE_DE_CLIENTE": input.NOMBRE_DE_CLIENTE,
+            "CEDULA": input.CEDULA,
+            "DIRECCION_CLIENTE": input.DIRECCION_CLIENTE,
+            "EMAIL_DEL_CLIENTE": input.EMAIL_DEL_CLIENTE
+        }
+
+        const query = await axios.post(`${process.env.BASE_API_URL}/porta-request/spn`, payload);
+
+        if (query.status === 200) {
+            return query.data.url;
+        } else {
+            return "ERROR";
+        }
+
+    }
 
     generateContract(contract: any) {
         return new Promise(async (resolve, reject) => {
@@ -94,7 +116,7 @@ export class PaperlessController {
 
                 form.append("file", cedula, filename);
                 form.append('name', "cedulacliente");
-                form.append('type', "Documento de Identidad");
+                form.append('type', "identification");
 
                 const request_time = new Date().toISOString();
                 const params = `request_time=${request_time}`;
@@ -132,7 +154,7 @@ export class PaperlessController {
 
                 form.append("file", lastInvoice, filename);
                 form.append('name', "invoice");
-                form.append('type', "Última factura");
+                form.append('type', "banking_documentation");
 
                 const request_time = new Date().toJSON().slice(0, 19)
                 const params = `request_time=${request_time}-06:00`;
@@ -140,7 +162,6 @@ export class PaperlessController {
                 const url = `${process.env.CONTRACT_API_URL}/api/v2/contracts/${contractId}/attachments?${params}`;
 
                 const query = await axios.post(url, form, { headers: headers });
-                console.log(query)
                 resolve(query);
                 fs.unlinkSync(filename);
 
@@ -172,7 +193,7 @@ export class PaperlessController {
 
                 form.append("file", cedula, filename);
                 form.append('name', "spnfirmado");
-                form.append('type', "SPN Firmado");
+                form.append('type', "spn_attachment");
 
                 const request_time = new Date().toJSON().slice(0, 19)
                 const params = `request_time=${request_time}-06:00`;
@@ -180,7 +201,6 @@ export class PaperlessController {
                 const url = `${process.env.CONTRACT_API_URL}/api/v2/contracts/${contractId}/attachments?${params}`;
 
                 const query = await axios.post(url, form, { headers: headers });
-                console.log(query)
                 resolve(query);
                 fs.unlinkSync(filename);
 
