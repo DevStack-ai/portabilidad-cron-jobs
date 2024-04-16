@@ -1,6 +1,5 @@
 import { DbController } from "../controllers/db.controller";
 import { PaperlessController } from "../controllers/paperless.controller";
-import fs from "fs";
 import log from "../utils/utils";
 import { ISOFT_INPUT } from "@prisma/client";
 

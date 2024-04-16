@@ -89,7 +89,6 @@ export class PaperlessController {
                 fs.unlinkSync(dir);
 
             } catch (e) {
-                console.log(e)
                 reject(e);
             }
         });
