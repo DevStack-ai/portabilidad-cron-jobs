@@ -112,7 +112,7 @@ export class PaperlessController {
     }
 
 
-    uploadSPN(id: number, contractId: string) {
+    uploadSPN(id: number, contractId: string, filePath: string) {
         return new Promise(async (resolve, reject) => {
             try {
 
@@ -127,7 +127,7 @@ export class PaperlessController {
                 const form = new FormData();
 
                 const filename = `spnfirmado${id}.pdf`
-                const fetchFile = await axios.get(`${process.env.BASE_API_URL}/cdn/download/${id}`, { responseType: 'arraybuffer' });
+                const fetchFile = await axios.get(filePath, { responseType: 'arraybuffer' });
                 const file = fetchFile.data
                 const cedula = new Blob([file], { type: 'application/pdf' });
 
