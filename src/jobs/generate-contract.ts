@@ -95,41 +95,40 @@ import { ISOFT_INPUT } from "@prisma/client";
             db.failedProcess(error_spn.map((item: any) => item.IDISOFT))
         ])
 
+        log("STEP UPLOAD ID")
+        const withId = await db.getDataByStep(2);
+        log(`Data to load ID: ${withId}`)
 
-        
-        // const queue_files = [];
-        // for (const item of success_base) {
+        const queue_id = [];
+        for (const item of withId) {
+            if (item.CONTRACT_ID === null) {
+                log(`Error: ${item.IDISOFT} no tiene CONTRACT_ID`)
+                continue;
+            }
+            const query = paperless.uploadId(item.CONTRACT_ID, item.s3_front_document, item.PRE_POST);
+            queue_spn.push(query);
+        }
 
-        //     if (item.s3_front_document === null) {
-        //         log(`Error: ${item.IDISOFT} no tiene s3_front_document`)
-        //         continue;
-        //     }
+        const responses_id = await Promise.allSettled(queue_id);
+        const success_id: ISOFT_INPUT[] = [];
+        const error_id: ISOFT_INPUT[] = [];
 
-        //     const query = paperless.uploadId(item.s3_front_document);
-        //     queue_files.push(query);
-        // }
+        responses_id.forEach((response, index) => {
+            console.log(response)
+            if (response.status === 'fulfilled') {
+                success_id.push(withId[index]);
+            }else{
+                error_id.push(withId[index]);
+            }
+        });
 
+        log(`Success: ${success_id.length}`);
+        log(`Error: ${responses_id.length - success_id.length}`);
 
-
-        // //update failed files
-        // const responses_files = await Promise.allSettled(queue_files);
-
-        // const success_files: any = [];
-
-        // responses_files.forEach((response, index) => {
-        //     if (response.status === 'fulfilled') {
-        //         success_files.push(success_base[index]);
-        //     }
-        // });
-
-        // log(`Success: ${success_files.length}`);
-        // log(`Error: ${responses_files.length - success_files.length}`);
-
-        // //update failed files
-        // await db.successStep(success_base.map((item: any) => item.IDISOFT), 1)
-
-
-        // //update failed files
+        await Promise.all([
+            db.successStep(success_spn.map((item: any) => item.IDISOFT), 3),
+            db.failedProcess(error_spn.map((item: any) => item.IDISOFT))
+        ])
 
 
 
