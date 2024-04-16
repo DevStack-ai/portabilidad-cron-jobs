@@ -70,7 +70,9 @@ import { ISOFT_INPUT } from "@prisma/client";
                 log(`Error: ${item.IDISOFT} no tiene CONTRACT_ID`)
                 continue;
             }
-            const query = paperless.uploadSPN(item.IDISOFT, item.CONTRACT_ID, 'https://socialmanager.s3.amazonaws.com/chats/sign_61753.pdf');
+        
+            const path = `https://socialmanager.s3.amazonaws.com/chats/sign_${item.TRANSACTION_ID}.pdf`;
+            const query = paperless.uploadSPN(item.IDISOFT, item.CONTRACT_ID, path);
             queue_spn.push(query);
         }
 
