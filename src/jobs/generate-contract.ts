@@ -154,7 +154,7 @@ import { ISOFT_INPUT } from "@prisma/client";
         const success_invoice: ISOFT_INPUT[] = [];
         const error_invoice: ISOFT_INPUT[] = [];
 
-        responses_id.forEach((response, index) => {
+        responses_invoice.forEach((response, index) => {
             console.log(response)
             if (response.status === 'fulfilled') {
                 success_invoice.push(toUploadInvoice[index]);
@@ -166,12 +166,10 @@ import { ISOFT_INPUT } from "@prisma/client";
         log(`Success: ${success_invoice.length}`);
         log(`Error: ${responses_invoice.length - success_invoice.length}`);
 
-        if (success_invoice.length > 0) {
-            await Promise.all([
-                db.successStep(success_invoice.map((item: any) => item.IDISOFT), 4),
-                db.failedProcess(error_spn.map((item: any) => item.IDISOFT))
-            ])
-        }
+        await Promise.all([
+            db.successStep(success_invoice.map((item: any) => item.IDISOFT), 4),
+            db.failedProcess(error_spn.map((item: any) => item.IDISOFT))
+        ])
 
         log(`End of generate contract ===================================================================`)
     } catch (e) {
