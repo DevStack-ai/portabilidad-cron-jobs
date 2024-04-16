@@ -37,7 +37,8 @@ export class DbController {
                 EMAIL_DEL_CLIENTE AS 'email_del_cliente',
                 '' AS 'tipo_de_plan',
                 '' AS tipo_equipo,
-                '' AS grupo_etapa_final
+                '' AS grupo_etapa_final,
+                CONTRACT_ID as 'contract_id'
             FROM
                 ISOFT_INPUT
             WHERE
