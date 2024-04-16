@@ -4,7 +4,7 @@ import log from "../utils/utils";
 import { ISOFT_INPUT } from "@prisma/client";
 import cron from "node-cron";
 
-cron.schedule("*/5 * * * *", async () => {
+cron.schedule("0,10,20,30,40,50 * * * * *", async () => {
     try {
         const db = new DbController();
         const paperless = new PaperlessController();
