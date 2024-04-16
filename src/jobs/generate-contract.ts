@@ -62,7 +62,7 @@ import { ISOFT_INPUT } from "@prisma/client";
         log("STEP UPLOAD FILES CONTRACT")
 
         const withoutSPN = await db.getDataByStep(1);
-        log(`Data to load SPN: ${withoutSPN.length}`)
+        log(`Data to load SPN: ${withoutSPN}`)
 
         const queue_spn = [];
         for (const item of withoutSPN) {
@@ -70,7 +70,7 @@ import { ISOFT_INPUT } from "@prisma/client";
                 log(`Error: ${item.IDISOFT} no tiene CONTRACT_ID`)
                 continue;
             }
-            const query = paperless.uploadSPN(item.IDISOFT, item.CONTRACT_ID, item.s3_spn_path);
+            const query = paperless.uploadSPN(item.IDISOFT, item.CONTRACT_ID, 'https://socialmanager.s3.amazonaws.com/chats/sign_61753.pdf');
             queue_spn.push(query);
         }
 
