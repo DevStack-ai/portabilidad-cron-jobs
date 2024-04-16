@@ -94,6 +94,8 @@ export class DbController {
             where: {
                 CONTRATO_GENERADO: 0,
                 CONTRACT_ID: null,
+                ENVIADO_ORACLE: 0,
+                ERROR: 0,
                 CONTRACT_ATTEMPTS: {
                     lt: 3
                 },
