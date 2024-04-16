@@ -128,11 +128,46 @@ import { ISOFT_INPUT } from "@prisma/client";
         log(`Error: ${responses_id.length - success_id.length}`);
 
         await Promise.all([
-            db.successStep(success_spn.map((item: any) => item.IDISOFT), 3),
-            db.failedProcess(error_spn.map((item: any) => item.IDISOFT))
+            db.successStep(success_id.map((item: any) => item.IDISOFT), 3),
+            db.failedProcess(error_id.map((item: any) => item.IDISOFT))
         ])
 
 
+        log("STEP UPLOAD Last Invoice")
+        const toUploadInvoice = await db.getDataByStepPostpaid(3);
+        log(`Data to load ID: ${toUploadInvoice}`)
+
+        const queue_invoice = [];
+        const queue_pre = [];
+        for (const item of toUploadInvoice) {
+            if (item.CONTRACT_ID === null) {
+                log(`Error: ${item.IDISOFT} no tiene CONTRACT_ID`)
+                continue;
+            }
+            const query = paperless.uploadLastContract(item.IDISOFT, item.CONTRACT_ID);
+            queue_invoice.push(query);
+        }
+
+        const responses_invoice = await Promise.allSettled(queue_invoice);
+        const success_invoice: ISOFT_INPUT[] = [];
+        const error_invoice: ISOFT_INPUT[] = [];
+
+        responses_id.forEach((response, index) => {
+            console.log(response)
+            if (response.status === 'fulfilled') {
+                success_invoice.push(toUploadInvoice[index]);
+            }else{
+                error_invoice.push(toUploadInvoice[index]);
+            }
+        });
+
+        log(`Success: ${success_invoice.length}`);
+        log(`Error: ${responses_invoice.length - success_invoice.length}`);
+
+        await Promise.all([
+            db.successStep(success_invoice.map((item: any) => item.IDISOFT), 4),
+            db.failedProcess(error_spn.map((item: any) => item.IDISOFT))
+        ])
 
         log(`End of generate contract ===================================================================`)
     } catch (e) {

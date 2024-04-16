@@ -111,6 +111,45 @@ export class PaperlessController {
         });
     }
 
+    uploadLastContract(id: number, contractId: string) {
+        return new Promise(async (resolve, reject) => {
+            try {
+
+                const headers = {
+                    'Content-Type': 'multipart/form-data',
+                    'Accept': 'application/json',
+                    'X-API-Token': `${process.env.CONTRACT_API_KEY}`
+                }
+
+                if (process.env.CONTRACT_API_URL === undefined) throw new Error('CONTRACT_API_URL is not defined');
+
+                const form = new FormData();
+
+                const filename = `lastInvoice.jpeg`
+                const fetchFile = await axios.get('https://s3.amazonaws.com/socialmanager/chats/ABGGUCQnhAA_Ags-sMhKaVDo9XPJSw.jpeg', { responseType: 'arraybuffer' });
+                const file = fetchFile.data
+                const lastInvoice = new Blob([file], { type: 'image/jpeg' });
+
+                form.append("file", lastInvoice, filename);
+                form.append('name', "invoice");
+                form.append('type', "Última factura");
+
+                const request_time = new Date().toJSON().slice(0, 19)
+                const params = `request_time=${request_time}-06:00`;
+
+                const url = `${process.env.CONTRACT_API_URL}/api/v2/contracts/${contractId}/attachments?${params}`;
+
+                const query = await axios.post(url, form, { headers: headers });
+                console.log(query)
+                resolve(query);
+                fs.unlinkSync(filename);
+
+            } catch (e) {
+                reject(e);
+            }
+        });
+    }
+
 
     uploadSPN(id: number, contractId: string, filePath: string) {
         return new Promise(async (resolve, reject) => {

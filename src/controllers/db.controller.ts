@@ -121,6 +121,24 @@ export class DbController {
         return query
     }
 
+    async getDataByStepPostpaid(step: number): Promise<ISOFT_INPUT[]> {
+        const prisma = new PrismaClient();
+
+        const query = await prisma.iSOFT_INPUT.findMany({
+            where: {
+                CONTRATO_GENERADO: 1,
+                STEP: step,
+                PRE_POST = 'POST',
+                CONTRACT_ATTEMPTS: {
+                    lt: 3
+                }
+            },
+            take: Number(process.env.CONTRACT_BATCH_SIZE)
+
+        })
+        return query
+    }
+
     async failedProcess(ids: number[]): Promise<void> {
         const prisma = new PrismaClient();
 
