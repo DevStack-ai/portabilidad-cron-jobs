@@ -37,8 +37,7 @@ export class DbController {
                 EMAIL_DEL_CLIENTE AS 'email_del_cliente',
                 '' AS 'tipo_de_plan',
                 '' AS tipo_equipo,
-                '' AS grupo_etapa_final,
-                CONTRACT_ID
+                '' AS grupo_etapa_final
             FROM
                 ISOFT_INPUT
             WHERE
@@ -92,7 +91,7 @@ export class DbController {
 
         const query = await prisma.iSOFT_INPUT.findMany({
             where: {
-                ESTADO: "0",
+                CONTRATO_GENERADO: 9,
                 CONTRACT_ID: null,
                 CONTRACT_ATTEMPTS: {
                     lt: 3
@@ -110,7 +109,7 @@ export class DbController {
 
         const query = await prisma.iSOFT_INPUT.findMany({
             where: {
-                ESTADO: "0",
+                CONTRATO_GENERADO: 1,
                 STEP: step,
                 CONTRACT_ATTEMPTS: {
                     lt: 3
