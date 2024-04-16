@@ -106,7 +106,7 @@ import { ISOFT_INPUT } from "@prisma/client";
                 continue;
             }
             const query = paperless.uploadId(item.CONTRACT_ID, item.s3_front_document, item.PRE_POST);
-            queue_spn.push(query);
+            queue_id.push(query);
         }
 
         const responses_id = await Promise.allSettled(queue_id);
