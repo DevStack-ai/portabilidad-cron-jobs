@@ -105,8 +105,10 @@ import { ISOFT_INPUT } from "@prisma/client";
                 log(`Error: ${item.IDISOFT} no tiene CONTRACT_ID`)
                 continue;
             }
-            const query = paperless.uploadId(item.CONTRACT_ID, item.s3_front_document, item.PRE_POST);
-            queue_id.push(query);
+            if (item.s3_front_document !== null) {
+                const query = paperless.uploadId(item.CONTRACT_ID, item.s3_front_document, item.PRE_POST);
+                queue_id.push(query);
+            }
         }
 
         const responses_id = await Promise.allSettled(queue_id);
