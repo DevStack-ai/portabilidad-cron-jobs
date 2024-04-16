@@ -106,7 +106,7 @@ import { ISOFT_INPUT } from "@prisma/client";
                 continue;
             }
             if (item.s3_front_document !== null) {
-                const query = paperless.uploadId(item.CONTRACT_ID, item.s3_front_document, item.PRE_POST);
+                const query = paperless.uploadId(item.CONTRACT_ID, item.s3_front_document, item.PRE_POST ?? 'PRE');
                 queue_id.push(query);
             }
         }
