@@ -94,7 +94,6 @@ export class DbController {
             where: {
                 CONTRATO_GENERADO: 9,
                 CONTRACT_ID: null,
-                IDISOFT: 790188,
                 CONTRACT_ATTEMPTS: {
                     lt: 3
                 },
