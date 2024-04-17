@@ -1,7 +1,7 @@
 import "dotenv/config"
 import * as ftp from 'basic-ftp';
 import fs from 'fs';
-import log from "../utils/utils";
+import print from "../utils/utils";
 
 
 import Client from "ssh2-sftp-client";
@@ -41,20 +41,20 @@ export class FtpController implements FTP {
     }
 
     async connect(options: FTPSettings) {
-        log(`Connecting to ${options.host}:${options.port}`);
+        print.log(`Connecting to ${options.host}:${options.port}`);
         try {
             await this.client.connect({ ...options, algorithms: { serverHostKey: ['ssh-dss'] } });
         } catch (err) {
-            log('Failed to connect:', err);
+            print.log('Failed to connect:', err);
         }
     }
     async listFiles(remoteDir: string) {
-        log(`Listing ${remoteDir} ...`);
+        print.log(`Listing ${remoteDir} ...`);
         let fileObjects;
         try {
             fileObjects = await this.client.list(remoteDir);
         } catch (err) {
-            log('Listing failed:', err);
+            print.log('Listing failed:', err);
         }
 
         if (!fileObjects) return []
@@ -75,11 +75,11 @@ export class FtpController implements FTP {
 
 
     async uploadFile(localFile: string, remoteFile: string) {
-        log(`Uploading ${localFile} to ${remoteFile} ...`);
+        print.log(`Uploading ${localFile} to ${remoteFile} ...`);
         try {
             await this.client.put(localFile, remoteFile);
         } catch (err) {
-            log('Uploading failed:', err);
+            print.log('Uploading failed:', err);
         }
     }
 
