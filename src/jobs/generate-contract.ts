@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { DbController } from "../controllers/db.controller";
 import { PaperlessController } from "../controllers/paperless.controller";
 import print from "../utils/utils";
@@ -216,5 +217,8 @@ const task = async () => {
         print.log(`Error: ${e}`)
     }
 }
-cron.schedule("* * * * *",task )
+if(process.env.CRON_PAPERLESS){
+    console.log("init paperless at", process.env.CRON_PAPERLESS)
+    cron.schedule(process.env.CRON_PAPERLESS, task)
+}
 
