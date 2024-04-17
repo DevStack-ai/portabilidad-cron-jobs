@@ -216,6 +216,5 @@ const task = async () => {
         print.log(`Error: ${e}`)
     }
 }
-task()
-//cron.schedule("* * * * *",task )
+cron.schedule("* * * * *",task )
 
