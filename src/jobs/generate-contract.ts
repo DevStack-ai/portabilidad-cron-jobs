@@ -209,7 +209,7 @@ const task = async () => {
 
         await Promise.all([
             db.successStep(success_invoice.map((item: any) => item.IDISOFT), 4),
-            db.failedProcess(error_spn.map((item: any) => item.IDISOFT))
+            db.failedProcess(error_invoice.map((item: any) => item.IDISOFT))
         ])
         print.log(`STEP 3 | UPDATE ${success_invoice.length} ROWS TO STEP 4`)
         print.log(`End of generate contract ===================================================================`)
