@@ -1,7 +1,5 @@
 import "dotenv/config"
-import * as ftp from 'basic-ftp';
-import fs from 'fs';
-import print from "../utils/utils";
+import Printer from "../utils/utils";
 
 
 import Client from "ssh2-sftp-client";
@@ -22,9 +20,12 @@ export class FtpController implements FTP {
 
     client: Client;
     settings: FTPSettings;
+    print: any;
 
     constructor() {
         this.client = new Client();
+        const print = new Printer("ftp");
+        this.print = print;
 
         if (!process.env.FTP_HOST || !process.env.FTP_PORT || !process.env.FTP_USER || !process.env.FTP_PASS) {
             throw new Error("FTP settings are not set in .env file");
@@ -41,20 +42,20 @@ export class FtpController implements FTP {
     }
 
     async connect(options: FTPSettings) {
-        print.log(`Connecting to ${options.host}:${options.port}`);
+       this.print.log(`Connecting to ${options.host}:${options.port}`);
         try {
             await this.client.connect({ ...options, algorithms: { serverHostKey: ['ssh-dss'] } });
         } catch (err) {
-            print.log('Failed to connect:', err);
+           this.print.log('Failed to connect:', err);
         }
     }
     async listFiles(remoteDir: string) {
-        print.log(`Listing ${remoteDir} ...`);
+       this.print.log(`Listing ${remoteDir} ...`);
         let fileObjects;
         try {
             fileObjects = await this.client.list(remoteDir);
         } catch (err) {
-            print.log('Listing failed:', err);
+           this.print.log('Listing failed:', err);
         }
 
         if (!fileObjects) return []
@@ -75,11 +76,11 @@ export class FtpController implements FTP {
 
 
     async uploadFile(localFile: string, remoteFile: string) {
-        print.log(`Uploading ${localFile} to ${remoteFile} ...`);
+       this.print.log(`Uploading ${localFile} to ${remoteFile} ...`);
         try {
             await this.client.put(localFile, remoteFile);
         } catch (err) {
-            print.log('Uploading failed:', err);
+           this.print.log('Uploading failed:', err);
         }
     }
 
