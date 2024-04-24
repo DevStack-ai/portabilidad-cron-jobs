@@ -32,10 +32,9 @@ const task = async () => {
             print.log(`STEP 0 | PROCESS ${row.IDISOFT}`)
             const query = paperless.generateContract(contract);
             queue_base.push(query);
-        }
-        print.log("-----------------")
+        }  print.log("-----------------")
 
-        
+
         const responses_base = await Promise.allSettled(queue_base);
         const success_base: any = [];
         const error_base: ISOFT_INPUT[] = [];
@@ -70,6 +69,7 @@ const task = async () => {
         print.log("-----------------")
 
         print.log("STEP 1 | STEP UPLOAD FILES CONTRACT  ============================")
+
         const withoutSPN = await db.getDataByStep(1, 99);
         print.log(`STEP 1 | DATA TO LOAD/GENERATE SPN: ${withoutSPN.length}`)
 
@@ -138,7 +138,7 @@ const task = async () => {
                 queue_id.push(query);
             } else {
                 print.log(`STEP 2 | ${item.IDISOFT} no tiene s3_front_document`)
-
+                queue_id.push(Promise.resolve({ status: 'rejected', reason: { code: 'NO_DOCUMENT' } }))
             }
         }
         print.log("-----------------")
@@ -179,11 +179,12 @@ const task = async () => {
         for (const item of toUploadInvoice) {
             if (item.CONTRACT_ID === null) {
                 print.log(`STEP 3 | ${item.IDISOFT} no tiene CONTRACT_ID`)
-                continue;
+                queue_invoice.push(Promise.resolve({ status: 'rejected', reason: { code: 'NO_CONTRACT' } }))
+            }else{
+                print.log(`STEP 3 | PROCESS ${item.IDISOFT} - ${item.CONTRACT_ID}`)
+                const query = paperless.uploadLastContract(item.IDISOFT, item.CONTRACT_ID);
+                queue_invoice.push(query);
             }
-            print.log(`STEP 3 | PROCESS ${item.IDISOFT} - ${item.CONTRACT_ID}`)
-            const query = paperless.uploadLastContract(item.IDISOFT, item.CONTRACT_ID);
-            queue_invoice.push(query);
         }
         print.log("-----------------")
         const responses_invoice = await Promise.allSettled(queue_invoice);

@@ -140,7 +140,7 @@ const task = async () => {
                 queue_id.push(query);
             } else {
                 print.log(`STEP 2 | ${item.IDISOFT} no tiene s3_front_document`)
-
+                queue_id.push(Promise.resolve({ status: 'rejected', reason: { code: 'NO_DOCUMENT' } }))
             }
         }
         print.log("-----------------")
@@ -181,11 +181,12 @@ const task = async () => {
         for (const item of toUploadInvoice) {
             if (item.CONTRACT_ID === null) {
                 print.log(`STEP 3 | ${item.IDISOFT} no tiene CONTRACT_ID`)
-                continue;
+                queue_invoice.push(Promise.resolve({ status: 'rejected', reason: { code: 'NO_CONTRACT' } }))
+            }else{
+                print.log(`STEP 3 | PROCESS ${item.IDISOFT} - ${item.CONTRACT_ID}`)
+                const query = paperless.uploadLastContract(item.IDISOFT, item.CONTRACT_ID);
+                queue_invoice.push(query);
             }
-            print.log(`STEP 3 | PROCESS ${item.IDISOFT} - ${item.CONTRACT_ID}`)
-            const query = paperless.uploadLastContract(item.IDISOFT, item.CONTRACT_ID);
-            queue_invoice.push(query);
         }
         print.log("-----------------")
         const responses_invoice = await Promise.allSettled(queue_invoice);
