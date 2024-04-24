@@ -4,8 +4,8 @@ import { PaperlessController } from "../controllers/paperless.controller";
 import { ISOFT_INPUT } from "@prisma/client";
 import cron from "node-cron";
 import Printer from "../utils/utils";
-
 const print = new Printer("manual-generate-contract");
+
 const task = async () => {
     try {
         const db = new DbController();
@@ -17,6 +17,7 @@ const task = async () => {
         print.log("STEP 0 | GENERATE CONTRACT")
         const queue_base = [];
         print.log("-----------------")
+
         for (const row of rows) {
             const contract = {
                 request_number: row.IDISOFT,
@@ -32,7 +33,8 @@ const task = async () => {
             print.log(`STEP 0 | PROCESS ${row.IDISOFT}`)
             const query = paperless.generateContract(contract);
             queue_base.push(query);
-        }  print.log("-----------------")
+        }
+        print.log("-----------------")
 
 
         const responses_base = await Promise.allSettled(queue_base);
@@ -138,7 +140,7 @@ const task = async () => {
                 queue_id.push(query);
             } else {
                 print.log(`STEP 2 | ${item.IDISOFT} no tiene s3_front_document`)
-                queue_id.push(Promise.resolve({ status: 'rejected', reason: { code: 'NO_DOCUMENT' } }))
+                queue_id.push(Promise.reject({ status: 'rejected', reason: { code: 'NO_DOCUMENT' } }))
             }
         }
         print.log("-----------------")
@@ -179,7 +181,7 @@ const task = async () => {
         for (const item of toUploadInvoice) {
             if (item.CONTRACT_ID === null) {
                 print.log(`STEP 3 | ${item.IDISOFT} no tiene CONTRACT_ID`)
-                queue_invoice.push(Promise.resolve({ status: 'rejected', reason: { code: 'NO_CONTRACT' } }))
+                queue_invoice.push(Promise.reject({ status: 'rejected', reason: { code: 'NO_CONTRACT' } }))
             }else{
                 print.log(`STEP 3 | PROCESS ${item.IDISOFT} - ${item.CONTRACT_ID}`)
                 const query = paperless.uploadLastContract(item.IDISOFT, item.CONTRACT_ID);
@@ -213,17 +215,13 @@ const task = async () => {
         ])
         print.log(`STEP 3 | UPDATE ${success_invoice.length} ROWS TO STEP 4`)
         print.log(`End of generate contract ===================================================================`)
-   
-        print.log("End of generate contract ===================================================================")
-        await db.closeConnection()
-        print.log("Connection closed")
-
     } catch (e) {
         print.log(`Error: ${e}`)
     }
 }
-if(process.env.CRON_PAPERLESS){
-    console.log("init paperless as", process.env.CRON_PAPERLESS)
-    cron.schedule(process.env.CRON_PAPERLESS, task)
-}
+// if(process.env.CRON_PAPERLESS){
+//     console.log("init paperless as", process.env.CRON_PAPERLESS)
+//     cron.schedule(process.env.CRON_PAPERLESS, task)
+// }
 
+task()

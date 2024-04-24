@@ -104,6 +104,9 @@ export class DbController {
 
         const query = await prisma.iSOFT_INPUT.findMany({
             where: where,
+            orderBy: {
+                IDISOFT: "desc"
+            },
             take: Number(process.env.CONTRACT_BATCH_SIZE)
 
         })
@@ -123,6 +126,9 @@ export class DbController {
                 CONTRACT_ATTEMPTS: {
                     lt: 3
                 }
+            },
+            orderBy: {
+                IDISOFT: "desc"
             },
             take: Number(process.env.CONTRACT_BATCH_SIZE)
 
@@ -144,6 +150,9 @@ export class DbController {
                 CONTRACT_ATTEMPTS: {
                     lt: 3
                 }
+            },
+            orderBy: {
+                IDISOFT: "desc"
             },
             take: Number(process.env.CONTRACT_BATCH_SIZE)
 

@@ -5,7 +5,12 @@ class Printer {
     private readonly log_path: string = "./logs/cron"
     constructor(path: string) {
 
-        fs.mkdirSync(`./logs/cron/${path}`)
+        const relative = `./logs/cron/${path}`
+        const exist = fs.existsSync(relative)
+
+        if (!exist) {
+            fs.mkdirSync(relative)
+        }
         this.path = path
     }
 
