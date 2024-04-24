@@ -11,12 +11,11 @@ const task = async () => {
         const paperless = new PaperlessController();
 
         print.log(`Starting generate contract ===================================================================`);
-        const rows = await db.getDataWithoutContract();
+        const rows = await db.getDataWithoutContract(99);
         print.log(`STEP 0 | DATA WITHOUT CONTRACT: ${rows.length}`)
         print.log("STEP 0 | GENERATE CONTRACT")
         const queue_base = [];
         print.log("-----------------")
-
         for (const row of rows) {
             const contract = {
                 request_number: row.IDISOFT,
@@ -35,7 +34,7 @@ const task = async () => {
         }
         print.log("-----------------")
 
-
+        
         const responses_base = await Promise.allSettled(queue_base);
         const success_base: any = [];
         const error_base: ISOFT_INPUT[] = [];
@@ -71,7 +70,7 @@ const task = async () => {
 
         print.log("STEP 1 | STEP UPLOAD FILES CONTRACT  ============================")
 
-        const withoutSPN = await db.getDataByStep(1);
+        const withoutSPN = await db.getDataByStep(1, 99);
         print.log(`STEP 1 | DATA TO LOAD/GENERATE SPN: ${withoutSPN.length}`)
 
         const queue_spn = [];
@@ -122,7 +121,7 @@ const task = async () => {
         print.log("-----------------")
 
         print.log("STEP 2 | UPLOAD ID ============================")
-        const withId = await db.getDataByStep(2);
+        const withId = await db.getDataByStep(2, 99);
         print.log(`STEP 2 | DATA TO LOAD ID: ${withId.length}`)
 
         const queue_id = [];
@@ -172,7 +171,7 @@ const task = async () => {
 
 
         print.log("STEP 3 | UPLOAD LAST INVOICE ============================")
-        const toUploadInvoice = await db.getDataByStepPostpaid(3);
+        const toUploadInvoice = await db.getDataByStepPostpaid(3, 99);
         print.log(`STEP 3 | DATA TO LOAD LAST INVOICE: ${toUploadInvoice.length}`)
 
         const queue_invoice = [];

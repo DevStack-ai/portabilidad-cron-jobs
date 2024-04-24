@@ -87,14 +87,14 @@ export class DbController {
     }
 
 
-    async getDataWithoutContract(): Promise<ISOFT_INPUT[]> {
+    async getDataWithoutContract(estado_oracle: number = 0): Promise<ISOFT_INPUT[]> {
         const prisma = new PrismaClient();
 
         const query = await prisma.iSOFT_INPUT.findMany({
             where: {
                 CONTRATO_GENERADO: 0,
                 CONTRACT_ID: null,
-                ENVIADO_ORACLE: 0,
+                ENVIADO_ORACLE: estado_oracle,
                 ERROR: 0,
                 CONTRACT_ATTEMPTS: {
                     lt: 3
@@ -109,12 +109,13 @@ export class DbController {
         return query
     }
 
-    async getDataByStep(step: number): Promise<ISOFT_INPUT[]> {
+    async getDataByStep(step: number,  estado_oracle: number = 0): Promise<ISOFT_INPUT[]> {
         const prisma = new PrismaClient();
 
         const query = await prisma.iSOFT_INPUT.findMany({
             where: {
                 CONTRATO_GENERADO: 1,
+                ENVIADO_ORACLE: estado_oracle,
                 STEP: step,
                 CONTRACT_ATTEMPTS: {
                     lt: 3
@@ -128,13 +129,14 @@ export class DbController {
         return query
     }
 
-    async getDataByStepPostpaid(step: number): Promise<ISOFT_INPUT[]> {
+    async getDataByStepPostpaid(step: number, estado_oracle: number = 0): Promise<ISOFT_INPUT[]> {
         const prisma = new PrismaClient();
 
         const query = await prisma.iSOFT_INPUT.findMany({
             where: {
                 CONTRATO_GENERADO: 1,
                 STEP: step,
+                ENVIADO_ORACLE: estado_oracle,
                 // PRE_POST: 'POST',
                 CONTRACT_ATTEMPTS: {
                     lt: 3
