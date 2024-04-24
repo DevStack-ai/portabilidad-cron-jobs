@@ -1,10 +1,11 @@
 import "dotenv/config";
 import { DbController } from "../controllers/db.controller";
 import { PaperlessController } from "../controllers/paperless.controller";
-import print from "../utils/utils";
 import { ISOFT_INPUT } from "@prisma/client";
 import cron from "node-cron";
+import Printer from "../utils/utils";
 
+const print = new Printer("manual-generate-contract");
 const task = async () => {
     try {
         const db = new DbController();
@@ -69,7 +70,6 @@ const task = async () => {
         print.log("-----------------")
 
         print.log("STEP 1 | STEP UPLOAD FILES CONTRACT  ============================")
-
         const withoutSPN = await db.getDataByStep(1, 99);
         print.log(`STEP 1 | DATA TO LOAD/GENERATE SPN: ${withoutSPN.length}`)
 
@@ -212,6 +212,11 @@ const task = async () => {
         ])
         print.log(`STEP 3 | UPDATE ${success_invoice.length} ROWS TO STEP 4`)
         print.log(`End of generate contract ===================================================================`)
+   
+        print.log("End of generate contract ===================================================================")
+        await db.closeConnection()
+        print.log("Connection closed")
+
     } catch (e) {
         print.log(`Error: ${e}`)
     }

@@ -5,7 +5,9 @@ import { DbController } from "../controllers/db.controller";
 import { json2csv } from "../utils/json2csv";
 import fs from "fs";
 import moment from "moment";
-import print from "../utils/utils";
+import Printer from "../utils/utils";
+
+const print = new Printer("report-ftp");
 
 (async () => {
     try {

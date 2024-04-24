@@ -1,6 +1,6 @@
 import "dotenv/config";
-
-import { ISOFT_INPUT, PrismaClient } from "@prisma/client";
+import prisma from "./db.connection"
+import { ISOFT_INPUT } from "@prisma/client";
 
 
 interface data {
@@ -10,12 +10,14 @@ interface data {
 
 export class DbController {
 
+    private prisma;
 
     constructor() {
+        this.prisma = prisma;
     }
 
     async getReport(): Promise<[]> {
-        const prisma = new PrismaClient();
+
 
         const query: [] = await prisma.$queryRaw`
             SELECT 
@@ -45,14 +47,13 @@ export class DbController {
                 PRE_POST = 'POST' AND ESTADO_FTP = 1
                     AND SERIE_DE_SIMCARD REGEXP '^[0-9]+$';`;
 
-        prisma.$disconnect();
         return query as []
     }
 
     async updateReport(ids: any[]): Promise<void> {
 
 
-        const prisma = new PrismaClient();
+
 
         await prisma.iSOFT_INPUT.updateMany({
             where: {
@@ -66,13 +67,13 @@ export class DbController {
                 FECHA_ENVIADOFTP: new Date()
             }
         });
-        await prisma.$disconnect();
+        
 
 
     }
 
     async updateField(id: number, field: string, value: any): Promise<void> {
-        const prisma = new PrismaClient();
+
 
         await prisma.iSOFT_INPUT.update({
             where: {
@@ -83,34 +84,36 @@ export class DbController {
             }
         });
 
-        await prisma.$disconnect();
+        
     }
 
 
     async getDataWithoutContract(estado_oracle: number = 0): Promise<ISOFT_INPUT[]> {
-        const prisma = new PrismaClient();
+
+        const where = {
+            CONTRATO_GENERADO: 0,
+            CONTRACT_ID: null,
+            ENVIADO_ORACLE: estado_oracle,
+            ERROR: 0,
+            CONTRACT_ATTEMPTS: {
+                lt: 3
+            },
+            STEP: 0
+        }
+
 
         const query = await prisma.iSOFT_INPUT.findMany({
-            where: {
-                CONTRATO_GENERADO: 0,
-                CONTRACT_ID: null,
-                ENVIADO_ORACLE: estado_oracle,
-                ERROR: 0,
-                CONTRACT_ATTEMPTS: {
-                    lt: 3
-                },
-                STEP: 0
-            },
+            where: where,
             take: Number(process.env.CONTRACT_BATCH_SIZE)
 
         })
-        await prisma.$disconnect();
+        
 
         return query
     }
 
     async getDataByStep(step: number,  estado_oracle: number = 0): Promise<ISOFT_INPUT[]> {
-        const prisma = new PrismaClient();
+
 
         const query = await prisma.iSOFT_INPUT.findMany({
             where: {
@@ -124,13 +127,13 @@ export class DbController {
             take: Number(process.env.CONTRACT_BATCH_SIZE)
 
         })
-        await prisma.$disconnect();
+        
 
         return query
     }
 
     async getDataByStepPostpaid(step: number, estado_oracle: number = 0): Promise<ISOFT_INPUT[]> {
-        const prisma = new PrismaClient();
+
 
         const query = await prisma.iSOFT_INPUT.findMany({
             where: {
@@ -145,13 +148,13 @@ export class DbController {
             take: Number(process.env.CONTRACT_BATCH_SIZE)
 
         })
-        await prisma.$disconnect();
+        
 
         return query
     }
 
     async failedProcess(ids: number[]): Promise<void> {
-        const prisma = new PrismaClient();
+
 
         await prisma.iSOFT_INPUT.updateMany({
             where: {
@@ -167,11 +170,11 @@ export class DbController {
             }
         });
 
-        await prisma.$disconnect();
+        
 
     }
     async successStep(ids: number[], step: number): Promise<void> {
-        const prisma = new PrismaClient();
+
 
         await prisma.iSOFT_INPUT.updateMany({
             where: {
@@ -184,7 +187,13 @@ export class DbController {
             }
         });
 
-        await prisma.$disconnect();
+        
 
+    }
+
+    async closeConnection(): Promise<void> {
+
+        await prisma.$disconnect()
+        
     }
 }

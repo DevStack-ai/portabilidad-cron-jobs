@@ -1,9 +1,10 @@
 import "dotenv/config";
 import { DbController } from "../controllers/db.controller";
 import { PaperlessController } from "../controllers/paperless.controller";
-import print from "../utils/utils";
 import { ISOFT_INPUT } from "@prisma/client";
 import cron from "node-cron";
+import Printer from "../utils/utils";
+const print = new Printer("generate-contract");
 
 const task = async () => {
     try {
