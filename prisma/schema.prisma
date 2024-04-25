@@ -53,6 +53,8 @@ model ISOFT_INPUT {
   s3_spn_path           String?   @db.VarChar(256)
   s3_front_document     String?   @db.VarChar(256)
   STEP                  Int?      @default(0)
+  ENVIADO_ORACLE_FECHA  DateTime? @db.DateTime(0)
+  paperless_message     String?   @db.Text
 
   @@index([ENVIADO_ORACLE], map: "ISOFT_INPUT_ENVIADO_ORACLE_IDX")
   @@index([ESTADO_FTP], map: "ISOFT_INPUT_ESTADO_FTP_IDX")
@@ -65,9 +67,12 @@ model ISOFT_INPUT {
 
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model ISOFT_INPUT_TEMP {
-  TRANSACTION_ID Int?
+  TRANSACTION_ID       Int?
+  MSISDN               String? @db.VarChar(255)
+  ICCID                String? @db.VarChar(255)
+  TRANSACTION_ID_ISOFT Int?
 
-  @@index([TRANSACTION_ID], map: "ISOFT_INPUT_TEMP_TRANSACTION_ID_IDX")
+  @@index([TRANSACTION_ID, MSISDN, ICCID, TRANSACTION_ID_ISOFT], map: "ISOFT_INPUT_TEMP_TRANSACTION_ID_IDX")
   @@ignore
 }
 

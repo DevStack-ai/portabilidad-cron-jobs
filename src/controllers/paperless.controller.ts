@@ -4,8 +4,12 @@ import axios from "axios";
 import fs from "fs";
 import { generateXMLTemplate } from "../utils/generatePayload";
 import { ISOFT_INPUT } from "@prisma/client";
+import sharp from "sharp";
+import Printer from "../utils/utils"
+import moment from "moment";
 // import { authHMAC } from "../utils/authHMAC";
 
+const print = new Printer("paperless-controller");
 export class PaperlessController {
 
 
@@ -108,10 +112,41 @@ export class PaperlessController {
 
                 const form = new FormData();
 
-                const filename = `cedula${type === "PRE" ? "prepaid" : "postpaid"}.jpeg`
+                const filename = `${moment().format("YYYYMMDDHHmmss")}-${Math.floor(Math.random() * 100)}-cedula${type === "PRE" ? "prepaid" : "postpaid"}.png`
                 const fetchFile = await axios.get(filePath, { responseType: 'arraybuffer' });
-                const file = fetchFile.data
-                const cedula = new Blob([file], { type: 'image/jpeg' });
+                let file = fetchFile.data
+
+                // print.log(`File url ${filePath} `);
+                //write in tmp
+                const dir = `${process.env.TMP_DIR}/${filename}`
+                fs.writeFileSync(dir, file);
+
+                const image = sharp(file);
+                if (!image) throw new Error('Image is not valid')
+                const metadata = await image.metadata();
+                const size = (metadata.size || file.byteLength) / (1024 * 1000);
+
+
+                print.log(`Image size ${size.toFixed(2)}MB`);
+                //check size of file dont exceed 1MB
+                if (size > 1) {
+                    //resize image to 800Kb
+                    print.log(`Resizing image from ${size.toFixed(2)}MB to 800Kb`);
+                    //if 1MB is 100% how much I have to reduce to get 800Kb
+                    const percent = Math.floor((100 * 800) / (size * 1000))
+                    const new_size = size / percent;
+                    print.log(`New size ${new_size.toFixed(2)}MB`);
+                    print.log(`Percent ${percent.toFixed(2)}%`);
+
+                    file = await image.jpeg({ quality: percent }).toFile(dir);
+                } else {
+                    print.log(`Quality 100%`);
+                    file = await image.jpeg({ quality: 100 }).toFile(dir);
+                }
+
+                const blob = fs.readFileSync(dir);
+                const cedula = new Blob([blob], { type: 'image/png' });
+
 
                 form.append("file", cedula, filename);
                 form.append('name', "cedulacliente");
@@ -124,9 +159,10 @@ export class PaperlessController {
 
                 const query = await axios.post(url, form, { headers: headers });
                 resolve(query);
-                fs.unlinkSync(filename);
+                fs.unlinkSync(dir);
 
             } catch (e) {
+                print.error(e);
                 reject(e);
             }
         });

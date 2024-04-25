@@ -67,7 +67,7 @@ export class DbController {
                 FECHA_ENVIADOFTP: new Date()
             }
         });
-        
+
 
 
     }
@@ -84,38 +84,37 @@ export class DbController {
             }
         });
 
-        
+
     }
 
 
     async getDataWithoutContract(estado_oracle: number = 0): Promise<ISOFT_INPUT[]> {
 
-        const where = {
-            CONTRATO_GENERADO: 0,
-            CONTRACT_ID: null,
-            ENVIADO_ORACLE: estado_oracle,
-            ERROR: 0,
-            CONTRACT_ATTEMPTS: {
-                lt: 3
-            },
-            STEP: 0
-        }
 
 
         const query = await prisma.iSOFT_INPUT.findMany({
-            where: where,
+            where:  {
+                CONTRATO_GENERADO: 0,
+                CONTRACT_ID: null,
+                ENVIADO_ORACLE: estado_oracle,
+                ERROR: 0,
+                CONTRACT_ATTEMPTS: {
+                    lt: 3
+                },
+                STEP: 0
+            },
             orderBy: {
                 IDISOFT: "desc"
             },
             take: Number(process.env.CONTRACT_BATCH_SIZE)
 
         })
-        
+
 
         return query
     }
 
-    async getDataByStep(step: number,  estado_oracle: number = 0): Promise<ISOFT_INPUT[]> {
+    async getDataByStep(step: number, estado_oracle: number = 0): Promise<ISOFT_INPUT[]> {
 
 
         const query = await prisma.iSOFT_INPUT.findMany({
@@ -133,7 +132,7 @@ export class DbController {
             take: Number(process.env.CONTRACT_BATCH_SIZE)
 
         })
-        
+
 
         return query
     }
@@ -157,7 +156,7 @@ export class DbController {
             take: Number(process.env.CONTRACT_BATCH_SIZE)
 
         })
-        
+
 
         return query
     }
@@ -179,7 +178,7 @@ export class DbController {
             }
         });
 
-        
+
 
     }
     async successStep(ids: number[], step: number): Promise<void> {
@@ -196,13 +195,13 @@ export class DbController {
             }
         });
 
-        
+
 
     }
 
     async closeConnection(): Promise<void> {
 
         await prisma.$disconnect()
-        
+
     }
 }

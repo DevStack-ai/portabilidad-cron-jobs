@@ -3,3 +3,4 @@ logs
 *.csv
 *.lock
 dist
+*.png
