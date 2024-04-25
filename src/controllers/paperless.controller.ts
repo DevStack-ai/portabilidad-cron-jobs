@@ -145,7 +145,7 @@ export class PaperlessController {
                 }
 
                 const blob = fs.readFileSync(dir);
-                const cedula = new Blob([blob], { type: 'image/png' });
+                const cedula = new Blob([blob], { type: 'image/jpeg' });
 
 
                 form.append("file", cedula, filename);
