@@ -235,9 +235,7 @@ const task = async (ORACLE_STATUS: number = 0) => {
         print.log(`Error: ${e}`)
     }
 }
-// if (process.env.CRON_PAPERLESS) {
-//     console.log("init paperless as", process.env.CRON_PAPERLESS)
-//     cron.schedule(process.env.CRON_PAPERLESS, () => task(99))
-// }
-
-task(99)
+if (process.env.CRON_PAPERLESS) {
+    console.log("init paperless as", process.env.CRON_PAPERLESS)
+    cron.schedule(process.env.CRON_PAPERLESS, () => task(99))
+}
