@@ -103,9 +103,9 @@ export class DbController {
                 },
                 STEP: 0
             },
-            orderBy: {
-                IDISOFT: "desc"
-            },
+            // orderBy: {
+            //     IDISOFT: "desc"
+            // },
             take: Number(process.env.CONTRACT_BATCH_SIZE)
 
         })
@@ -126,9 +126,9 @@ export class DbController {
                     lt: 3
                 }
             },
-            orderBy: {
-                IDISOFT: "desc"
-            },
+            // orderBy: {
+            //     IDISOFT: "desc"
+            // },
             take: Number(process.env.CONTRACT_BATCH_SIZE)
 
         })
@@ -150,9 +150,9 @@ export class DbController {
                     lt: 3
                 }
             },
-            orderBy: {
-                IDISOFT: "desc"
-            },
+            // orderBy: {
+            //     IDISOFT: "desc"
+            // },
             take: Number(process.env.CONTRACT_BATCH_SIZE)
 
         })
