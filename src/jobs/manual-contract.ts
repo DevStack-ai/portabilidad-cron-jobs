@@ -191,14 +191,15 @@ const task = async (ORACLE_STATUS: number = 0) => {
         const queue_invoice = [];
         print.log("-----------------")
         for (const item of toUploadInvoice) {
-            if (item.CONTRACT_ID === null) {
-                print.log(`STEP 3 | ${item.IDISOFT} no tiene CONTRACT_ID`)
-                queue_invoice.push(Promise.reject({ code: 'NO_CONTRACT' }))
-            } else {
-                print.log(`STEP 3 | PROCESS ${item.IDISOFT} - ${item.CONTRACT_ID}`)
-                const query = paperless.uploadLastContract(item.IDISOFT, item.CONTRACT_ID);
-                queue_invoice.push(query);
-            }
+            // if (item.CONTRACT_ID === null) {
+            //     print.log(`STEP 3 | ${item.IDISOFT} no tiene CONTRACT_ID`)
+            //     queue_invoice.push(Promise.reject({ code: 'NO_CONTRACT' }))
+            // } else {
+            //     print.log(`STEP 3 | PROCESS ${item.IDISOFT} - ${item.CONTRACT_ID}`)
+            //     const query = paperless.uploadLastContract(item.IDISOFT, item.CONTRACT_ID);
+            //     queue_invoice.push(query);
+            // }
+            queue_invoice.push(Promise.resolve({ status: 'fulfilled', item: item }))
         }
         print.log("-----------------")
         const responses_invoice = await Promise.allSettled(queue_invoice);
