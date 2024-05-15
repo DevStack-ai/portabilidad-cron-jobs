@@ -3,18 +3,11 @@ import prisma from "./db.connection"
 import { ISOFT_INPUT } from "@prisma/client";
 
 
-interface data {
-    data: Array<any>
-    ids: Array<number>
-}
 
 export class DbController {
 
-    private prisma;
 
-    constructor() {
-        this.prisma = prisma;
-    }
+    constructor() { }
 
     async getReport(): Promise<[]> {
 
@@ -44,8 +37,9 @@ export class DbController {
             FROM
                 ISOFT_INPUT
             WHERE
-                PRE_POST = 'POST' AND ESTADO_FTP = 1
-                    AND SERIE_DE_SIMCARD REGEXP '^[0-9]+$';`;
+                PRE_POST = 'POST' 
+            AND ESTADO_FTP = 1
+            AND SERIE_DE_SIMCARD REGEXP '^[0-9]+$';`;
 
         return query as []
     }
@@ -74,15 +68,19 @@ export class DbController {
 
     async updateField(id: number, field: string, value: any): Promise<void> {
 
+        try {
 
-        await prisma.iSOFT_INPUT.update({
-            where: {
-                IDISOFT: id
-            },
-            data: {
-                [field]: value
-            }
-        });
+            await prisma.iSOFT_INPUT.update({
+                where: {
+                    IDISOFT: id
+                },
+                data: {
+                    [field]: value
+                }
+            });
+        } catch (e) {
+            console.log("PRISMA DB ERROR", e)
+        }
 
 
     }
@@ -93,7 +91,7 @@ export class DbController {
 
 
         const query = await prisma.iSOFT_INPUT.findMany({
-            where:  {
+            where: {
                 CONTRATO_GENERADO: 0,
                 CONTRACT_ID: null,
                 ENVIADO_ORACLE: estado_oracle,
