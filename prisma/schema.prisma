@@ -55,6 +55,10 @@ model ISOFT_INPUT {
   STEP                  Int?      @default(0)
   ENVIADO_ORACLE_FECHA  DateTime? @db.DateTime(0)
   paperless_message     String?   @db.Text
+  s3_contract_path      String?   @db.VarChar(256)
+  s3_invoice_path       String?   @db.VarChar(256)
+  port_type_id          Int       @default(3)
+  nip                   Int?
 
   @@index([ENVIADO_ORACLE], map: "ISOFT_INPUT_ENVIADO_ORACLE_IDX")
   @@index([ESTADO_FTP], map: "ISOFT_INPUT_ESTADO_FTP_IDX")

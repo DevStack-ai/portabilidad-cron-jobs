@@ -168,10 +168,12 @@ export class PaperlessController {
         });
     }
 
-    uploadLastContract(id: number, contractId: string) {
+    uploadLastContract(porta: ISOFT_INPUT, contractId: string) {
         return new Promise(async (resolve, reject) => {
             try {
-
+                if (typeof porta.s3_invoice_path !== "string") {
+                    throw new Error('s3_invoice_path is not defined')
+                }
                 const headers = {
                     'Content-Type': 'multipart/form-data',
                     'Accept': 'application/json',
@@ -183,7 +185,7 @@ export class PaperlessController {
                 const form = new FormData();
 
                 const filename = `lastInvoice.jpeg`
-                const fetchFile = await axios.get('https://s3.amazonaws.com/socialmanager/chats/ABGGUCQnhAA_Ags-sMhKaVDo9XPJSw.jpeg', { responseType: 'arraybuffer' });
+                const fetchFile = await axios.get(porta.s3_invoice_path, { responseType: 'arraybuffer' });
                 const file = fetchFile.data
                 const lastInvoice = new Blob([file], { type: 'image/jpeg' });
 
@@ -229,6 +231,44 @@ export class PaperlessController {
                 form.append("file", cedula, filename);
                 form.append('name', "spnfirmado");
                 form.append('type', "spn_attachment");
+
+                const request_time = new Date().toJSON().slice(0, 19)
+                const params = `request_time=${request_time}-06:00`;
+
+                const url = `${process.env.CONTRACT_API_URL}/api/v2/contracts/${contractId}/attachments?${params}`;
+
+                const query = await axios.post(url, form, { headers: headers });
+                resolve(query);
+                fs.unlinkSync(filename);
+
+            } catch (e) {
+                reject(e);
+            }
+        });
+    }
+
+    uploadContract(contractId: string, filePath: string) {
+        return new Promise(async (resolve, reject) => {
+            try {
+
+                const headers = {
+                    'Content-Type': 'multipart/form-data',
+                    'Accept': 'application/json',
+                    'X-API-Token': `${process.env.CONTRACT_API_KEY}`
+                }
+
+                if (process.env.CONTRACT_API_URL === undefined) throw new Error('CONTRACT_API_URL is not defined');
+
+                const form = new FormData();
+
+                const filename = `contract.pdf`
+                const fetchFile = await axios.get(filePath, { responseType: 'arraybuffer' });
+                const file = fetchFile.data
+                const cedula = new Blob([file], { type: 'application/pdf' });
+
+                form.append("file", cedula, filename);
+                form.append('name', "contract");
+                form.append('type', "contract");
 
                 const request_time = new Date().toJSON().slice(0, 19)
                 const params = `request_time=${request_time}-06:00`;

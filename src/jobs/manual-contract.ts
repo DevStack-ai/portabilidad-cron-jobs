@@ -191,15 +191,18 @@ const task = async (ORACLE_STATUS: number = 0) => {
         const queue_invoice = [];
         print.log("-----------------")
         for (const item of toUploadInvoice) {
-            // if (item.CONTRACT_ID === null) {
-            //     print.log(`STEP 3 | ${item.IDISOFT} no tiene CONTRACT_ID`)
-            //     queue_invoice.push(Promise.reject({ code: 'NO_CONTRACT' }))
-            // } else {
-            //     print.log(`STEP 3 | PROCESS ${item.IDISOFT} - ${item.CONTRACT_ID}`)
-            //     const query = paperless.uploadLastContract(item.IDISOFT, item.CONTRACT_ID);
-            //     queue_invoice.push(query);
-            // }
-            queue_invoice.push(Promise.resolve({ status: 'fulfilled', item: item }))
+            if (item.port_type_id === 3) {
+                queue_invoice.push(Promise.resolve({ status: 'fulfilled', item: item }))
+            } else {
+                if (item.CONTRACT_ID === null) {
+                    print.log(`STEP 3 | ${item.IDISOFT} no tiene CONTRACT_ID`)
+                    queue_invoice.push(Promise.reject({ code: 'NO_CONTRACT' }))
+                } else {
+                    print.log(`STEP 3 | PROCESS ${item.IDISOFT} - ${item.CONTRACT_ID}`)
+                    const query = paperless.uploadLastContract(item, item.CONTRACT_ID);
+                    queue_invoice.push(query);
+                }
+            }
         }
         print.log("-----------------")
         const responses_invoice = await Promise.allSettled(queue_invoice);
@@ -231,6 +234,66 @@ const task = async (ORACLE_STATUS: number = 0) => {
             db.failedProcess(error_invoice.map((item: any) => item.IDISOFT))
         ])
         print.log(`STEP 3 | UPDATE ${success_invoice.length} ROWS TO STEP 4`)
+
+        print.log("-----------------")
+
+        print.log("STEP 4 | UPLOAD CONTRACT ============================")
+        const toUploadContract = await db.getDataByStepPostpaid(4, ORACLE_STATUS);
+
+        print.log(`STEP 4 | DATA TO LOAD CONTRACT: ${toUploadContract.length}`)
+
+        const queue_contract = [];
+        print.log("-----------------")
+
+        for (const item of toUploadContract) {
+            if(item.port_type_id === 4){
+                queue_contract.push(Promise.resolve({ status: 'fulfilled', item: item }))
+                continue;
+            }
+            if (item.CONTRACT_ID === null) {
+                print.log(`STEP 4 | ${item.IDISOFT} no tiene CONTRACT_ID`)
+                continue;
+            }
+            if(item.s3_contract_path === null){
+                print.log(`STEP 4 | ${item.IDISOFT} no tiene s3_contract_path`)
+                continue;
+            }
+            print.log(`STEP 4 | PROCESS ${item.IDISOFT} - ${item.CONTRACT_ID}`)
+            const query = paperless.uploadContract(item.CONTRACT_ID, item.s3_contract_path);
+            queue_contract.push(query);
+        }
+        print.log("-----------------")
+
+        const responses_contract = await Promise.allSettled(queue_contract);
+        const success_contract: ISOFT_INPUT[] = [];
+        const error_contract: ISOFT_INPUT[] = [];
+
+        responses_contract.forEach((response, index) => {
+            if (response.status === 'fulfilled') {
+                success_contract.push(toUploadContract[index]);
+                print.log(`STEP 4 | SUCCESS ${toUploadContract[index].IDISOFT} - ${toUploadContract[index].CONTRACT_ID}`)
+
+            } else {
+                error_contract.push(toUploadContract[index]);
+                print.error(`STEP 4 | ERROR ${toUploadContract[index].IDISOFT} - ${toUploadContract[index].CONTRACT_ID} ${response.reason?.code} ${JSON.stringify(response.reason?.response?.data || response)}`)
+            }
+        });
+
+        print.log("-----------------")
+
+        print.log(`STEP 4 | TOTAL SUCCESS: ${success_contract.length}`);
+        print.log(`STEP 4 | TOTAL ERROR: ${responses_contract.length - success_contract.length}`);
+
+        await Promise.all([
+            db.successStep(success_contract.map((item: any) => item.IDISOFT), 5),
+            db.failedProcess(error_contract.map((item: any) => item.IDISOFT))
+        ])
+
+        print.log(`STEP 4 | UPDATE ${success_contract.length} ROWS TO STEP 5`)
+
+        print.log("-----------------")
+
+
         print.log(`End of generate contract ===================================================================`)
     } catch (e) {
         print.log(`Error: ${e}`)
