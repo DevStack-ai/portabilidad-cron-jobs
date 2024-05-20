@@ -268,7 +268,7 @@ export class PaperlessController {
 
                 form.append("file", cedula, filename);
                 form.append('name', "contract");
-                form.append('type', "contract");
+                form.append('type', "service_request");
 
                 const request_time = new Date().toJSON().slice(0, 19)
                 const params = `request_time=${request_time}-06:00`;
