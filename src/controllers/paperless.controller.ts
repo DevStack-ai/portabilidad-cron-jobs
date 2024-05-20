@@ -267,7 +267,7 @@ export class PaperlessController {
                 const contract = new Blob([file], { type: 'application/pdf' });
 
                 form.append("file", contract, filename);
-                form.append('name', "solicitudservicio");
+                form.append('name', "service_request");
                 form.append('type', "service_request");
 
                 const request_time = new Date().toJSON().slice(0, 19)
