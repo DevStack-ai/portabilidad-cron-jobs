@@ -264,10 +264,10 @@ export class PaperlessController {
                 const filename = `contract.pdf`
                 const fetchFile = await axios.get(filePath, { responseType: 'arraybuffer' });
                 const file = fetchFile.data
-                const cedula = new Blob([file], { type: 'application/pdf' });
+                const contract = new Blob([file], { type: 'application/pdf' });
 
-                form.append("file", cedula, filename);
-                form.append('name', "contract");
+                form.append("file", contract, filename);
+                form.append('name', "solicitudservicio");
                 form.append('type', "service_request");
 
                 const request_time = new Date().toJSON().slice(0, 19)
