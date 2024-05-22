@@ -96,6 +96,7 @@ export class DbController {
                 CONTRACT_ID: null,
                 ENVIADO_ORACLE: estado_oracle,
                 ERROR: 0,
+                ENVIADO_ORACLE_FECHA: null,
                 CONTRACT_ATTEMPTS: {
                     lt: 3
                 },
@@ -120,6 +121,8 @@ export class DbController {
                 CONTRATO_GENERADO: 1,
                 ENVIADO_ORACLE: estado_oracle,
                 STEP: step,
+                ERROR: 0,
+                ENVIADO_ORACLE_FECHA: null,
                 CONTRACT_ATTEMPTS: {
                     lt: 3
                 }
@@ -142,6 +145,8 @@ export class DbController {
             where: {
                 CONTRATO_GENERADO: 1,
                 STEP: step,
+                ERROR: 0,
+                ENVIADO_ORACLE_FECHA: null,
                 ENVIADO_ORACLE: estado_oracle,
                 // PRE_POST: 'POST',
                 CONTRACT_ATTEMPTS: {
