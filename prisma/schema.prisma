@@ -58,7 +58,8 @@ model ISOFT_INPUT {
   s3_contract_path      String?   @db.VarChar(256)
   s3_invoice_path       String?   @db.VarChar(256)
   port_type_id          Int       @default(3)
-  nip                   Int?
+  nip                   String?   @db.VarChar(256)
+  error_oracle          String?   @db.Text
 
   @@index([ENVIADO_ORACLE], map: "ISOFT_INPUT_ENVIADO_ORACLE_IDX")
   @@index([ESTADO_FTP], map: "ISOFT_INPUT_ESTADO_FTP_IDX")
