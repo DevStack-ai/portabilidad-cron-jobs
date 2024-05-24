@@ -6,10 +6,10 @@ import { json2csv } from "../utils/json2csv";
 import fs from "fs";
 import moment from "moment";
 import Printer from "../utils/utils";
+import cron from "node-cron";
 
 const print = new Printer("report-ftp");
-
-(async () => {
+const task = async () => {
     try {
         print.log(`Starting report ftp ===================================================================`);
         const ftp = new FtpController();
@@ -43,7 +43,7 @@ const print = new Printer("report-ftp");
         }
 
         const today = moment().format("YYYYMMDDHHmmss")
-        const filename = `DIGI_POSTPORT_${today}.csv`;
+        const filename = `TIGO_POSTPORT_${today}.csv`;
         const dir = `${process.env.TMP_DIR}/${filename}`
         print.log(`Writing to file: ${dir}`);
 
@@ -65,4 +65,13 @@ const print = new Printer("report-ftp");
         print.log(`Error: ${e}`)
     }
 
-})();
+}
+
+if (process.argv.includes('--manual')) {
+    task()
+} else {
+    if (process.env.CRON_REPORT) {
+        console.log("init report as", process.env.CRON_REPORT)
+        cron.schedule(process.env.CRON_REPORT, () => task())
+    }
+}
