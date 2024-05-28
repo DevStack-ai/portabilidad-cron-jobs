@@ -15,7 +15,6 @@ const task = async () => {
         const ftp = new FtpController();
         const db = new DbController();
 
-
         const host = process.env.FTP_HOST;
         const port = Number(process.env.FTP_PORT);
         const username = process.env.FTP_USER;

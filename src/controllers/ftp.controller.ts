@@ -42,20 +42,31 @@ export class FtpController implements FTP {
     }
 
     async connect(options: FTPSettings) {
-       this.print.log(`Connecting to ${options.host}:${options.port}`);
+        this.print.log(`Connecting to ${options.host}:${options.port}`);
         try {
-            await this.client.connect({ ...options, algorithms: { serverHostKey: ['ssh-dss'] } });
+            await this.client.connect({
+                ...options,
+                algorithms: { serverHostKey: ['ssh-dss'] },
+                // timeout: 5000,
+                // retries: 2,
+                // retry_factor: 2,
+                // retry_minTimeout: 2000,
+                // debug: (msg) => {
+                //     this.print.log(msg);
+                // }
+            });
         } catch (err) {
-           this.print.log('Failed to connect:', err);
+            this.print.log('Failed to connect:', err);
+            throw err;
         }
     }
     async listFiles(remoteDir: string) {
-       this.print.log(`Listing ${remoteDir} ...`);
+        this.print.log(`Listing ${remoteDir} ...`);
         let fileObjects;
         try {
             fileObjects = await this.client.list(remoteDir);
         } catch (err) {
-           this.print.log('Listing failed:', err);
+            this.print.log('Listing failed:', err);
         }
 
         if (!fileObjects) return []
@@ -76,11 +87,11 @@ export class FtpController implements FTP {
 
 
     async uploadFile(localFile: string, remoteFile: string) {
-       this.print.log(`Uploading ${localFile} to ${remoteFile} ...`);
+        this.print.log(`Uploading ${localFile} to ${remoteFile} ...`);
         try {
             await this.client.put(localFile, remoteFile);
         } catch (err) {
-           this.print.log('Uploading failed:', err);
+            this.print.log('Uploading failed:', err);
         }
     }
 
