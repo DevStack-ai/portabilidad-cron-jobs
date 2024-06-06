@@ -24,20 +24,20 @@ export function generateXMLTemplate(data: contract) {
                   <transactiontype>External Mobile Port ${data.type === "PRE" ? "Prepaid" : "Postpaid"} SPN</transactiontype>
                   <request_number>${data.request_number}</request_number>
                   <date>${data.date}</date>
-                  <client_name>${data.client_name}</client_name>
+                  <client_name>${data.client_name.normalize("NFKC")}</client_name>
                   <id>${data.id}</id>
                   <cedula>${data.id}</cedula>
-                  <adress>${data.address}</adress>
-                  <province>${data.address}</province>
-                  <district>${data.address}</district>
-                  <corregimiento>${data.address}</corregimiento>
-                  <barriada>${data.address}</barriada>
-                  <street>${data.address}</street>
-                  <house>${data.address}</house>
+                  <adress>${data.address.normalize("NFKC")}</adress>
+                  <province>${data.address.normalize("NFKC")}</province>
+                  <district>${data.address.normalize("NFKC")}</district>
+                  <corregimiento>${data.address.normalize("NFKC")}</corregimiento>
+                  <barriada>${data.address.normalize("NFKC")}</barriada>
+                  <street>${data.address.normalize("NFKC")}</street>
+                  <house>${data.address.normalize("NFKC")}</house>
                   <apto></apto>
                   <ctn>${data.ctn}</ctn>
                   <contact_client>${data.ctn}</contact_client>
-                  <email>${data.email}</email>
+                  <email>${data.email.normalize("NFKC")}</email>
                   <quantity_line>1</quantity_line>
                   <account_number>${data.ctn}</account_number>
                   <line_one>${data.ctn}</line_one>
@@ -64,7 +64,7 @@ export function generateXMLTemplate(data: contract) {
                   <phone_not_exist></phone_not_exist>
                   <wrong_nip></wrong_nip>
                   <without_nip></without_nip>
-                  <client_name_represent>${data.client_name}</client_name_represent>
+                  <client_name_represent>${data.client_name.normalize("NFKC")}</client_name_represent>
                   <dealership>Telefonica Moviles Panama S.A</dealership>
                   <client_id_represent>${data.id}</client_id_represent>
                   <liberate_code_user></liberate_code_user>           
