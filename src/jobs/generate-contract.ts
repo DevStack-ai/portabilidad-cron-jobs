@@ -91,9 +91,11 @@ const task = async (ORACLE_STATUS: number = 0) => {
             print.log(`STEP 1 | PROCESS ${item.IDISOFT} - ${item.CONTRACT_ID}`)
             let path = item.s3_spn_path
             if (!path) {
-                print.log(`STEP 1 | ${item.IDISOFT} no tiene s3_spn_path`)
+                print.log(`STEP 1 | MISSING ${item.IDISOFT} no tiene s3_spn_path`)
                 const url = await paperless.getSPN(item);
                 path = url
+                print.log(`STEP 1 | FIXED ${item.IDISOFT} agregado  s3_spn_path`)
+
             }
 
             const query = paperless.uploadSPN(item.IDISOFT, item.CONTRACT_ID, path);

@@ -31,22 +31,26 @@ export class PaperlessController {
     }
 
     async getSPN(input: ISOFT_INPUT): Promise<string> {
+        try {
 
-        const payload = {
-            "IDISOFT": input.IDISOFT,
-            "MSISDN": input.MSISDN,
-            "DONOR_OP": input.DONOR_OP,
-            "NOMBRE_DE_CLIENTE": input.NOMBRE_DE_CLIENTE,
-            "CEDULA": input.CEDULA,
-            "DIRECCION_CLIENTE": input.DIRECCION_CLIENTE,
-            "EMAIL_DEL_CLIENTE": input.EMAIL_DEL_CLIENTE
-        }
+            const payload = {
+                "IDISOFT": input.IDISOFT,
+                "MSISDN": input.MSISDN,
+                "DONOR_OP": input.DONOR_OP,
+                "NOMBRE_DE_CLIENTE": input.NOMBRE_DE_CLIENTE,
+                "CEDULA": input.CEDULA,
+                "DIRECCION_CLIENTE": input.DIRECCION_CLIENTE,
+                "EMAIL_DEL_CLIENTE": input.EMAIL_DEL_CLIENTE
+            }
+            const query = await axios.post(`${process.env.BASE_API_URL}/porta-request/spn`, payload);
 
-        const query = await axios.post(`${process.env.BASE_API_URL}/porta-request/spn`, payload);
-
-        if (query.status === 200) {
-            return query.data.url;
-        } else {
+            if (query.status === 200) {
+                return query.data.url;
+            } else {
+                return "ERROR";
+            }
+        } catch (e) {
+            print.log(e);
             return "ERROR";
         }
 
@@ -240,7 +244,6 @@ export class PaperlessController {
                 const query = await axios.post(url, form, { headers: headers });
                 resolve(query);
                 fs.unlinkSync(filename);
-
             } catch (e) {
                 reject(e);
             }
