@@ -60,6 +60,13 @@ model ISOFT_INPUT {
   port_type_id          Int       @default(3)
   nip                   String?   @db.VarChar(256)
   error_oracle          String?   @db.Text
+  OPM_MSGIDENTIFIER     String?   @db.VarChar(256)
+  OPM_TIME_STAMP        DateTime? @db.DateTime(0)
+  OPM_MESSAGE           String?   @db.MediumText
+  nombre_vendedor       String?   @db.VarChar(500)
+  cedula_vendedor       String?   @db.VarChar(100)
+  firma_vendedor        String?   @db.LongText
+  firma_cliente         String?   @db.LongText
 
   @@index([ENVIADO_ORACLE], map: "ISOFT_INPUT_ENVIADO_ORACLE_IDX")
   @@index([ESTADO_FTP], map: "ISOFT_INPUT_ESTADO_FTP_IDX")
@@ -138,9 +145,38 @@ model MM_PORTABILIDAD_CLIENTE {
   existe_en_isoft_input                     Int?      @default(0)
   estado_extractor                          Int?      @default(0)
   fecha_extractor                           DateTime? @db.DateTime(0)
+  nip                                       Int?      @default(0)
+  idregistrofirma_cliente                   Int?      @default(0)
+  nombre_vendedor                           String?   @db.VarChar(500)
+  cedula_vendedor                           String?   @db.VarChar(100)
+  firma_vendedor                            String?   @db.LongText
 
   @@index([estado_extractor], map: "MM_PORTABILIDAD_CLIENTE_estado_extractor_IDX")
   @@index([existe_en_isoft_input], map: "MM_PORTABILIDAD_CLIENTE_existe_en_isoft_input_IDX")
   @@index([idcaso], map: "MM_PORTABILIDAD_CLIENTE_idcaso_IDX")
   @@index([line_to_port], map: "MM_PORTABILIDAD_CLIENTE_line_to_port_IDX")
+}
+
+model cs_RegistrosFirmaBot {
+  idRegistroFirma       Int       @id @default(autoincrement())
+  idCaso                String
+  numeroTelefonoCliente String
+  tipoFlujo             String
+  encabezado            String
+  footer                String
+  colorHex              String?
+  estado                String
+  urlFirma              String?
+  fehcaCreacion         DateTime  @default(now())
+  fechaActualizacion    DateTime?
+  firma                 String?   @db.LongText
+  idEmpresa             String?
+  waBusinessNumber      String?
+  s3UrlFirma            String?
+}
+
+model cs_config {
+  idConfig Int    @id @default(autoincrement())
+  nombre   String
+  valor    String
 }

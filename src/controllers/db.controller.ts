@@ -151,6 +151,9 @@ export class DbController {
                 // PRE_POST: 'POST',
                 CONTRACT_ATTEMPTS: {
                     lt: 3
+                },
+                ORIGEN: {
+                    in: [1, 4]
                 }
             },
             // orderBy: {

@@ -252,7 +252,7 @@ const task = async (ORACLE_STATUS: number = 0) => {
         print.log("-----------------")
 
         for (const item of toUploadContract) {
-            if(item.port_type_id !== 4){
+            if (item.port_type_id !== 4) {
                 queue_contract.push(Promise.resolve({ status: 'fulfilled', item: item }))
                 continue;
             }
@@ -260,7 +260,7 @@ const task = async (ORACLE_STATUS: number = 0) => {
                 print.log(`STEP 4 | ${item.IDISOFT} no tiene CONTRACT_ID`)
                 continue;
             }
-            if(item.s3_contract_path === null){
+            if (item.s3_contract_path === null) {
                 print.log(`STEP 4 | ${item.IDISOFT} no tiene s3_contract_path`)
                 continue;
             }
