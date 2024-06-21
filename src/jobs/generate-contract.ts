@@ -95,7 +95,7 @@ const task = async (ORACLE_STATUS: number = 0) => {
                 const url = await paperless.getSPN(item);
                 path = url
                 print.log(`STEP 1 | FIXED ${item.IDISOFT} agregado  s3_spn_path`)
-
+                db.updateField(item.IDISOFT, 's3_spn_path', url)
             }
 
             const query = paperless.uploadSPN(item.IDISOFT, item.CONTRACT_ID, path);

@@ -45,6 +45,7 @@ export class PaperlessController {
                 "CEDULA_VENDEDOR": input.cedula_vendedor,
                 "FIRMA_VENDEDOR": input.firma_vendedor,
                 "FIRMA_CLIENTE": input.firma_cliente,
+                "NIP": input.nip
             }
             const query = await axios.post(`${process.env.BASE_API_URL}/porta-request/spn`, payload);
 
