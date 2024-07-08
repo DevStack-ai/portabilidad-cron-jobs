@@ -33,7 +33,8 @@ export class DbController {
                 '' AS 'tipo_de_plan',
                 '' AS tipo_equipo,
                 '' AS grupo_etapa_final,
-                CONTRACT_ID as 'contract_id'
+                CONTRACT_ID as 'contract_id',
+                nip as NIP
             FROM
                 ISOFT_INPUT
             WHERE

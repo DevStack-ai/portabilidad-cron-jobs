@@ -191,7 +191,7 @@ const task = async (ORACLE_STATUS: number = 0) => {
         const queue_invoice = [];
         print.log("-----------------")
         for (const item of toUploadInvoice) {
-            if (item.port_type_id === 3) {
+            if (item.port_type_id === 3 || item.port_type_id === 5) {
                 queue_invoice.push(Promise.resolve({ status: 'fulfilled', item: item }))
             } else {
                 if (item.CONTRACT_ID === null) {
