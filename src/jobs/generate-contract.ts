@@ -246,7 +246,7 @@ const task = async (ORACLE_STATUS: number = 0) => {
         print.log("-----------------")
 
         for (const item of toUploadContract) {
-            if (item.port_type_id !== 4) {
+            if (item.port_type_id === 3) {
                 queue_contract.push(Promise.resolve({ status: 'fulfilled', item: item }))
                 continue;
             }
