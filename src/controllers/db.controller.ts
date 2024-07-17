@@ -94,7 +94,15 @@ export class DbController {
 
         const query = await prisma.iSOFT_INPUT.findMany({
             where: {
-                IDISOFT: 894512,
+                CONTRATO_GENERADO: 0,
+                CONTRACT_ID: null,
+                ENVIADO_ORACLE: estado_oracle,
+                ERROR: 0,
+                ENVIADO_ORACLE_FECHA: null,
+                CONTRACT_ATTEMPTS: {
+                    lt: 3
+                },
+                STEP: 0
             },
             // orderBy: {
             //     IDISOFT: "desc"
@@ -112,8 +120,14 @@ export class DbController {
 
         const query = await prisma.iSOFT_INPUT.findMany({
             where: {
-                IDISOFT: 894512,
-
+                CONTRATO_GENERADO: 1,
+                ENVIADO_ORACLE: estado_oracle,
+                STEP: step,
+                ERROR: 0,
+                ENVIADO_ORACLE_FECHA: null,
+                CONTRACT_ATTEMPTS: {
+                    lt: 3
+                }
             },
             // orderBy: {
             //     IDISOFT: "desc"
@@ -131,8 +145,18 @@ export class DbController {
 
         const query = await prisma.iSOFT_INPUT.findMany({
             where: {
-                IDISOFT: 894512,
-
+                CONTRATO_GENERADO: 1,
+                STEP: step,
+                ERROR: 0,
+                ENVIADO_ORACLE_FECHA: null,
+                ENVIADO_ORACLE: estado_oracle,
+                // PRE_POST: 'POST',
+                CONTRACT_ATTEMPTS: {
+                    lt: 3
+                },
+                ORIGEN: {
+                    in: [1, 4]
+                }
             },
             // orderBy: {
             //     IDISOFT: "desc"
