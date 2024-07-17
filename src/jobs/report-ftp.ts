@@ -25,14 +25,13 @@ const task = async () => {
         }
 
         print.log(`Connecting to FTP`);
-        await ftp.connect({ host, port, username, password });
+        // await ftp.connect({ host, port, username, password });
         print.log(`Connected to FTP`);
 
 
         print.log(`Fetch from database`);
         const data = await db.getReport();
         print.log(`Fetched: ${data.length} records`);
-
         const ids = data.map((item: any) => item.IDISOFT)
         print.log(`Converted to CSV`);
         const csv = json2csv(data);
@@ -51,7 +50,7 @@ const task = async () => {
 
         const toPath = `${process.env.FTP_DIR}/${filename}`;
         print.log(`Uploading to FTP: ${toPath}`)
-        await ftp.uploadFile(dir, toPath);
+        // await ftp.uploadFile(dir, toPath);
 
         print.log(`Uploaded successfully`);
         print.log('Updating database');

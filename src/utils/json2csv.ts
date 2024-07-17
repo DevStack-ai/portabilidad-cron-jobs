@@ -20,7 +20,7 @@ function json2csv(data: any[], headers?: string[]): string {
         });
         csv.push(values.join(','));
     });
-
+    //if last col is empty, add a "NULL" value
     return csv.join('\n');
 }
 

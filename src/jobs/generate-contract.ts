@@ -91,11 +91,9 @@ const task = async (ORACLE_STATUS: number = 0) => {
             print.log(`STEP 1 | PROCESS ${item.IDISOFT} - ${item.CONTRACT_ID}`)
             let path = item.s3_spn_path
             if (!path) {
-                print.log(`STEP 1 | MISSING ${item.IDISOFT} no tiene s3_spn_path`)
+                print.log(`STEP 1 | ${item.IDISOFT} no tiene s3_spn_path`)
                 const url = await paperless.getSPN(item);
                 path = url
-                print.log(`STEP 1 | FIXED ${item.IDISOFT} agregado  s3_spn_path`)
-                db.updateField(item.IDISOFT, 's3_spn_path', url)
             }
 
             const query = paperless.uploadSPN(item.IDISOFT, item.CONTRACT_ID, path);
@@ -168,8 +166,6 @@ const task = async (ORACLE_STATUS: number = 0) => {
             } else {
                 const error_message = `${response?.reason?.code} ${JSON.stringify(response.reason?.response?.data || response)}`
                 update_msg_id.push(db.updateField(withId[index].IDISOFT, 'paperless_message', error_message));
-
-                print.log(JSON.stringify(response))
                 error_id.push(withId[index]);
                 print.error(`STEP 2 | ERROR ${withId[index].IDISOFT} - ${withId[index].CONTRACT_ID} ${error_message}`)
 
@@ -195,7 +191,6 @@ const task = async (ORACLE_STATUS: number = 0) => {
         const queue_invoice = [];
         print.log("-----------------")
         for (const item of toUploadInvoice) {
-
             if (item.port_type_id === 3 || item.port_type_id === 5) {
                 queue_invoice.push(Promise.resolve({ status: 'fulfilled', item: item }))
             } else {
@@ -239,7 +234,6 @@ const task = async (ORACLE_STATUS: number = 0) => {
             db.failedProcess(error_invoice.map((item: any) => item.IDISOFT))
         ])
         print.log(`STEP 3 | UPDATE ${success_invoice.length} ROWS TO STEP 4`)
-
 
         print.log("-----------------")
 

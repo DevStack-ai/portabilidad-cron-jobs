@@ -37,12 +37,13 @@ export class DbController {
                 nip as NIP
             FROM
                 ISOFT_INPUT
-            WHERE
+                WHERE
                 PRE_POST = 'POST' 
             AND ESTADO_FTP = 1
             AND SERIE_DE_SIMCARD REGEXP '^[0-9]+$';`;
 
-        return query as []
+        const mapped = query.map((item: any) => ({ ...item, NIP: item.NIP || "NULL" }));
+        return mapped as []
     }
 
     async updateReport(ids: any[]): Promise<void> {
