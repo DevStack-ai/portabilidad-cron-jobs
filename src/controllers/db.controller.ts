@@ -33,16 +33,16 @@ export class DbController {
                 '' AS 'tipo_de_plan',
                 '' AS tipo_equipo,
                 '' AS grupo_etapa_final,
-                CONTRACT_ID as 'contract_id',
-                nip as NIP
+                CONTRACT_ID as 'contract_id'
             FROM
                 ISOFT_INPUT
-                WHERE
+            WHERE
                 PRE_POST = 'POST' 
+            AND port_type_id IN (4)
             AND ESTADO_FTP = 1
             AND SERIE_DE_SIMCARD REGEXP '^[0-9]+$';`;
 
-        const mapped = query.map((item: any) => ({ ...item, NIP: item.NIP || "NULL" }));
+        const mapped = query.map((item: any) => ({ ...item }));
         return mapped as []
     }
 
