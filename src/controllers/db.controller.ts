@@ -34,15 +34,17 @@ export class DbController {
                 '' AS tipo_equipo,
                 '' AS grupo_etapa_final,
                 CONTRACT_ID as 'contract_id',
-                nip as NIP
+                nip as NIP,
+                billgroup as BILLGROUP
             FROM
                 ISOFT_INPUT
             WHERE
                 port_type_id IN (4, 5)
-            AND ESTADO_FTP = 1
+          
+            AND IDISOFT = 904181
             AND SERIE_DE_SIMCARD REGEXP '^[0-9]+$';`;
 
-        const mapped = query.map((item: any) => ({ ...item, NIP: item.NIP || "NULL" }));
+        const mapped = query.map((item: any) => ({ ...item, NIP: item.NIP || "NULL", BILLGROUP: item.BILLGROUP || "NULL" }));
         return mapped as []
     }
 
@@ -247,5 +249,35 @@ export class DbController {
 
         await prisma.$disconnect()
 
+    }
+
+    async getConfig(): Promise<any> {
+        const query = await prisma.$queryRaw`
+        SELECT 
+            *
+        FROM
+            config;
+        `
+
+        return query
+    }
+
+    async getUserByLastLogin(date: Date): Promise<[]> {
+        const users: [] = await prisma.$queryRaw`
+        SELECT 
+            u.id,
+            u.username,
+            u.email,
+            u.last_login,
+            u.created_at,
+            u.updated_at
+        FROM
+            user u
+        WHERE
+            u.last_login < ${date}
+        ORDER BY
+            u.last_login DESC;
+        `
+        return users
     }
 }
