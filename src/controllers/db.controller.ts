@@ -40,6 +40,7 @@ export class DbController {
                 ISOFT_INPUT
             WHERE
                 port_type_id IN (4, 5)
+            AND ESTADO_FTP = 1
             AND SERIE_DE_SIMCARD REGEXP '^[0-9]+$';`;
 
         const mapped = query.map((item: any) => ({ ...item, NIP: item.NIP || "NULL", BILLGROUP: item.BILLGROUP || "NULL" }));
