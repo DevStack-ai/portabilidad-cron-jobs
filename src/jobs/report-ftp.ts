@@ -67,7 +67,6 @@ const task = async () => {
             print.log(`Uploaded successfully ===================================================================`);
         }else{
             print.log(`No data to upload to FTP ================================================================`);
-            return
         }
         
         // if(csvV2){
@@ -82,7 +81,10 @@ const task = async () => {
         await db.updateReport(ids);
         // await db.updateReport(idsV2);
         print.log(`Database updated`);
-
+        //delete file if is empty
+        if(data.length === 0){
+            fs.unlinkSync(dir)
+        }
         print.log(`End of report ftp ===================================================================`)
     } catch (e) {
         console.log(e)
