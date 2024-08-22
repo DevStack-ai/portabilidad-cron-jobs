@@ -12,7 +12,7 @@ interface contract {
     email: string;
     type: PayloadType;
 }
-export function generateXMLTemplate(data: contract) {
+export function generateXMLTemplate(data: contract, type: any) {
 
     const template = `
     <?xml version="1.0" encoding="UTF-8"?>
@@ -21,7 +21,7 @@ export function generateXMLTemplate(data: contract) {
               <item>
                   <metadata>
                   <carrier>CWP</carrier>
-                  <transactiontype>External Mobile Port ${data.type === "PRE" ? "Prepaid" : "Postpaid"} SPN</transactiontype>
+                  <transactiontype>${type ? type : `External Mobile Port ${data.type === "PRE" ? "Prepaid" : "Postpaid"} SPN`}</transactiontype>
                   <request_number>${data.request_number}</request_number>
                   <date>${data.date}</date>
                   <client_name>${data.client_name.normalize("NFKC")}</client_name>
@@ -73,7 +73,7 @@ export function generateXMLTemplate(data: contract) {
           </items>
       </transaction>
     `
-    
+
 
     return template
 }
