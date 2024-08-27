@@ -27,7 +27,7 @@ const task = async () => {
         }
 
         print.log(`Connecting to FTP`);
-        await ftp.connect({ host, port, username, password });
+        // await ftp.connect({ host, port, username, password });
         print.log(`Connected to FTP`);
 
 
@@ -49,7 +49,7 @@ const task = async () => {
         const toPath = `${process.env.FTP_DIR}/${filename}`;
         if (csv) {
             print.log(`Uploading to FTP: ${toPath}`)
-            await ftp.uploadFile(dir, toPath);
+            // await ftp.uploadFile(dir, toPath);
             print.log(`Uploaded successfully ===================================================================`);
         } else {
             print.log(`No data to upload to FTP ================================================================`);
