@@ -2,7 +2,7 @@ import "dotenv/config";
 import prisma from "./db.connection"
 import { ISOFT_INPUT } from "@prisma/client";
 import mysql, { PoolOptions } from 'mysql2';
-import { generateXMLTemplate } from "../utils/generatePayload";
+import { generateXMLTemplate, generateXMLTemplateP2P } from "../utils/generatePayload";
 import sharp from "sharp";
 import Printer from "../utils/utils"
 import moment from "moment";
@@ -117,12 +117,13 @@ export class Pre2PostController {
       SELECT 
             p2p.msisdn,
             'N',
+            p2p.ICCID_N,
             '' as fixed,
             TRIM(SUBSTRING_INDEX(p2p.name, '{|}', 1)) as name,
             TRIM(SUBSTRING_INDEX(p2p.name, '{|}', - 1)) as lastname,
             CASE
                 WHEN p2p.document_type = 1 THEN 'C'
-                WHEN p2p.document_type = 2 THEN 'P'
+                WHEN p2p.document_type = 2 THEN 'PP'
                 ELSE 'C'
             END as doc_type,
             CASE
@@ -198,20 +199,53 @@ export class Pre2PostController {
 
             const query = `
                 SELECT
-                    *
+                    l.nombre as distrito_name,
+                    l2.nombre as provincia_name,
+                    pp.name as plan_name,
+                    pp.month_charge as plan_month_charge,
+                    pp.credit_limit as plan_credit_limit,
+                    pp.min_inlcuded as plan_min_included,
+                    pp.min_all_net as plan_min_all_net,
+                    pp.min_on_net as plan_min_on_net,
+                    pp.min_cost_excedent  as plan_min_cost_excedent,
+                    pp.min_cost_mobile as plan_min_cost_mobile,
+                    pp.sms as plan_sms,
+                    pp.gprs as plan_gprs,
+                    pp.cost_excedent as plan_cost_excedent,
+                    pp.description as plan_description,
+                    pp.mrc as plan_mrc,
+                    pp.mb_included as plan_mb_included,
+                    pp.kb_excedent as plan_kb_excedent,
+                    u.name as seller_name,
+                    u.document as seller_document,
+                    ppii.name as client_name,
+                    ppii.*
                 FROM
-                    PRE2POST_ISOFT_INPUT_INTPORT
+                          PRE2POST_ISOFT_INPUT_INTPORT ppii
+                LEFT JOIN location l ON l.id = ppii.distrito 
+                LEFT JOIN location l2 ON l2.id  = ppii.provincia
+                LEFT JOIN postpaid_plan pp ON pp.id = ppii.post_paid_plan_id 
+                LEFT JOIN user u ON u.id = ppii.user_id 
                 WHERE
-                    CONTRATO_GENERADO = 0
-                AND CONTRACTID IS NULL
-                AND ENVIADO_ORACLE = ${estado_oracle}
-                AND ERROR = 0
-                AND ENVIADO_ORACLE_FECHA IS NULL
-                AND CONTRACT_ATTEMPTS < 3
-                AND STEP = 0
-                AND user_id != 0
+                        ppii.CONTRATO_GENERADO = 0
+                    AND ppii.CONTRACTID IS NULL
+                    AND ppii.ENVIADO_ORACLE = ${estado_oracle}
+                    AND ppii.ERROR = 0
+                    AND ppii.ENVIADO_ORACLE_FECHA IS NULL
+                    AND ppii.CONTRACT_ATTEMPTS < 3
+                    AND ppii.STEP = 0
+                    AND ppii.user_id != 0
+                    AND ppii.STATUS = 2
                 LIMIT ${Number(process.env.CONTRACT_BATCH_SIZE)};
             `
+            // CONTRATO_GENERADO = 0
+            // AND CONTRACTID IS NULL
+            // AND ENVIADO_ORACLE = ${estado_oracle}
+            // AND ERROR = 0
+            // AND ENVIADO_ORACLE_FECHA IS NULL
+            // AND CONTRACT_ATTEMPTS < 3
+            // AND STEP = 0
+            // AND user_id != 0
 
             conn.query(query, (err, results) => {
                 if (err) {
@@ -256,7 +290,8 @@ export class Pre2PostController {
                 if (process.env.CONTRACT_API_URL === undefined) throw new Error('CONTRACT_API_URL is not defined');
 
                 const form = new FormData();
-                const str = generateXMLTemplate(contract);
+                const str = generateXMLTemplateP2P(contract, type);
+                console.log(str)
                 const filename = `PRE2POST${contract.request_number}.xml`
                 const dir = `${process.env.TMP_DIR}/${filename}`
 

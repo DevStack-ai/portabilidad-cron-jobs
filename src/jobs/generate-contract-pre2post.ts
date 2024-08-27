@@ -15,21 +15,28 @@ const task = async (ORACLE_STATUS: number = 0) => {
         print.log("STEP 0 | GENERATE CONTRACT")
         const queue_base = [];
         print.log("-----------------")
-        console.log(rows)
         for (const row of rows) {
+            let cedula = ""
+            if (row.document_type === 1) {
+                cedula = `${row.c_provincia || row.c_letra}-${row.c_folio}-${row.c_asiento}`
+            } else if (row.document_type === 2) {
+                cedula = `${row.passport}`
+            } else {
+                cedula = `${row.ruc}`
+            }
             const contract = {
+                ...row,
                 request_number: row.TRANSACTION_ID,
                 date: row.ADDED_ON,
-                client_name: row.name.split('{|}').join(' '),
                 id: row.CEDULA,
                 address: row.address,
                 ctn: row.phone,
-                email: row.email,
-                type: "PortIn Pre to Post Internal"//row.PRE_POST
+                cedula: cedula,
+                type: "Portln Pre to Post Internal"//row.PRE_POST,
             }
 
             print.log(`STEP 0 | PROCESS ${row.TRANSACTION_ID}`)
-            const query = pre2post.generateContract(contract);
+            const query = pre2post.generateContract(contract, contract.type);
             queue_base.push(query);
         }
         print.log("-----------------")
@@ -234,7 +241,7 @@ const task = async (ORACLE_STATUS: number = 0) => {
         print.log("-----------------")
 
         for (const item of toUploadContract) {
-     
+
             if (item.CONTRACTID === null) {
                 print.log(`STEP 4 | ${item.TRANSACTION_ID} no tiene CONTRACTID`)
                 queue_contract.push(Promise.reject({ code: 'NO_CONTRACT' }))
