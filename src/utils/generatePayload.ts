@@ -178,7 +178,7 @@ export function generateXMLTemplateP2P(data: contractP2P , type?: any) {
                     <isc>0.00</isc>
                     <total_charges>0.00</total_charges>
                     <quotas></quotas>
-                    <contract_number>VCR${8000000 + data.TRANSACTION_ID}</contract_number>
+                    <contract_number>VCP${8000000 + data.TRANSACTION_ID}</contract_number>
                     <cellphone_number>${data.MSISDN}</cellphone_number>
                     <imei_serie>000000000000000</imei_serie>
                     <equipment_list_price>0.00</equipment_list_price>
