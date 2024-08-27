@@ -165,6 +165,7 @@ export class Pre2PostController {
     async updateReport(ids: number[], filename: string): Promise<void> {
         return new Promise(async (resolve, reject) => {
             const query = `UPDATE PRE2POST_ISOFT_INPUT_INTPORT SET LIB_FILE_SENT_ON = NOW() AND LIB_FILE = "${filename}" WHERE CONTRACTID IN (${ids.join(",")});`
+            console.log(query)
             conn.query(query, (err, results) => {
                 if (err) {
                     reject(err)
