@@ -116,7 +116,7 @@ export class Pre2PostController {
             const query = `
       SELECT 
             p2p.msisdn,
-            'N',
+            'Y',
             p2p.ICCID_N,
             TRIM(SUBSTRING_INDEX(p2p.name, '{|}', 1)) as name,
             TRIM(SUBSTRING_INDEX(p2p.name, '{|}', - 1)) as lastname,
