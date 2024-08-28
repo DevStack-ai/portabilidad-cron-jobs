@@ -118,7 +118,6 @@ export class Pre2PostController {
             p2p.msisdn,
             'N',
             p2p.ICCID_N,
-            '' as fixed,
             TRIM(SUBSTRING_INDEX(p2p.name, '{|}', 1)) as name,
             TRIM(SUBSTRING_INDEX(p2p.name, '{|}', - 1)) as lastname,
             CASE
