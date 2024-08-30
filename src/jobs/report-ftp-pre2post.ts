@@ -39,7 +39,7 @@ const task = async () => {
         const ids = data.map((item: any) => item.CONTRACTID)
         print.log(`Converted to CSV`);
         const csv = json2csv(data);
-        const today = moment().format("YYYYMMDDHHmmss")
+        const today = moment().add(-5, "hour").format("YYYYMMDDHHmmss")
         const filename = `INTPORT_${today}.txt`;
         const dir = `${process.env.TMP_DIR}/${filename}`
         print.log(`Writing to file: ${dir}`);
