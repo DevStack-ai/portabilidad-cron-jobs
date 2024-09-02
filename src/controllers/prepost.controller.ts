@@ -111,6 +111,22 @@ export class Pre2PostController {
 
     constructor() { }
 
+    async getConfirV2(): Promise<any> {
+        const query = `SELECT * FROM config;`
+        return new Promise((resolve, reject) => {
+            conn.query(query, (err, results: any) => {
+                if (err) {
+                    reject(err)
+                    return;
+                }
+                const hash = results.reduce((acc: any, item: any) => {
+                    acc[item.nombre] = item.valor;
+                    return acc;
+                }, {})
+                resolve(hash)
+            })
+        })
+    }
     async getReport(): Promise<[]> {
         return new Promise(async (resolve, reject) => {
             const query = `
@@ -565,7 +581,7 @@ export class Pre2PostController {
         });
     }
 
-    
+
     uploadId(contractId: number, filePath: string, type: string) {
         return new Promise(async (resolve, reject) => {
             try {
@@ -712,4 +728,46 @@ export class Pre2PostController {
         });
     }
 
+
+    async getDataWithoutProcess(offset: string = "30"): Promise<Array<{
+        Telefono: string,
+        icc: string,
+        "Nombre cliente": string,
+        "Fecha de envio a liberate": Date,
+        Area: string,
+        "Tiempo transcurrido": string
+    }>> {
+
+        const query = `
+            SELECT
+                ppiii.MSISDN as Telefono,
+                ppiii.ICCID_N as icc,
+                REPLACE(ppiii.name, "{|}", '') as "Nombre cliente",
+	            DATE_FORMAT(ppiii.LIB_FILE_SENT_ON - INTERVAL 5 HOUR, '%d/%m/%Y %H:%i:%s') as "Fecha de envio a liberate",
+                a.name as Area,
+                CONCAT(
+                    FLOOR(TIMESTAMPDIFF(MINUTE, LIB_FILE_SENT_ON, NOW()) / 60), ':',
+                    LPAD(MOD(TIMESTAMPDIFF(MINUTE, LIB_FILE_SENT_ON, NOW()), 60), 2, '0')
+                ) AS "Tiempo transcurrido (HH:MM)"
+            FROM
+                 PRE2POST_ISOFT_INPUT_INTPORT ppiii 
+            JOIN user u ON u.id = ppiii.user_id 
+            JOIN area a ON u.area_id = a.id 
+            WHERE
+                ppiii.STATUS = 2
+            AND ppiii.LIB_FILE IS NOT NULL 
+            AND ppiii.LIB_FILE_SENT_ON IS NOT NULL 
+            AND ppiii.LIB_FILE_SENT_ON <= NOW() - INTERVAL ${offset} MINUTE ;
+        `
+
+        return new Promise((resolve, reject) => {
+            conn.query(query, (err, results: any) => {
+                if (err) {
+                    reject(err)
+                    return;
+                }
+                resolve(results)
+            })
+        })
+    }
 }
