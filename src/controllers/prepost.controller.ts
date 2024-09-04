@@ -754,7 +754,7 @@ export class Pre2PostController {
             JOIN user u ON u.id = ppiii.user_id 
             JOIN area a ON u.area_id = a.id 
             WHERE
-                ppiii.STATUS = 2
+                ppiii.STATUS in (2, 4)
             AND ppiii.LIB_FILE IS NOT NULL 
             AND ppiii.LIB_FILE_SENT_ON IS NOT NULL 
             AND ppiii.LIB_FILE_SENT_ON <= NOW() - INTERVAL ${offset} MINUTE ;
