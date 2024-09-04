@@ -179,7 +179,7 @@ export class Pre2PostController {
 
     async updateReport(ids: number[], filename: string): Promise<void> {
         return new Promise(async (resolve, reject) => {
-            const query = `UPDATE PORTABILIDAD_DES.PRE2POST_ISOFT_INPUT_INTPORT SET LIB_FILE_SENT_ON = NOW(), LIB_FILE = "${filename}" WHERE CONTRACTID IN (${ids.join(",")});`
+            const query = `UPDATE PORTABILIDAD.PRE2POST_ISOFT_INPUT_INTPORT SET LIB_FILE_SENT_ON = NOW(), LIB_FILE = "${filename}" WHERE CONTRACTID IN (${ids.join(",")});`
             conn.query(query, (err, results) => {
                 if (err) {
                     reject(err)
@@ -374,8 +374,8 @@ export class Pre2PostController {
                         u.signature as FIRMA_VENDEDOR
                     FROM
                        PRE2POST_ISOFT_INPUT_INTPORT p2p
-                    LEFT JOIN PORTABILIDAD_DES.user u ON u.id = p2p.user_id 
-                    LEFT JOIN PORTABILIDAD_DES.origin o ON o.id = p2p.origin 
+                    LEFT JOIN PORTABILIDAD.user u ON u.id = p2p.user_id 
+                    LEFT JOIN PORTABILIDAD.origin o ON o.id = p2p.origin 
                     WHERE
                         p2p.CONTRATO_GENERADO = 1
                     AND p2p.ENVIADO_ORACLE = ${estado_oracle}
