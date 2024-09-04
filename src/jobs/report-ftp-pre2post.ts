@@ -75,8 +75,8 @@ const task = async () => {
 if (process.argv.includes('--manual')) {
     task()
 } else {
-    if (process.env.CRON_REPORT) {
-        console.log("init report as", process.env.CRON_REPORT)
-        cron.schedule(process.env.CRON_REPORT, () => task())
+    if (process.env.CRON_REPORT_PRE2POST) {
+        console.log("init report as", process.env.CRON_REPORT_PRE2POST)
+        cron.schedule(process.env.CRON_REPORT_PRE2POST, () => task())
     }
 }
