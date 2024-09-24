@@ -27,29 +27,52 @@ const task = async () => {
         }
 
         print.log(`Connecting to FTP`);
-        await ftp.connect({ host, port, username, password });
+        // await ftp.connect({ host, port, username, password });
         print.log(`Connected to FTP`);
 
 
         print.log(`Fetch from database`);
         const data = await db.getReport();
+        const activations = await db.getReportActivations();
         print.log(`Fetched v1: ${data.length} records`);
         console.log(data)
 
         const ids = data.map((item: any) => item.CONTRACTID)
+        const idsActivations = activations.map((item: any) => item.CONTRACTID)
+
         print.log(`Converted to CSV`);
         const csv = json2csv(data);
+        const csvActivations = json2csv(activations);
+
+        print.log(`Converted to CSV Activations`);
         const today = moment().add(-5, "hour").format("YYYYMMDDHHmmss")
         const filename = `INTPORT_${today}.txt`;
+        const filenameActivations = `POSTACT_${today}.txt`;
+
         const dir = `${process.env.TMP_DIR}/${filename}`
+        const dirActivations = `${process.env.TMP_DIR}/${filenameActivations}`
+
         print.log(`Writing to file: ${dir}`);
         fs.writeFileSync(dir, csv, { encoding: 'utf-8' });
         print.log(`File written successfully`);
 
+        print.log(`Writing to file Activations: ${dirActivations}`);
+        fs.writeFileSync(dirActivations, csvActivations, { encoding: 'utf-8' });
+        print.log(`File written successfully`);
+
         const toPath = `${process.env.FTP_DIR}/${filename}`;
+        const toPathActivations = `${process.env.FTP_DIR}/${filenameActivations}`;
         if (csv) {
             print.log(`Uploading to FTP: ${toPath}`)
             await ftp.uploadFile(dir, toPath);
+            print.log(`Uploaded successfully ===================================================================`);
+        } else {
+            print.log(`No data to upload to FTP ================================================================`);
+        }
+
+        if (csvActivations) {
+            print.log(`Uploading to FTP: ${toPathActivations}`)
+            await ftp.uploadFile(dirActivations, toPathActivations);
             print.log(`Uploaded successfully ===================================================================`);
         } else {
             print.log(`No data to upload to FTP ================================================================`);
@@ -60,10 +83,17 @@ const task = async () => {
             await db.updateReport(ids, filename);
             print.log(`Database updated`);
         }
+
+        if (activations.length !== 0) {
+            print.log('Updating database Activations');
+            await db.updateReportActivations(idsActivations, filenameActivations);
+            print.log(`Database updated Activations`);
+        }
         //delete file if is empty
         if (data.length === 0) {
             fs.unlinkSync(dir)
         }
+
         print.log(`End of report ftp ===================================================================`)
     } catch (e) {
         console.log(e)

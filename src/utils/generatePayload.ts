@@ -104,14 +104,14 @@ interface contractP2P extends Pre2Post {
 
     distrito_name: string;
     provincia_name: string;
-    
+
     seller_name: string;
     seller_document: string;
 
     client_name: string;
 }
 
-export function generateXMLTemplateP2P(data: contractP2P , type?: any) {
+export function generateXMLTemplateP2P(data: contractP2P, type?: any) {
     const date = moment(data.ADDED_ON)
     console.log(data.client_name)
     const firstname = data.client_name.split('{|}')[0].trim()
@@ -203,6 +203,101 @@ export function generateXMLTemplateP2P(data: contractP2P , type?: any) {
     </transaction>
     `
 
+    return template
+}
+
+
+export function generateTemplateActivation(data: contractP2P) {
+    const date = moment(data.ADDED_ON)
+    console.log(data.client_name)
+    const firstname = data.client_name.split('{|}')[0].trim()
+    const lastname = data.client_name.split('{|}')[1].trim()
+    const template = `<?xml version="1.0" encoding="UTF-8"?>
+    <transaction>
+        <items>
+            <item>
+                <metadata>
+                    <carrier>CWP</carrier>
+                    <transactiontype>Activation Single T&amp;C</transactiontype> 
+                    <sale_id>VCP${100000000 + data.TRANSACTION_ID}</sale_id>
+                    <date>${date.format("DD/MM/YYYY")}</date>
+                    <name>${firstname || ""}</name>
+                    <lastname>${lastname || ""}</lastname>
+                    <idcard>${data.cedula}</idcard>
+                    <email>${data.email}</email>
+                    <gender></gender>
+                    <distribution_code>999</distribution_code>
+                    <workplace></workplace>
+                    <email_p>${data.email}</email_p>
+                    <phone>${data.contact_phone}</phone>
+                    <fax></fax>
+                    <province>${data.provincia_name}</province>
+                    <district>${data.distrito_name}</district>
+                    <neighborhood>${data.address}</neighborhood>
+                    <street>${data.address}</street>
+                    <home>${data.home_number}</home>
+                    <payment_method>Efectivo</payment_method>
+                    <equipment>NA</equipment>
+                    <plu>NA</plu>
+                    <brand>NA</brand>
+                    <model>NA</model>
+                    <imei>000000000000000</imei>
+                    <services_number>${data.MSISDN}</services_number>
+                    <contract_duration>18</contract_duration>
+                    <plan_name>Mas Control VYD LDI 500 DATA Sin Limites</plan_name>
+                    <monthly_plan_charge>${Number(data.plan_month_charge).toFixed(2)}</monthly_plan_charge>
+                    <credit_limit>${data.plan_credit_limit}</credit_limit>
+                    <minutes_included>${data.plan_min_included}</minutes_included>
+                    <minutes_includ_allnet>${data.plan_min_all_net}</minutes_includ_allnet>
+                    <minutes_includ_onnet>${data.plan_min_on_net}</minutes_includ_onnet>
+                    <cost_excess_minutes>${data.plan_min_cost_excedent}</cost_excess_minutes>
+                    <cost_min_another_mobile>${data.plan_min_cost_mobile}</cost_min_another_mobile>
+                    <cost_min_another_operator>0</cost_min_another_operator>
+                    <cost_min_fixed_network>0</cost_min_fixed_network>
+                    <sms>${data.plan_sms}</sms>
+                    <gprs>${data.plan_gprs}</gprs>
+                    <cost_excent></cost_excent>
+                    <plan_code>${data.plan_description}</plan_code>
+                    <description_data>${data.plan_description}</description_data>
+                    <mrc>${Number(data.plan_mrc).toFixed(2)}</mrc>
+                    <mb_included>${data.plan_mb_included}</mb_included>
+                    <excess_kb>${data.plan_kb_excedent}</excess_kb>
+                    <total_price_client>0.00</total_price_client>
+                    <list_price>0.00</list_price>
+                    <activation_charge>0.00</activation_charge>
+                    <deposit>0.00</deposit>
+                    <deposit_exoneration>(0.00)</deposit_exoneration>
+                    <credit_limit_increase>0.00</credit_limit_increase>
+                    <additional_services>0.00</additional_services>
+                    <accessories>0.00</accessories>
+                    <itbms>0.00</itbms>
+                    <isc>0.00</isc>
+                    <total_charges>0.00</total_charges>
+                    <quotas></quotas>
+                    <contract_number>VCP${8000000 + data.TRANSACTION_ID}</contract_number>
+                    <cellphone_number>${data.MSISDN}</cellphone_number>
+                    <imei_serie>000000000000000</imei_serie>
+                    <equipment_list_price>0.00</equipment_list_price>
+                    <price_equip_according_service_plan>0.00</price_equip_according_service_plan>
+                    <client_name_portin>${firstname || ""}</client_name_portin>
+                    <client_lastname_portin>${lastname || ""}</client_lastname_portin>
+                    <id>${data.cedula}</id>
+                    <prepaid_number>${data.MSISDN}</prepaid_number>
+                    <day>${date.format("DD")}</day>
+                    <month>${date.format("MM")}</month>
+                    <year>${date.format("YYYY")}</year>
+                    <client_name>${firstname || ""}</client_name>
+                    <client_lastname>${lastname || ""}</client_lastname>
+                    <client_idcard>${data.cedula}</client_idcard>
+                    <client_email>${data.email}</client_email>
+                    <created_by_name>${data.seller_name}</created_by_name>
+                    <created_by_lastname></created_by_lastname>
+                    <liberate_code_user>CWP00</liberate_code_user>
+                </metadata>
+            </item>
+        </items>
+    </transaction>
+    `
 
     return template
 }

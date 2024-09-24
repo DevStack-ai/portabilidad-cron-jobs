@@ -2,13 +2,13 @@ import "dotenv/config";
 import prisma from "./db.connection"
 import { ISOFT_INPUT } from "@prisma/client";
 import mysql, { PoolOptions } from 'mysql2';
-import { generateXMLTemplate, generateXMLTemplateP2P } from "../utils/generatePayload";
+import { generateTemplateActivation, generateXMLTemplate, generateXMLTemplateP2P } from "../utils/generatePayload";
 import sharp from "sharp";
 import Printer from "../utils/utils"
 import moment from "moment";
 import axios from "axios";
 import fs from "fs";
-const print = new Printer("p2p-paperless-controller");
+const print = new Printer("p2p-activation-controller");
 
 const access: PoolOptions = {
     user: process.env.DATABASE_USER,
@@ -158,7 +158,7 @@ export class Pre2PostController {
             CONTRACTID,
             discount_code
         FROM
-            PRE2POST_ISOFT_INPUT_INTPORT p2p
+            AP_ISOFT_INPUT_POSTPAID p2p
             join location l1 on l1.id = provincia
             join location l2 on l2.id = distrito
             join location l3 on l3.id = corregimiento
@@ -233,7 +233,7 @@ export class Pre2PostController {
 
     async updateReport(ids: number[], filename: string): Promise<void> {
         return new Promise(async (resolve, reject) => {
-            const query = `UPDATE PORTABILIDAD_DES.PRE2POST_ISOFT_INPUT_INTPORT SET LIB_FILE_SENT = NOW(), LIB_FILE = "${filename}" WHERE CONTRACTID IN (${ids.join(",")});`
+            const query = `UPDATE PORTABILIDAD_DES.AP_ISOFT_INPUT_POSTPAID SET LIB_FILE_SENT = NOW(), LIB_FILE = "${filename}" WHERE CONTRACTID IN (${ids.join(",")});`
             conn.query(query, (err, results) => {
                 if (err) {
                     reject(err)
@@ -262,7 +262,7 @@ export class Pre2PostController {
     async updateField(id: number, field: string, value: any): Promise<void> {
 
         return new Promise((resolve, reject) => {
-            const query = `UPDATE PRE2POST_ISOFT_INPUT_INTPORT SET ${field} = ${value} WHERE TRANSACTION_ID = ${id};`
+            const query = `UPDATE AP_ISOFT_INPUT_POSTPAID SET ${field} = ${value} WHERE TRANSACTION_ID = ${id};`
             conn.query(query, (err, results) => {
                 if (err) {
                     reject(err)
@@ -304,7 +304,7 @@ export class Pre2PostController {
                     ppii.name as client_name,
                     ppii.*
                 FROM
-                          PRE2POST_ISOFT_INPUT_INTPORT ppii
+                        AP_ISOFT_INPUT_POSTPAID ppii
                 LEFT JOIN location l ON l.id = ppii.distrito 
                 LEFT JOIN location l2 ON l2.id  = ppii.provincia
                 LEFT JOIN postpaid_plan pp ON pp.id = ppii.post_paid_plan_id 
@@ -318,7 +318,7 @@ export class Pre2PostController {
                     AND ppii.CONTRACT_ATTEMPTS < 3
                     AND ppii.STEP = 0
                     AND ppii.user_id != 0
-                    AND ppii.STATUS = 2
+                    AND ppii.STATUS = 1
                 LIMIT ${Number(process.env.CONTRACT_BATCH_SIZE)};
             `
             // CONTRATO_GENERADO = 0
@@ -373,7 +373,7 @@ export class Pre2PostController {
                 if (process.env.CONTRACT_API_URL === undefined) throw new Error('CONTRACT_API_URL is not defined');
 
                 const form = new FormData();
-                const str = generateXMLTemplateP2P(contract, type);
+                const str = generateTemplateActivation(contract);
                 console.log(str)
                 const filename = `PRE2POST${contract.request_number}.xml`
                 const dir = `${process.env.TMP_DIR}/${filename}`
@@ -441,7 +441,7 @@ export class Pre2PostController {
                         u.document as CEDULA_VENDEDOR,
                         u.signature as FIRMA_VENDEDOR
                     FROM
-                       PRE2POST_ISOFT_INPUT_INTPORT p2p
+                       AP_ISOFT_INPUT_POSTPAID p2p
                     LEFT JOIN PORTABILIDAD.user u ON u.id = p2p.user_id 
                     LEFT JOIN PORTABILIDAD.origin o ON o.id = p2p.origin 
                     WHERE
@@ -502,7 +502,7 @@ export class Pre2PostController {
         if (ids.length === 0) return
 
         return new Promise((resolve, reject) => {
-            const query = `UPDATE PRE2POST_ISOFT_INPUT_INTPORT SET CONTRACT_ATTEMPTS = CONTRACT_ATTEMPTS + 1 WHERE TRANSACTION_ID IN (${ids.join(",")});`
+            const query = `UPDATE AP_ISOFT_INPUT_POSTPAID SET CONTRACT_ATTEMPTS = CONTRACT_ATTEMPTS + 1 WHERE TRANSACTION_ID IN (${ids.join(",")});`
             conn.query(query, (err, results) => {
                 if (err) {
                     reject(err)
@@ -532,7 +532,7 @@ export class Pre2PostController {
         if (ids.length === 0) return
 
         return new Promise((resolve, reject) => {
-            const query = `UPDATE PRE2POST_ISOFT_INPUT_INTPORT SET STEP = ${step} WHERE TRANSACTION_ID IN (${ids.join(",")});`
+            const query = `UPDATE AP_ISOFT_INPUT_POSTPAID SET STEP = ${step} WHERE TRANSACTION_ID IN (${ids.join(",")});`
             conn.query(query, (err, results) => {
                 if (err) {
                     reject(err)
@@ -818,7 +818,7 @@ export class Pre2PostController {
                     LPAD(MOD(TIMESTAMPDIFF(MINUTE, LIB_FILE_SENT_ON, NOW()), 60), 2, '0')
                 ) AS "Tiempo transcurrido (HH:MM)"
             FROM
-                 PRE2POST_ISOFT_INPUT_INTPORT ppiii 
+                 AP_ISOFT_INPUT_POSTPAID ppiii 
             JOIN user u ON u.id = ppiii.user_id 
             JOIN area a ON u.area_id = a.id 
             WHERE
