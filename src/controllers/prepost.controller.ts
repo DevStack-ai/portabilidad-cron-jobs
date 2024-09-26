@@ -217,7 +217,7 @@ export class Pre2PostController {
                         join postpaid_plan pp on pp.id = post_paid_plan_id
                     WHERE 
                         act.CONTRACTID is not null
-                    AND LIB_FILE_SENT is null;`
+                    AND LIB_FILE_SENT_ON is null;`
 
             conn.query(query, (err,
                 results) => {
@@ -247,7 +247,7 @@ export class Pre2PostController {
 
     async updateReportActivations(ids: number[], filename: string): Promise<void> {
         return new Promise(async (resolve, reject) => {
-            const query = `UPDATE PORTABILIDAD_DES.AP_ISOFT_INPUT_POSTPAID SET LIB_FILE_SENT = NOW(), LIB_FILE = "${filename}", STATUS = 2, REMARKS = "PROCESSING" WHERE CONTRACTID IN (${ids.join(",")});`
+            const query = `UPDATE PORTABILIDAD_DES.AP_ISOFT_INPUT_POSTPAID SET LIB_FILE_SENT = NOW(), LIB_FILE_SENT_ON = NOW(), LIB_FILE = "${filename}", STATUS = 2, REMARKS = "PROCESSING" WHERE CONTRACTID IN (${ids.join(",")});`
             conn.query(query, (err, results) => {
                 if (err) {
                     reject(err)
