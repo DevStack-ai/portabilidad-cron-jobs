@@ -123,7 +123,7 @@ export function generateXMLTemplateP2P(data: contractP2P, type?: any) {
                 <metadata>
                     <carrier>CWP</carrier>
                     <transactiontype>Internal Port T&amp;C</transactiontype>
-                    <sale_id>VCP${8000000 + data.TRANSACTION_ID}</sale_id>
+                    <sale_id>VCR${8000000 + data.TRANSACTION_ID}</sale_id>
                     <date>${date.format("DD/MM/YYYY")}</date>
                     <name>${firstname || ""}</name>
                     <lastname>${lastname || ""}</lastname>
@@ -219,7 +219,7 @@ export function generateTemplateActivation(data: contractP2P) {
                 <metadata>
                     <carrier>CWP</carrier>
                     <transactiontype>Activation Single T&amp;C</transactiontype> 
-                    <sale_id>VCP${100000000 + data.TRANSACTION_ID}</sale_id>
+                    <sale_id>VCR${8000000 + data.TRANSACTION_ID}</sale_id>
                     <date>${date.format("DD/MM/YYYY")}</date>
                     <name>${firstname || ""}</name>
                     <lastname>${lastname || ""}</lastname>
