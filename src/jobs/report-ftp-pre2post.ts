@@ -27,7 +27,7 @@ const task = async () => {
         }
 
         print.log(`Connecting to FTP`);
-        // await ftp.connect({ host, port, username, password });
+        await ftp.connect({ host, port, username, password });
         print.log(`Connected to FTP`);
 
 
