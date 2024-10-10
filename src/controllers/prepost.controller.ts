@@ -168,7 +168,7 @@ export class Pre2PostController {
                 l2.nombre as l2,
                 l3.nombre as l3, 
                 SUBSTRING(p2p.address, 1, 40) as address,
-                SUBSTRING(p2p.address, 41, LENGTH(p2p.address)) as address,
+                SUBSTRING(p2p.address, 41, LENGTH(p2p.address)) as address2,
                 pp.code as plan,
                 discount_code,
                 BILLGROUP,

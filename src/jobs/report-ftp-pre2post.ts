@@ -62,27 +62,27 @@ const task = async () => {
 
         const toPath = `${process.env.FTP_DIR}/${filename}`;
         // const toPathActivations = `${process.env.FTP_DIR}/${filenameActivations}`;
-        if (csv) {
-            print.log(`Uploading to FTP: ${toPath}`)
-            await ftp.uploadFile(dir, toPath);
-            print.log(`Uploaded successfully ===================================================================`);
-        } else {
-            print.log(`No data to upload to FTP ================================================================`);
-        }
-
-        // if (csvActivations) {
-        //     print.log(`Uploading to FTP: ${toPathActivations}`)
-        //     await ftp.uploadFile(dirActivations, toPathActivations);
+        // if (csv) {
+        //     print.log(`Uploading to FTP: ${toPath}`)
+        //     await ftp.uploadFile(dir, toPath);
         //     print.log(`Uploaded successfully ===================================================================`);
         // } else {
         //     print.log(`No data to upload to FTP ================================================================`);
         // }
 
-        if (data.length !== 0) {
-            print.log('Updating database');
-            await db.updateReport(ids, filename);
-            print.log(`Database updated`);
-        }
+        // // if (csvActivations) {
+        // //     print.log(`Uploading to FTP: ${toPathActivations}`)
+        // //     await ftp.uploadFile(dirActivations, toPathActivations);
+        // //     print.log(`Uploaded successfully ===================================================================`);
+        // // } else {
+        // //     print.log(`No data to upload to FTP ================================================================`);
+        // // }
+
+        // if (data.length !== 0) {
+        //     print.log('Updating database');
+        //     await db.updateReport(ids, filename);
+        //     print.log(`Database updated`);
+        // }
 
         // if (activations.length !== 0) {
         //     print.log('Updating database Activations');
