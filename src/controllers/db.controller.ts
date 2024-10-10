@@ -13,31 +13,30 @@ export class DbController {
 
 
         const query: [] = await prisma.$queryRaw`
-            SELECT 
-                IDISOFT, 
-                NUMBER_PORT AS 'number_port',
-                '' AS 'ticket',
-                '' AS 'estado',
-                '' AS 'creado',
-                '' AS 'canal',
-                '' AS etapa_actual,
-                '' AS 'agente',
+            SELECT
+                IDISOFT,
+                PRE_POST,
+                NUMBER_PORT,
+                ICCID,
                 TRIM(SUBSTRING_INDEX(NOMBRE_DE_CLIENTE, '{|}', 1)) as nombre,
                 TRIM(SUBSTRING_INDEX(NOMBRE_DE_CLIENTE, '{|}', - 1)) as apellido,
-                CEDULA AS 'cedula',
-                '' AS 'direccion entrega',
-                DIRECCION_CLIENTE AS 'direccion cliente',
-                '' AS 'imei',
-                GENERADIGITOSENSIM(SERIE_DE_SIMCARD) AS 'serie_de_simcard',
+                CASE
+                    WHEN document_type = 1 THEN 'C'
+                    WHEN document_type = 2 THEN 'PP'
+                    ELSE 'C'
+                END as doc_type,
+                CEDULA,
+                EMAIL_DEL_CLIENTE,
+                provincia,
+                distrito,
+                barriada,
+                SUBSTRING(DIRECCION_CLIENTE , 1, 40) as address,
+                SUBSTRING(DIRECCION_CLIENTE, 41, LENGTH(DIRECCION_CLIENTE)) as address2,
                 NOMBRE_DEL_PLAN AS 'nombre_del_plan',
-                EMAIL_DEL_CLIENTE AS 'email_del_cliente',
-                '' AS 'tipo_de_plan',
-                '' AS tipo_equipo,
-                '' AS grupo_etapa_final,
-                CONTRACT_ID as 'contract_id',
+                discount_code as DISCOUNT_CODE,
                 nip as NIP,
                 billgroup as BILLGROUP,
-                discount_code as DISCOUNT_CODE
+                CONTRACT_ID as 'contract_id'
             FROM
                 ISOFT_INPUT
             WHERE
@@ -45,7 +44,28 @@ export class DbController {
             AND ESTADO_FTP = 1
             AND SERIE_DE_SIMCARD REGEXP '^[0-9]+$';`;
 
-        const mapped = query.map((item: any) => ({ ...item, NIP: item.NIP || "NULL", BILLGROUP: item.BILLGROUP || "NULL" }));
+        const mapped = query.map((item: any) => ({
+            IDISOFT: item.IDISOFT,
+            PRE_POST: item.PRE_POST,
+            NUMBER_PORT: item.NUMBER_PORT,
+            ICCID: item.ICCID,
+            nombre: item.nombre,
+            apellido: item.apellido,
+            doc_type: item.doc_type,
+            CEDULA: item.CEDULA,
+            EMAIL_DEL_CLIENTE: item.EMAIL_DEL_CLIENTE,
+            provincia: item.provincia,
+            distrito: item.distrito,
+            barriada: item.barriada,
+            address: item.address,
+            address2: item.address2,
+            nombre_del_plan: item.nombre_del_plan,
+            DISCOUNT_CODE: item.DISCOUNT_CODE,
+            NIP: item.NIP,
+            BILLGROUP: item.BILLGROUP,
+            contract_id: item.contract_id
+            
+        }));
         return mapped as []
     }
 
