@@ -61,13 +61,13 @@ const task = async () => {
 
         const toPath = `${process.env.FTP_DIR}/${filename}`;
         // const toPathV2 = `${process.env.FTP_DIR}/${filenameV2}`;
-        if(csv){
-            print.log(`Uploading to FTP: ${toPath}`)
-            await ftp.uploadFile(dir, toPath);
-            print.log(`Uploaded successfully ===================================================================`);
-        }else{
-            print.log(`No data to upload to FTP ================================================================`);
-        }
+        // if(csv){
+        //     print.log(`Uploading to FTP: ${toPath}`)
+        //     await ftp.uploadFile(dir, toPath);
+        //     print.log(`Uploaded successfully ===================================================================`);
+        // }else{
+        //     print.log(`No data to upload to FTP ================================================================`);
+        // }
         
         // if(csvV2){
         //     print.log(`Uploading to FTP: ${toPathV2}`)
@@ -78,7 +78,7 @@ const task = async () => {
         // }
 
         print.log('Updating database');
-        await db.updateReport(ids);
+        // await db.updateReport(ids);
         // await db.updateReport(idsV2);
         print.log(`Database updated`);
         //delete file if is empty
