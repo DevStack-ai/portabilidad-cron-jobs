@@ -124,6 +124,7 @@ export class Pre2PostController {
     }
 
     disconnect() {
+        console.log("Closing pool")
         conn?.end()
     }
 
