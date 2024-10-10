@@ -15,7 +15,10 @@ export class DbController {
         const query: [] = await prisma.$queryRaw`
             SELECT
                 IDISOFT,
-                PRE_POST,
+                CASE
+                    WHEN port_type_id = 4 THEN "POST_POST"
+                    WHEN port_type_id = 5 THEN "PRE_POST"
+                END as transaction_type,
                 NUMBER_PORT,
                 ICCID,
                 TRIM(SUBSTRING_INDEX(NOMBRE_DE_CLIENTE, '{|}', 1)) as nombre,
