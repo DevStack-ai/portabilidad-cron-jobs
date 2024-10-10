@@ -170,9 +170,9 @@ export class Pre2PostController {
                 SUBSTRING(p2p.address, 1, 40) as address,
                 SUBSTRING(p2p.address, 41, LENGTH(p2p.address)) as address,
                 pp.code as plan,
-                discount_code
+                discount_code,
                 BILLGROUP,
-                CONTRACTID,
+                CONTRACTID
             FROM
                 PRE2POST_ISOFT_INPUT_INTPORT p2p
                 join location l1 on l1.id = provincia
