@@ -19,7 +19,7 @@ export class DbController {
                 NUMBER_PORT,
                 ICCID,
                 TRIM(SUBSTRING_INDEX(NOMBRE_DE_CLIENTE, '{|}', 1)) as nombre,
-                TRIM(SUBSTRING_INDEX(NOMBRE_DE_CLIENTE, '{|}', - 1)) as apellido,
+                TRIM(SUBSTRING_INDEX(NOMBRE_DE_CLIENTE, '{|}', -1)) as apellido,
                 CASE
                     WHEN document_type = 1 THEN 'C'
                     WHEN document_type = 2 THEN 'PP'
