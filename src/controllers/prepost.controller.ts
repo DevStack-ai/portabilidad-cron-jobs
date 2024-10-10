@@ -123,6 +123,10 @@ export class Pre2PostController {
         }
     }
 
+    disconnect() {
+        conn?.end()
+    }
+
     async getConfirV2(): Promise<any> {
         const query = `SELECT * FROM config;`
         return new Promise((resolve, reject) => {

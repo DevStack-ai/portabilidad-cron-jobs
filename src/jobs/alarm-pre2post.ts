@@ -65,6 +65,7 @@ const task = async (config: any) => {
             }
         });
 
+        pre2post.disconnect();
         print.log(`Endalarm ===================================================================`)
     } catch (e) {
         console.log(e)

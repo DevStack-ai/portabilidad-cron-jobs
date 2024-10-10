@@ -94,6 +94,7 @@ const task = async () => {
             fs.unlinkSync(dir)
         }
 
+        db.disconnect();
         print.log(`End of report ftp ===================================================================`)
     } catch (e) {
         console.log(e)

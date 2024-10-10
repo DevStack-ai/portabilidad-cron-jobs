@@ -287,7 +287,7 @@ const task = async (ORACLE_STATUS: number = 0) => {
 
         print.log("-----------------")
 
-
+        pre2post.disconnect();
         print.log(`End of generate contract ===================================================================`)
     } catch (e) {
         print.log(`Error: ${e}`)
