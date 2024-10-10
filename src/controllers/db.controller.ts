@@ -47,28 +47,7 @@ export class DbController {
             AND ESTADO_FTP = 1
             AND SERIE_DE_SIMCARD REGEXP '^[0-9]+$';`;
 
-        const mapped = query.map((item: any) => ({
-            IDISOFT: item.IDISOFT,
-            PRE_POST: item.PRE_POST,
-            NUMBER_PORT: item.NUMBER_PORT,
-            ICCID: item.ICCID,
-            nombre: item.nombre,
-            apellido: item.apellido,
-            doc_type: item.doc_type,
-            CEDULA: item.CEDULA,
-            EMAIL_DEL_CLIENTE: item.EMAIL_DEL_CLIENTE,
-            provincia: item.provincia,
-            distrito: item.distrito,
-            barriada: item.barriada,
-            address: item.address,
-            address2: item.address2,
-            nombre_del_plan: item.nombre_del_plan,
-            DISCOUNT_CODE: item.DISCOUNT_CODE,
-            NIP: item.NIP,
-            BILLGROUP: item.BILLGROUP,
-            contract_id: item.contract_id
-            
-        }));
+        const mapped = query.map((item: any) => item);
         return mapped as []
     }
 
