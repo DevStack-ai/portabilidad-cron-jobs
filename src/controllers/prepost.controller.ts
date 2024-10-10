@@ -148,41 +148,40 @@ export class Pre2PostController {
         return new Promise(async (resolve, reject) => {
             const query = `
             SELECT 
-            p2p.msisdn,
-            'Y',
-            p2p.ICCID_N,
-            TRIM(SUBSTRING_INDEX(p2p.name, '{|}', 1)) as name,
-            TRIM(SUBSTRING_INDEX(p2p.name, '{|}', - 1)) as lastname,
-            CASE
-                WHEN p2p.document_type = 1 THEN 'C'
-                WHEN p2p.document_type = 2 THEN 'PP'
-                ELSE 'C'
-            END as doc_type,
-            CASE
-                WHEN p2p.document_type = 1 THEN concat(p2p.c_provincia,'-',p2p.c_folio,'-',p2p.c_asiento)
-                WHEN p2p.document_type = 2 THEN p2p.passport
-                ELSE 'C'
-            END as document,
-            email as email,
-            l1.nombre as l1, 
-            l2.nombre as l2,
-            l3.nombre as l3, 
-            SUBSTRING(p2p.address, 1, 40) as address,
-            '' as fixed2,
-            pp.code as plan,
-            '' as fixed3,
-            BILLGROUP,
-            CONTRACTID,
-            discount_code
-        FROM
-            PRE2POST_ISOFT_INPUT_INTPORT p2p
-            join location l1 on l1.id = provincia
-            join location l2 on l2.id = distrito
-            join location l3 on l3.id = corregimiento
-            join postpaid_plan pp on pp.id = post_paid_plan_id
-        WHERE 
-            p2p.CONTRACTID is not null
-        AND LIB_FILE_SENT_ON is null;`
+                p2p.msisdn,
+                'Y',
+                p2p.ICCID_N,
+                TRIM(SUBSTRING_INDEX(p2p.name, '{|}', 1)) as name,
+                TRIM(SUBSTRING_INDEX(p2p.name, '{|}', -1)) as lastname,
+                CASE
+                    WHEN p2p.document_type = 1 THEN 'C'
+                    WHEN p2p.document_type = 2 THEN 'PP'
+                    ELSE 'C'
+                END as doc_type,
+                CASE
+                    WHEN p2p.document_type = 1 THEN concat(p2p.c_provincia,'-',p2p.c_folio,'-',p2p.c_asiento)
+                    WHEN p2p.document_type = 2 THEN p2p.passport
+                    ELSE 'C'
+                END as document,
+                email as email,
+                l1.nombre as l1, 
+                l2.nombre as l2,
+                l3.nombre as l3, 
+                SUBSTRING(p2p.address, 1, 40) as address,
+                SUBSTRING(p2p.address, 41, LENGTH(p2p.address)) as address,
+                pp.code as plan,
+                discount_code
+                BILLGROUP,
+                CONTRACTID,
+            FROM
+                PRE2POST_ISOFT_INPUT_INTPORT p2p
+                join location l1 on l1.id = provincia
+                join location l2 on l2.id = distrito
+                join location l3 on l3.id = corregimiento
+                join postpaid_plan pp on pp.id = post_paid_plan_id
+            WHERE 
+                p2p.CONTRACTID is not null
+            AND LIB_FILE_SENT_ON is null;`
 
             conn?.query(query, (err,
                 results) => {
@@ -223,7 +222,6 @@ export class Pre2PostController {
                         SUBSTRING(act.address, 41, LENGTH(act.address)) as address2,
                         act.PACKAGE_ID,
                         discount_code,
-                        "" as fixed,
                         BILLGROUP,
                         CONTRACTID
                     FROM
