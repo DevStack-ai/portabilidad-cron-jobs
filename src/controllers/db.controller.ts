@@ -36,7 +36,8 @@ export class DbController {
                 '' AS grupo_etapa_final,
                 CONTRACT_ID as 'contract_id',
                 nip as NIP,
-                billgroup as BILLGROUP
+                billgroup as BILLGROUP,
+                discount_code as DISCOUNT_CODE
             FROM
                 ISOFT_INPUT
             WHERE
