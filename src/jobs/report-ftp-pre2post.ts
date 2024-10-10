@@ -46,7 +46,7 @@ const task = async () => {
 
         print.log(`Converted to CSV Activations`);
         const today = moment().add(-5, "hour").format("YYYYMMDDHHmmss")
-        const filename = `DEV_INTPORT_${today}.txt`;
+        const filename = `INTPORT_${today}.txt`;
         // const filenameActivations = `POSTACT_${today}.txt`;
 
         const dir = `${process.env.TMP_DIR}/${filename}`
