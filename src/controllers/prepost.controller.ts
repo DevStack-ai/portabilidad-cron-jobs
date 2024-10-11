@@ -222,7 +222,7 @@ export class Pre2PostController {
                         SUBSTRING(act.address, 41, LENGTH(act.address)) as address2,
                         act.PACKAGE_ID,
                         discount_code,
-                        "" as fixed
+                        """ as nip,
                         BILLGROUP,
                         CONTRACTID
                     FROM
