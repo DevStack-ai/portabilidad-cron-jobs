@@ -105,16 +105,29 @@ export interface Pre2Post {
     s3_contract_path: string;
 }
 
-const conn = mysql.createPool(access);
+let conn: mysql.Pool | null = null
 export class Pre2PostController {
 
 
-    constructor() { }
+
+    constructor(is_dev: boolean = false) {
+        if (is_dev) {
+            const config = {
+                ...access,
+                database: "PORTABILIDAD_DES"
+            }
+            console.log("Creating pool", config)
+            conn = mysql.createPool(config);
+        } else {
+            console.log("Creating pool", access)
+            conn = mysql.createPool(access);
+        }
+    }
 
     async getConfirV2(): Promise<any> {
         const query = `SELECT * FROM config;`
         return new Promise((resolve, reject) => {
-            conn.query(query, (err, results: any) => {
+            conn?.query(query, (err, results: any) => {
                 if (err) {
                     reject(err)
                     return;
@@ -167,7 +180,7 @@ export class Pre2PostController {
             p2p.CONTRACTID is not null
         AND LIB_FILE_SENT_ON is null;`
 
-            conn.query(query, (err,
+            conn?.query(query, (err,
                 results) => {
                 if (err) {
                     reject(err)
@@ -219,7 +232,7 @@ export class Pre2PostController {
                         act.CONTRACTID is not null
                     AND LIB_FILE_SENT is null;`
 
-            conn.query(query, (err,
+            conn?.query(query, (err,
                 results) => {
                 if (err) {
                     reject(err)
@@ -234,7 +247,7 @@ export class Pre2PostController {
     async updateReport(ids: number[], filename: string): Promise<void> {
         return new Promise(async (resolve, reject) => {
             const query = `UPDATE PORTABILIDAD_DES.AP_ISOFT_INPUT_POSTPAID SET LIB_FILE_SENT = NOW(), LIB_FILE = "${filename}" WHERE CONTRACTID IN (${ids.join(",")});`
-            conn.query(query, (err, results) => {
+            conn?.query(query, (err, results) => {
                 if (err) {
                     reject(err)
                     return;
@@ -248,7 +261,7 @@ export class Pre2PostController {
     async updateReportActivations(ids: number[], filename: string): Promise<void> {
         return new Promise(async (resolve, reject) => {
             const query = `UPDATE PORTABILIDAD_DES.AP_ISOFT_INPUT_POSTPAID SET LIB_FILE_SENT = NOW(), LIB_FILE = "${filename}", STATUS = 2, REMARKS = "PROCESSING" WHERE CONTRACTID IN (${ids.join(",")});`
-            conn.query(query, (err, results) => {
+            conn?.query(query, (err, results) => {
                 if (err) {
                     reject(err)
                     return;
@@ -263,7 +276,7 @@ export class Pre2PostController {
 
         return new Promise((resolve, reject) => {
             const query = `UPDATE AP_ISOFT_INPUT_POSTPAID SET ${field} = ${value} WHERE TRANSACTION_ID = ${id};`
-            conn.query(query, (err, results) => {
+            conn?.query(query, (err, results) => {
                 if (err) {
                     reject(err)
                     return;
@@ -330,7 +343,7 @@ export class Pre2PostController {
             // AND STEP = 0
             // AND user_id != 0
 
-            conn.query(query, (err, results) => {
+            conn?.query(query, (err, results) => {
                 if (err) {
                     reject(err)
                     return;
@@ -454,7 +467,7 @@ export class Pre2PostController {
                     LIMIT ${Number(process.env.CONTRACT_BATCH_SIZE)};
                 `
 
-            conn.query(query, (err, results) => {
+            conn?.query(query, (err, results) => {
                 if (err) {
                     reject(err)
                     return;
@@ -503,7 +516,7 @@ export class Pre2PostController {
 
         return new Promise((resolve, reject) => {
             const query = `UPDATE AP_ISOFT_INPUT_POSTPAID SET CONTRACT_ATTEMPTS = CONTRACT_ATTEMPTS + 1 WHERE TRANSACTION_ID IN (${ids.join(",")});`
-            conn.query(query, (err, results) => {
+            conn?.query(query, (err, results) => {
                 if (err) {
                     reject(err)
                     return;
@@ -533,7 +546,7 @@ export class Pre2PostController {
 
         return new Promise((resolve, reject) => {
             const query = `UPDATE AP_ISOFT_INPUT_POSTPAID SET STEP = ${step} WHERE TRANSACTION_ID IN (${ids.join(",")});`
-            conn.query(query, (err, results) => {
+            conn?.query(query, (err, results) => {
                 if (err) {
                     reject(err)
                     return;
@@ -829,7 +842,7 @@ export class Pre2PostController {
         `
 
         return new Promise((resolve, reject) => {
-            conn.query(query, (err, results: any) => {
+            conn?.query(query, (err, results: any) => {
                 if (err) {
                     reject(err)
                     return;
@@ -882,7 +895,7 @@ export class Pre2PostController {
             ORDER BY p.end_date DESC;
         `
         return new Promise((resolve, reject) => {
-            conn.query(query, (err, results: any) => {
+            conn?.query(query, (err, results: any) => {
                 if (err) {
                     reject(err)
                     return;
@@ -897,7 +910,7 @@ export class Pre2PostController {
 
     async disconnect() {
         console.log("DISCONNECTING")
-        await conn.end();
+        await conn?.end();
     }
     
 }
