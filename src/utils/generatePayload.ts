@@ -27,7 +27,7 @@ export function generateXMLTemplate(data: contract, type?: any) {
                   <transactiontype>External Mobile Port ${data.type === "PRE" ? "Prepaid" : "Postpaid"} SPN</transactiontype>
                   <request_number>${data.request_number}</request_number>
                   <date>${data.date}</date>
-                  <client_name>${data.client_name.normalize("NFKC")}</client_name>
+                  <client_name>${data.client_name.normalize("NFKC").replace("{|}", "")}</client_name>
                   <id>${data.id}</id>
                   <cedula>${data.id}</cedula>
                   <adress>${data.address.normalize("NFKC")}</adress>
@@ -67,7 +67,7 @@ export function generateXMLTemplate(data: contract, type?: any) {
                   <phone_not_exist></phone_not_exist>
                   <wrong_nip></wrong_nip>
                   <without_nip></without_nip>
-                  <client_name_represent>${data.client_name.normalize("NFKC")}</client_name_represent>
+                  <client_name_represent>${data.client_name.normalize("NFKC").replace("{|}", "")}</client_name_represent>
                   <dealership>Telefonica Moviles Panama S.A</dealership>
                   <client_id_represent>${data.id}</client_id_represent>
                   <liberate_code_user></liberate_code_user>           
