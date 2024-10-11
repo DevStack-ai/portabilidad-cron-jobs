@@ -225,7 +225,7 @@ export class Pre2PostController {
                         BILLGROUP,
                         CONTRACTID
                     FROM
-                        PORTABILIDAD_DES.AP_ISOFT_INPUT_POSTPAID act
+                        AP_ISOFT_INPUT_POSTPAID act
                         join location l1 on l1.id = provincia
                         join location l2 on l2.id = distrito
                         join location l3 on l3.id = corregimiento
@@ -263,7 +263,7 @@ export class Pre2PostController {
 
     async updateReportActivations(ids: number[], filename: string): Promise<void> {
         return new Promise(async (resolve, reject) => {
-            const query = `UPDATE PORTABILIDAD_DES.AP_ISOFT_INPUT_POSTPAID SET LIB_FILE_SENT = NOW(), LIB_FILE_SENT_ON = NOW(), LIB_FILE = "${filename}", REMARKS = "PROCESSING" WHERE CONTRACTID IN (${ids.join(",")});`
+            const query = `UPDATE AP_ISOFT_INPUT_POSTPAID SET LIB_FILE_SENT = NOW(), LIB_FILE_SENT_ON = NOW(), LIB_FILE = "${filename}", REMARKS = "PROCESSING" WHERE CONTRACTID IN (${ids.join(",")});`
             conn?.query(query, (err, results) => {
                 if (err) {
                     reject(err)
@@ -282,7 +282,7 @@ export class Pre2PostController {
             try {
                 const query = typeof value === "string" ? `UPDATE PRE2POST_ISOFT_INPUT_INTPORT SET ${field} = "${value}" WHERE TRANSACTION_ID = ${id};` : `UPDATE PRE2POST_ISOFT_INPUT_INTPORT SET ${field} = ${value} WHERE TRANSACTION_ID = ${id};`
                 conn?.query(query, (err, results) => {
-                    if(err){
+                    if (err) {
                     }
                     resolve()
                 })
@@ -521,7 +521,7 @@ export class Pre2PostController {
 
         return new Promise((resolve, reject) => {
 
-            if(ids.length === 0) {
+            if (ids.length === 0) {
                 resolve()
                 return;
             }
@@ -555,7 +555,7 @@ export class Pre2PostController {
 
         return new Promise((resolve, reject) => {
 
-            if(ids.length === 0) {
+            if (ids.length === 0) {
                 resolve()
                 return;
             }

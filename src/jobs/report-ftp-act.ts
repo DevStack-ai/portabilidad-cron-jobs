@@ -15,7 +15,7 @@ const task = async () => {
     try {
         print.log(`Starting report ftp ===================================================================`);
         const ftp = new FtpController();
-        const db = new Pre2PostController(true);
+        const db = new Pre2PostController();
 
         const host = process.env.FTP_HOST;
         const port = Number(process.env.FTP_PORT);
