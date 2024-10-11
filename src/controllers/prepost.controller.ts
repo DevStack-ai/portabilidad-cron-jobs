@@ -275,17 +275,20 @@ export class Pre2PostController {
 
     }
 
-    async updateField(id: number, field: string, value: any): Promise<void> {
+    async updateField(id: number, field: string, value: string | number): Promise<void> {
+
 
         return new Promise((resolve, reject) => {
-            const query = `UPDATE PRE2POST_ISOFT_INPUT_INTPORT SET ${field} = ${value} WHERE TRANSACTION_ID = ${id};`
-            conn?.query(query, (err, results) => {
-                if (err) {
-                    reject(err)
-                    return;
-                }
+            try {
+                const query = typeof value === "string" ? `UPDATE PRE2POST_ISOFT_INPUT_INTPORT SET ${field} = "${value}" WHERE TRANSACTION_ID = ${id};` : `UPDATE PRE2POST_ISOFT_INPUT_INTPORT SET ${field} = ${value} WHERE TRANSACTION_ID = ${id};`
+                conn?.query(query, (err, results) => {
+                    if(err){
+                    }
+                    resolve()
+                })
+            } catch (e) {
                 resolve()
-            })
+            }
         })
 
     }
@@ -515,9 +518,13 @@ export class Pre2PostController {
         //     }
         // });
 
-        if (ids.length === 0) return
 
         return new Promise((resolve, reject) => {
+
+            if(ids.length === 0) {
+                resolve()
+                return;
+            }
             const query = `UPDATE PRE2POST_ISOFT_INPUT_INTPORT SET CONTRACT_ATTEMPTS = CONTRACT_ATTEMPTS + 1 WHERE TRANSACTION_ID IN (${ids.join(",")});`
             conn?.query(query, (err, results) => {
                 if (err) {
@@ -545,9 +552,13 @@ export class Pre2PostController {
         //     }
         // });
 
-        if (ids.length === 0) return
 
         return new Promise((resolve, reject) => {
+
+            if(ids.length === 0) {
+                resolve()
+                return;
+            }
             const query = `UPDATE PRE2POST_ISOFT_INPUT_INTPORT SET STEP = ${step} WHERE TRANSACTION_ID IN (${ids.join(",")});`
             conn?.query(query, (err, results) => {
                 if (err) {

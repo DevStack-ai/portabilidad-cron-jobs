@@ -59,7 +59,7 @@ const task = async (ORACLE_STATUS: number = 0) => {
                     print.log(`STEP 0 | SUCCESS ${rows[index].TRANSACTION_ID} - ${response.value} `)
                 }
             } else {
-                const error_message = `${response?.reason?.code} ${JSON.stringify(response.reason?.response?.data || response)}`
+                const error_message = JSON.stringify(response.reason?.response?.data || response)
                 update_msg_base.push(pre2post.updateField(rows[index].TRANSACTION_ID, 'paperless_message', error_message));
                 error_base.push(rows[index]);
                 print.error(`STEP 0 | ERROR ${rows[index].TRANSACTION_ID} ${error_message}`)
@@ -112,7 +112,7 @@ const task = async (ORACLE_STATUS: number = 0) => {
         print.log("-----------------")
         print.log(`STEP 1 | TOTAL SUCCESS: ${success_spn.length}`);
         print.log(`STEP 1 | TOTAL ERROR: ${responses_spn.length - success_spn.length}`);
-
+        
         await Promise.all([
             ...update_msg_spn,
             pre2post.successStep(success_spn.map((item: any) => item.TRANSACTION_ID), 2),
@@ -226,7 +226,7 @@ const task = async (ORACLE_STATUS: number = 0) => {
         await Promise.all([
             ...update_msg_invoice,
             pre2post.successStep(success_invoice.map((item: any) => item.TRANSACTION_ID), 4),
-            pre2post.failedProcess(error_invoice.map((item: any) => item.IDISOFT))
+            pre2post.failedProcess(error_invoice.map((item: any) => item.TRANSACTION_ID))
         ])
         print.log(`STEP 3 | UPDATE ${success_invoice.length} ROWS TO STEP 4`)
 

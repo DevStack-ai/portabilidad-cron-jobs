@@ -227,7 +227,7 @@ const task = async (ORACLE_STATUS: number = 0) => {
         await Promise.all([
             ...update_msg_invoice,
             pre2post.successStep(success_invoice.map((item: any) => item.TRANSACTION_ID), 4),
-            pre2post.failedProcess(error_invoice.map((item: any) => item.IDISOFT))
+            pre2post.failedProcess(error_invoice.map((item: any) => item.TRANSACTION_ID))
         ])
         print.log(`STEP 3 | UPDATE ${success_invoice.length} ROWS TO STEP 4`)
 
