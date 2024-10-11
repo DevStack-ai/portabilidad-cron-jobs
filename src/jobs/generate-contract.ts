@@ -295,6 +295,7 @@ const task = async (ORACLE_STATUS: number = 0) => {
 
 
         print.log(`End of generate contract ===================================================================`)
+        await db.disconnect();
     } catch (e) {
         print.log(`Error: ${e}`)
     }

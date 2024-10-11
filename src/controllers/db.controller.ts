@@ -283,4 +283,9 @@ export class DbController {
         `
         return users
     }
+
+    async disconnect(): Promise<void> {
+        console.log("DISCONNECTING")
+        await prisma.$disconnect()
+    }
 }

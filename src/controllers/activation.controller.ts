@@ -894,4 +894,10 @@ export class Pre2PostController {
 
 
     }
+
+    async disconnect() {
+        console.log("DISCONNECTING")
+        await conn.end();
+    }
+    
 }
