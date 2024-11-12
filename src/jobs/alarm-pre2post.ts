@@ -7,7 +7,7 @@ import nodemailer from "nodemailer";
 import ses from "nodemailer-ses-transport";
 import fs from "fs";
 
-const print = new Printer("report-ftp");
+const print = new Printer("alarm-pre2post");
 
 // const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 const task = async (config: any) => {

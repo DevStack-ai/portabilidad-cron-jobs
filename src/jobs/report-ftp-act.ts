@@ -8,7 +8,7 @@ import moment from "moment";
 import Printer from "../utils/utils";
 import cron from "node-cron";
 
-const print = new Printer("report-ftp");
+const print = new Printer("report-ftp-act");
 
 // const sleep = (ms: number)sssss=> new Promise((resolve) => setTimeout(resolve, ms));
 const task = async () => {
