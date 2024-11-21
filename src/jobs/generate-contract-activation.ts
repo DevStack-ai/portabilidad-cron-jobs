@@ -1,7 +1,10 @@
 import "dotenv/config";
 import { Pre2Post, Pre2PostController } from "../controllers/activation.controller";
+import { Pre2PostController as P2PController } from "../controllers/prepost.controller";
+
 import cron from "node-cron";
 import Printer from "../utils/utils";
+import { json2csv } from "../utils/json2csv";
 const print = new Printer("generate-contract");
 
 const task = async (ORACLE_STATUS: number = 0) => {
@@ -288,9 +291,36 @@ const task = async (ORACLE_STATUS: number = 0) => {
 
         print.log("-----------------")
 
+        const db = new P2PController();
+        print.log(`STEP 5 | Fetch from database`);
+        const activations = await db.getReportActivations();
+        print.log(`STEP 5 | Fetched v1: ${activations.length} records`);
+        // const idsActivations = activations.map((item: any) => item.CONTRACTID)
+
+        const lines = activations.map((item: any) => {
+            const copy = { ...item }
+            delete copy.TRANSACTION_ID
+            return {
+                ...item,
+                liberateLine: json2csv([{ ...copy }])
+            }
+        })
+        print.log(`STEP 5 | Converted to CSV and update`);
+        await db.updateLine(lines)
+
+        print.log(`STEP 5 | send lines to liberate`);
+        const mapped = lines.map((item: any) => ({
+            transaction_id: item.TRANSACTION_ID,
+            file_content: item.liberateLine
+        }))
+        await db.sendToLiberate(mapped)
+        print.log(`STEP 5 | send lines to liberate`);
+        await db.updateLineStep(lines)
+
         await pre2post.disconnect();
         print.log(`End of generate contract ===================================================================`)
-    } catch (e) {
+    } catch (e: any) {
+        console.log(e.noinsertados)
         print.log(`Error: ${e}`)
     }
 }

@@ -201,6 +201,7 @@ export class Pre2PostController {
             const query = `
                       SELECT 
                         "ACT",
+                        act.TRANSACTION_ID,
                         act.msisdn,
                         act.ICCID,
                         TRIM(SUBSTRING_INDEX(act.name, '{|}', 1)) as name,
@@ -225,7 +226,7 @@ export class Pre2PostController {
                         discount_code,
                         "" as nip,
                         BILLGROUP,
-                        CONTRACTID
+                        CONTRACTID 
                     FROM
                         AP_ISOFT_INPUT_POSTPAID act
                         join location l1 on l1.id = provincia
@@ -234,6 +235,8 @@ export class Pre2PostController {
                         join postpaid_plan pp on pp.id = post_paid_plan_id
                     WHERE 
                         act.CONTRACTID is not null
+                    AND act.STEP = 5
+                    AND act.file_content is null
                     AND act.STATUS in (1,2)
                     AND LIB_FILE_SENT_ON is null;`
 
@@ -924,4 +927,96 @@ export class Pre2PostController {
 
 
     }
+
+
+    async updateLine(lines: any[]): Promise<any> {
+        return new Promise((resolve, reject) => {
+
+            const queue = []
+
+            for (const line of lines) {
+
+                const query = ` UPDATE AP_ISOFT_INPUT_POSTPAID 
+                            SET file_content = "${line.liberateLine}" 
+                            WHERE CONTRACTID = ${line.CONTRACTID};`
+
+                queue.push(conn?.query(query))
+            }
+
+            Promise.allSettled(queue).then((results) => {
+                resolve(results)
+            }).catch((e) => {
+                reject(e)
+            })
+        })
+
+
+    }
+
+
+    async updateLineStep(lines: any[]): Promise<any> {
+        return new Promise((resolve, reject) => {
+            const queue = []
+
+            for (const line of lines) {
+
+                const query = `UPDATE AP_ISOFT_INPUT_POSTPAID SET STEP = 6 WHERE CONTRACTID = ${line.CONTRACTID};`
+
+                console.log(query)
+                queue.push(conn?.query(query))
+            }
+
+            Promise.allSettled(queue).then((results) => {
+                resolve(results)
+            }).catch((e) => {
+                reject(e)
+            })
+
+        })
+
+
+    }
+
+
+    async sendToLiberate(lines: { transaction_id: number, file_content: string }[]) {
+
+        return new Promise(async (resolve, reject) => {
+            try {
+
+                if (!process.env.LIBERATE_WS_NOTIFICATION) {
+                    reject("Liberate WS Notification is not defined")
+                    return;
+                }
+
+                if (!process.env.LIBERATE_WS_APIKEY) {
+                    reject("Liberate WS ApiKey is not defined")
+                    return;
+                }
+
+                const headers = {
+                    apikey: process.env.LIBERATE_WS_APIKEY
+
+                }
+
+                console.log("Sending to liberate", lines)
+                const query = await axios.post(process.env.LIBERATE_WS_NOTIFICATION, {
+                    in: lines
+                }, { headers })
+
+                const result = query.data
+                if (result.response === 1) {
+                    resolve(result)
+                } else {
+                    reject(result)
+                }
+
+            } catch (e) {
+                reject(e)
+            }
+
+
+        })
+
+    }
+
 }
