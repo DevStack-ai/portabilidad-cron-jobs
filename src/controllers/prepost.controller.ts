@@ -855,7 +855,9 @@ export class Pre2PostController {
                 ppiii.STATUS in (2, 4)
             AND ppiii.LIB_FILE IS NOT NULL 
             AND ppiii.LIB_FILE_SENT_ON IS NOT NULL 
-            AND ppiii.LIB_FILE_SENT_ON <= NOW() - INTERVAL ${offset} MINUTE ;
+            AND ppiii.LIB_FILE_SENT_ON <= NOW() - INTERVAL ${offset} MINUTE 
+            AND ppiii.LIB_FILE_SENT_ON > NOW() - INTERVAL 8 DAY 
+            ;
         `
 
         return new Promise((resolve, reject) => {
