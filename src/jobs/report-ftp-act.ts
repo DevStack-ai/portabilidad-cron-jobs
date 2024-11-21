@@ -41,7 +41,7 @@ const task = async () => {
         print.log(`Converted to CSV`);
         const csvActivations = json2csv(activations);
 
-        await db.updateLine(activations, csvActivations)
+        await db.updateLine(activations)
 
         // print.log(`Converted to CSV Activations`);
         // const today = moment().add(-5, "hour").format("YYYYMMDDHHmmss")
