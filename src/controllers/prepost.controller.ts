@@ -998,6 +998,11 @@ export class Pre2PostController {
 
                 }
 
+                if(!lines.length){
+                    resolve("No lines to send")
+                    return;
+                }
+
                 console.log("Sending to liberate", lines)
                 const query = await axios.post(process.env.LIBERATE_WS_NOTIFICATION, {
                     in: lines
