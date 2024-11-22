@@ -318,6 +318,7 @@ const task = async (ORACLE_STATUS: number = 0) => {
         await db.updateLineStep(lines)
 
         await pre2post.disconnect();
+        await db.disconnect();
         print.log(`End of generate contract ===================================================================`)
     } catch (e: any) {
         console.log(e)

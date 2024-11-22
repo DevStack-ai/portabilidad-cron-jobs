@@ -123,9 +123,10 @@ export class Pre2PostController {
         }
     }
 
-    disconnect() {
+    async disconnect() {
         console.log("Closing pool")
         conn?.end()
+        
     }
 
     async getConfirV2(): Promise<any> {
