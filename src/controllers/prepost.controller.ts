@@ -209,8 +209,8 @@ export class Pre2PostController {
                         act.TRANSACTION_ID,
                         act.msisdn,
                         act.ICCID,
-                        TRIM(SUBSTRING_INDEX(act.name, '{|}', 1)) as name,
-                        TRIM(SUBSTRING_INDEX(act.name, '{|}', - 1)) as lastname,
+                        TRIM(SUBSTRING_INDEX(REPLACE(act.name, ',', ''), '{|}', 1)) as name,
+                        TRIM(SUBSTRING_INDEX(REPLACE(act.name, ',', ''), '{|}', - 1)) as lastname,
                         CASE
                             WHEN act.document_type = 1 THEN 'C'
                             WHEN act.document_type = 2 THEN 'PP'
@@ -221,12 +221,12 @@ export class Pre2PostController {
                             WHEN act.document_type = 2 THEN act.passport
                             ELSE 'C'
                         END as document,
-                        email as email,
+                        REPLACE(email, ',', '') as email,
                         l1.nombre as l1, 
                         l2.nombre as l2,
                         l3.nombre as l3, 
-                        SUBSTRING(act.address, 1, 40) as address,
-                        SUBSTRING(act.address, 41, LENGTH(act.address)) as address2,
+                        SUBSTRING(REPLACE(act.address, ',', ''), 1, 40) as address,
+                        SUBSTRING(REPLACE(act.address, ',', ''), 41, LENGTH(act.address)) as address2,
                         act.PACKAGE_ID,
                         discount_code,
                         "" as nip,
