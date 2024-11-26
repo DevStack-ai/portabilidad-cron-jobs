@@ -124,8 +124,12 @@ export class Pre2PostController {
     }
 
     async disconnect() {
-        console.log("Closing pool")
-        conn?.end()
+        try {
+            conn?.end()
+            console.log("Closing pool")
+        } catch (e) {
+            console.log("Error closing pool", e)
+        }
         
     }
 

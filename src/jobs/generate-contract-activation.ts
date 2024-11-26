@@ -311,7 +311,9 @@ const task = async (ORACLE_STATUS: number = 0) => {
         print.log(`STEP 5 | send lines to liberate`);
         const mapped = lines.map((item: any) => ({
             transaction_id: item.TRANSACTION_ID,
-            file_content: item.liberateLine
+            file_content: item.liberateLine,
+            msisdn: item.msisdn,
+            package_id: item.PACKAGE_ID
         }))
         await db.sendToLiberate(mapped)
         print.log(`STEP 5 | send lines to liberate`);
