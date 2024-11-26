@@ -186,7 +186,7 @@ export class Pre2PostController {
                 join postpaid_plan pp on pp.id = post_paid_plan_id
             WHERE 
                 p2p.CONTRACTID is not null
-            AND p2p.STATUS in (1, 2)
+            AND p2p.STATUS in (1,2)
             AND LIB_FILE_SENT_ON is null;`
 
             conn?.query(query, (err,
