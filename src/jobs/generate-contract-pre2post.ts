@@ -1,13 +1,13 @@
 import "dotenv/config";
 import { Pre2Post, Pre2PostController } from "../controllers/prepost.controller";
-import { ISOFT_INPUT } from "@prisma/client";
 import cron from "node-cron";
 import Printer from "../utils/utils";
+import { json2csv } from "../utils/json2csv";
 const print = new Printer("generate-contract");
 
 const task = async (ORACLE_STATUS: number = 0) => {
     try {
-        const pre2post = new Pre2PostController();
+        const pre2post = new Pre2PostController(true);
 
         print.log(`Starting generate contract ===================================================================`);
         const rows = await pre2post.getDataWithoutContract(ORACLE_STATUS);
@@ -287,8 +287,36 @@ const task = async (ORACLE_STATUS: number = 0) => {
 
         print.log("-----------------")
 
-        pre2post.disconnect();
+        print.log(`STEP 5 | Fetch from database`);
+        const activations = await pre2post.getReportPortasPre2Post();
+        print.log(`STEP 5 | Fetched v1: ${activations.length} records`);
+        // const idsActivations = activations.map((item: any) => item.CONTRACTID)
+
+        const lines = activations.map((item: any) => {
+            const copy = { ...item }
+            delete copy.TRANSACTION_ID
+            return {
+                ...item,
+                liberateLine: json2csv([{ ...copy }])
+            }
+        })
+        print.log(`STEP 5 | Converted to CSV and update`);
+        await pre2post.updateLineP2P(lines)
+
+        print.log(`STEP 5 | send lines to liberate`);
+        const mapped = lines.map((item: any) => ({
+            transaction_id: item.TRANSACTION_ID,
+            file_content: item.liberateLine,
+            msisdn: item.msisdn,
+            contractid: item.CONTRACTID
+        }))
+        await pre2post.sendToLiberateP2P(mapped)
+        print.log(`STEP 5 | send lines to liberate`);
+        await pre2post.updateLineStepP2P(lines)
+
+        await pre2post.disconnect();
         print.log(`End of generate contract ===================================================================`)
+
     } catch (e) {
         print.log(`Error: ${e}`)
     }

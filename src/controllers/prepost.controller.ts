@@ -257,6 +257,60 @@ export class Pre2PostController {
         })
     }
 
+    async getReportPortasPre2Post(): Promise<[]> {
+        return new Promise(async (resolve, reject) => {
+            const query = `
+            SELECT 
+                p2p.TRANSACTION_ID,
+                p2p.msisdn,
+                'Y',
+                p2p.ICCID_N,
+                TRIM(SUBSTRING_INDEX(p2p.name, '{|}', 1)) as name,
+                TRIM(SUBSTRING_INDEX(p2p.name, '{|}', -1)) as lastname,
+                CASE
+                    WHEN p2p.document_type = 1 THEN 'C'
+                    WHEN p2p.document_type = 2 THEN 'PP'
+                    ELSE 'C'
+                END as doc_type,
+                CASE
+                    WHEN p2p.document_type = 1 THEN concat(p2p.c_provincia,'-',p2p.c_folio,'-',p2p.c_asiento)
+                    WHEN p2p.document_type = 2 THEN p2p.passport
+                    ELSE 'C'
+                END as document,
+                email as email,
+                l1.nombre as l1, 
+                l2.nombre as l2,
+                l3.nombre as l3, 
+                SUBSTRING(p2p.address, 1, 40) as address,
+                SUBSTRING(p2p.address, 41, LENGTH(p2p.address)) as address2,
+                pp.code as plan,
+                discount_code,
+                BILLGROUP,
+                CONTRACTID
+            FROM
+                PRE2POST_ISOFT_INPUT_INTPORT p2p
+                join location l1 on l1.id = provincia
+                join location l2 on l2.id = distrito
+                join location l3 on l3.id = corregimiento
+                join postpaid_plan pp on pp.id = post_paid_plan_id
+            WHERE 
+                p2p.CONTRACTID is not null
+            AND p2p.STATUS in (1,2)
+            AND p2p.STEP = 5
+            AND LIB_FILE_SENT_ON is null;`
+
+            conn?.query(query, (err,
+                results) => {
+                if (err) {
+                    reject(err)
+                    return;
+                }
+                const rows = results as []
+                resolve(rows)
+            })
+        })
+    }
+
     async updateReport(ids: number[], filename: string): Promise<void> {
         return new Promise(async (resolve, reject) => {
             console.log("updateReport", ids, filename)
@@ -960,7 +1014,29 @@ export class Pre2PostController {
 
     }
 
+    async updateLineP2P(lines: any[]): Promise<any> {
+        return new Promise((resolve, reject) => {
 
+            const queue = []
+
+            for (const line of lines) {
+
+                const query = ` UPDATE PRE2POST_ISOFT_INPUT_INTPORT 
+                            SET file_content = "${line.liberateLine}" 
+                            WHERE CONTRACTID = ${line.CONTRACTID};`
+
+                queue.push(conn?.query(query))
+            }
+
+            Promise.allSettled(queue).then((results) => {
+                resolve(results)
+            }).catch((e) => {
+                reject(e)
+            })
+        })
+
+
+    }
     async updateLineStep(lines: any[]): Promise<any> {
         return new Promise((resolve, reject) => {
             const queue = []
@@ -968,6 +1044,29 @@ export class Pre2PostController {
             for (const line of lines) {
 
                 const query = `UPDATE AP_ISOFT_INPUT_POSTPAID SET STEP = 6 WHERE CONTRACTID = ${line.CONTRACTID};`
+
+                console.log(query)
+                queue.push(conn?.query(query))
+            }
+
+            Promise.allSettled(queue).then((results) => {
+                resolve(results)
+            }).catch((e) => {
+                reject(e)
+            })
+
+        })
+
+
+    }
+
+    async updateLineStepP2P(lines: any[]): Promise<any> {
+        return new Promise((resolve, reject) => {
+            const queue = []
+
+            for (const line of lines) {
+
+                const query = `UPDATE PRE2POST_ISOFT_INPUT_INTPORT SET STEP = 6 WHERE CONTRACTID = ${line.CONTRACTID};`
 
                 console.log(query)
                 queue.push(conn?.query(query))
@@ -1012,6 +1111,53 @@ export class Pre2PostController {
 
                 console.log("Sending to liberate", lines)
                 const query = await axios.post(process.env.LIBERATE_WS_NOTIFICATION, {
+                    in: lines
+                }, { headers })
+
+                const result = query.data
+                if (result.response === 1) {
+                    resolve(result)
+                } else {
+                    reject(result)
+                }
+
+            } catch (e) {
+                reject(e)
+            }
+
+
+        })
+
+    }
+
+    
+    async sendToLiberateP2P(lines: { transaction_id: number, file_content: string }[]) {
+
+        return new Promise(async (resolve, reject) => {
+            try {
+
+                if (!process.env.LIBERATE_WS_NOTIFICATION_P2P) {
+                    reject("Liberate WS Notification is not defined")
+                    return;
+                }
+
+                if (!process.env.LIBERATE_WS_APIKEY) {
+                    reject("Liberate WS ApiKey is not defined")
+                    return;
+                }
+
+                const headers = {
+                    apikey: process.env.LIBERATE_WS_APIKEY
+
+                }
+
+                if(!lines.length){
+                    resolve("No lines to send")
+                    return;
+                }
+
+                console.log("Sending to liberate", lines)
+                const query = await axios.post(process.env.LIBERATE_WS_NOTIFICATION_P2P, {
                     in: lines
                 }, { headers })
 
