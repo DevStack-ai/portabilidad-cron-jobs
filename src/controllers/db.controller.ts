@@ -51,6 +51,31 @@ export class DbController {
         return mapped as []
     }
 
+
+
+    async updateLineP2P(lines: any[]): Promise<any> {
+        return new Promise((resolve, reject) => {
+
+            const queue = []
+
+            for (const line of lines) {
+
+                const query = prisma.$queryRaw`UPDATE ISOFT_INPUT 
+                            SET file_content = \'${line.liberateLine}\'
+                            WHERE CONTRACT_ID = ${line.contract_id};`
+
+                queue.push(query)
+            }
+            prisma.$transaction(queue)
+                .then((results) => {
+                    resolve(results)
+                }).catch((e) => {
+                    reject(e)
+                })
+        })
+
+
+    }
     async getReportV2(): Promise<[]> {
 
 

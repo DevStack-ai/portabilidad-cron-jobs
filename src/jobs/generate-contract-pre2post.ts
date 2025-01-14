@@ -112,7 +112,7 @@ const task = async (ORACLE_STATUS: number = 0) => {
         print.log("-----------------")
         print.log(`STEP 1 | TOTAL SUCCESS: ${success_spn.length}`);
         print.log(`STEP 1 | TOTAL ERROR: ${responses_spn.length - success_spn.length}`);
-        
+
         await Promise.all([
             ...update_msg_spn,
             pre2post.successStep(success_spn.map((item: any) => item.TRANSACTION_ID), 2),
@@ -295,9 +295,15 @@ const task = async (ORACLE_STATUS: number = 0) => {
         const lines = activations.map((item: any) => {
             const copy = { ...item }
             delete copy.TRANSACTION_ID
+            let line = json2csv([{ ...copy }])
+            //if last character is a comma, remove it
+            if (line.slice(-1) === ',') {
+                line = line.slice(0, -1)
+            }
+
             return {
                 ...item,
-                liberateLine: json2csv([{ ...copy }])
+                liberateLine: line
             }
         })
         print.log(`STEP 5 | Converted to CSV and update`);

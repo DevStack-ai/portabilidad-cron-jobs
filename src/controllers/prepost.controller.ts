@@ -130,7 +130,7 @@ export class Pre2PostController {
         } catch (e) {
             console.log("Error closing pool", e)
         }
-        
+
     }
 
     async getConfirV2(): Promise<any> {
@@ -221,7 +221,7 @@ export class Pre2PostController {
                             WHEN act.document_type = 2 THEN act.passport
                             ELSE 'C'
                         END as document,
-                        REPLACE(email, ',', '') as email,
+                        REPLACE(act.email, ',', '') as email,
                         l1.nombre as l1, 
                         l2.nombre as l2,
                         l3.nombre as l3, 
@@ -231,13 +231,17 @@ export class Pre2PostController {
                         discount_code,
                         "" as nip,
                         BILLGROUP,
-                        CONTRACTID 
+                        CONTRACTID,
+                        IFNULL(lsa.area_code, "") as area
                     FROM
                         AP_ISOFT_INPUT_POSTPAID act
                         join location l1 on l1.id = provincia
                         join location l2 on l2.id = distrito
                         join location l3 on l3.id = corregimiento
                         join postpaid_plan pp on pp.id = post_paid_plan_id
+                        join user u on u.id = act.user_id 
+                        join area a on a.id = u.area_id 
+                        left join liberate_source_app lsa on lsa.id = a.liberate_source_app_id
                     WHERE 
                         act.CONTRACTID is not null
                     AND act.STEP = 5
@@ -277,7 +281,7 @@ export class Pre2PostController {
                     WHEN p2p.document_type = 2 THEN p2p.passport
                     ELSE 'C'
                 END as document,
-                email as email,
+                REPLACE(p2p.email, ',', '') as email,
                 l1.nombre as l1, 
                 l2.nombre as l2,
                 l3.nombre as l3, 
@@ -286,13 +290,17 @@ export class Pre2PostController {
                 pp.code as plan,
                 discount_code,
                 BILLGROUP,
-                CONTRACTID
+                CONTRACTID,
+                IFNULL(lsa.area_code, "") as area
             FROM
                 PRE2POST_ISOFT_INPUT_INTPORT p2p
                 join location l1 on l1.id = provincia
                 join location l2 on l2.id = distrito
                 join location l3 on l3.id = corregimiento
                 join postpaid_plan pp on pp.id = post_paid_plan_id
+                join user u on u.id = p2p.user_id 
+                join area a on a.id = u.area_id 
+                left join liberate_source_app lsa on lsa.id = a.liberate_source_app_id 
             WHERE 
                 p2p.CONTRACTID is not null
             AND p2p.STATUS in (1,2)
@@ -1104,7 +1112,7 @@ export class Pre2PostController {
 
                 }
 
-                if(!lines.length){
+                if (!lines.length) {
                     resolve("No lines to send")
                     return;
                 }
@@ -1130,7 +1138,7 @@ export class Pre2PostController {
 
     }
 
-    
+
     async sendToLiberateP2P(lines: { transaction_id: number, file_content: string }[]) {
 
         return new Promise(async (resolve, reject) => {
@@ -1151,7 +1159,7 @@ export class Pre2PostController {
 
                 }
 
-                if(!lines.length){
+                if (!lines.length) {
                     resolve("No lines to send")
                     return;
                 }

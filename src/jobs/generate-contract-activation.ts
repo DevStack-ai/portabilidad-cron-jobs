@@ -300,9 +300,15 @@ const task = async (ORACLE_STATUS: number = 0) => {
         const lines = activations.map((item: any) => {
             const copy = { ...item }
             delete copy.TRANSACTION_ID
+            let line = json2csv([{ ...copy }])
+            //if last character is a comma, remove it
+            if (line.slice(-1) === ',') {
+                line = line.slice(0, -1)
+            }
+
             return {
                 ...item,
-                liberateLine: json2csv([{ ...copy }])
+                liberateLine: line
             }
         })
         print.log(`STEP 5 | Converted to CSV and update`);
