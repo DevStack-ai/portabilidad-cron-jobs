@@ -324,7 +324,7 @@ const task = async (ORACLE_STATUS: number = 0) => {
         print.log(`End of generate contract ===================================================================`)
 
     } catch (e) {
-        print.log(`Error: ${e}`)
+        print.log(`Error: ${typeof e === 'object' ? JSON.stringify(e) : e}`)
     }
 }
 
