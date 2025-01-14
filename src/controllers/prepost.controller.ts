@@ -1054,7 +1054,12 @@ export class Pre2PostController {
                 const query = `UPDATE AP_ISOFT_INPUT_POSTPAID SET STEP = 6 WHERE CONTRACTID = ${line.CONTRACTID};`
 
                 console.log(query)
-                queue.push(conn?.query(query))
+                if (conn) {
+                    queue.push(conn.promise().query(query))
+                } else {
+                    console.log("ERROOOOOOOOOOOOOOOR | conn is null")
+                }
+
             }
 
             Promise.allSettled(queue).then((results) => {
@@ -1077,7 +1082,11 @@ export class Pre2PostController {
                 const query = `UPDATE PRE2POST_ISOFT_INPUT_INTPORT SET STEP = 6 WHERE CONTRACTID = ${line.CONTRACTID};`
 
                 console.log(query)
-                queue.push(conn?.query(query))
+                if (conn) {
+                    queue.push(conn.promise().query(query))
+                } else {
+                    console.log("ERROOOOOOOOOOOOOOOR | conn is null")
+                }
             }
 
             Promise.allSettled(queue).then((results) => {
@@ -1123,6 +1132,7 @@ export class Pre2PostController {
                 }, { headers })
 
                 const result = query.data
+                console.log(JSON.stringify(result))
                 if (result.response === 1) {
                     resolve(result)
                 } else {
@@ -1170,6 +1180,7 @@ export class Pre2PostController {
                 }, { headers })
 
                 const result = query.data
+                console.log(JSON.stringify(result))
                 if (result.response === 1) {
                     resolve(result)
                 } else {
