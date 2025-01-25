@@ -4,6 +4,7 @@ import { PaperlessController } from "../controllers/paperless.controller";
 import { ISOFT_INPUT } from "@prisma/client";
 import cron from "node-cron";
 import Printer from "../utils/utils";
+import { json2csv } from "../utils/json2csv";
 const print = new Printer("generate-contract");
 
 const task = async (ORACLE_STATUS: number = 0) => {
@@ -292,12 +293,31 @@ const task = async (ORACLE_STATUS: number = 0) => {
         print.log(`STEP 4 | UPDATE ${success_contract.length} ROWS TO STEP 5`)
 
         print.log("-----------------")
+        print.log(`STEP 5 | Fetch from database`);
+        const data = await db.getReport();
+        print.log(`STEP 5 | Fetched: ${data.length} records`);
 
+        const lines = data.map((item: any) => {
+            const copy = { ...item }
+            delete copy.TRANSACTION_ID
+            let line = json2csv([{ ...copy }])
+            //if last character is a comma, remove it
+            if (line.slice(-1) === ',') {
+                line = line.slice(0, -1)
+            }
+            return {
+                ...item,
+                liberateLine: line
+            }
+        })
+        // await db.sendToLiberate(lines);
+        print.log(`STEP 5 | Converted to CSV and update`);
+        await  db.updateLine(lines);
 
         print.log(`End of generate contract ===================================================================`)
         await db.disconnect();
     } catch (e) {
-        print.log(`Error: ${e}`)
+        print.log(`Error: ${typeof e === 'object' ? JSON.stringify(e) : e}`)
     }
 }
 

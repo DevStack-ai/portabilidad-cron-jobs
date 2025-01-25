@@ -67,6 +67,16 @@ model ISOFT_INPUT {
   cedula_vendedor       String?   @db.VarChar(100)
   firma_vendedor        String?   @db.LongText
   firma_cliente         String?   @db.LongText
+  billgroup             String?   @db.VarChar(45)
+  discount_code         String?   @db.VarChar(100)
+  document_type         String?   @db.VarChar(100)
+  provincia             String?   @db.VarChar(100)
+  distrito              String?   @db.VarChar(100)
+  barriada              String?   @db.VarChar(100)
+  file_content          String?   @db.MediumText
+  file_name             String?   @db.VarChar(256)
+  file_sent_date        DateTime? @db.DateTime(0)
+  area_code             String?   @db.VarChar(45)
 
   @@index([ENVIADO_ORACLE], map: "ISOFT_INPUT_ENVIADO_ORACLE_IDX")
   @@index([ESTADO_FTP], map: "ISOFT_INPUT_ESTADO_FTP_IDX")
@@ -75,14 +85,18 @@ model ISOFT_INPUT {
   @@index([PRE_POST], map: "ISOFT_INPUT_PRE_POST_IDX")
   @@index([TRANSACTION_ID], map: "ISOFT_INPUT_TRANSACTION_ID_IDX")
   @@index([ERROR], map: "ERROR")
+  @@index([CEDULA], map: "ISOFT_INPUT_CEDULA_IDX")
 }
 
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model ISOFT_INPUT_TEMP {
   TRANSACTION_ID       Int?
-  MSISDN               String? @db.VarChar(255)
-  ICCID                String? @db.VarChar(255)
+  MSISDN               String?   @db.VarChar(255)
+  ICCID                String?   @db.VarChar(255)
   TRANSACTION_ID_ISOFT Int?
+  BILLGROUP            String?   @db.VarChar(45)
+  FILE_NAME            String?   @db.VarChar(256)
+  FILE_SENT_DATE       DateTime? @db.DateTime(0)
 
   @@index([TRANSACTION_ID, MSISDN, ICCID, TRANSACTION_ID_ISOFT], map: "ISOFT_INPUT_TEMP_TRANSACTION_ID_IDX")
   @@ignore
@@ -179,4 +193,46 @@ model cs_config {
   idConfig Int    @id @default(autoincrement())
   nombre   String
   valor    String
+}
+
+model blacklist_setting {
+  id          Int    @id @default(autoincrement())
+  name        String
+  value       String
+  description String
+  should_show Int?
+
+  @@index([name], map: "name_index")
+}
+
+model fraude_cwp {
+  id               Int       @id @default(autoincrement())
+  type             String?   @db.VarChar(255)
+  tr_id            Int?
+  tr_id_rajat      Int?
+  area             String?   @db.VarChar(45)
+  vendedor         String?   @db.VarChar(255)
+  phone            Int?
+  document_type    String?   @db.VarChar(45)
+  document         String?   @db.VarChar(45)
+  name             String?   @db.VarChar(255)
+  rule             Int?
+  date             DateTime? @db.DateTime(0)
+  rule_description String?   @db.VarChar(255)
+
+  @@index([document], map: "fraude_cwp_document_IDX")
+  @@index([phone], map: "fraude_cwp_phone_IDX")
+}
+
+model sus_transaction {
+  id         Int      @id @default(autoincrement())
+  document   String   @db.VarChar(45)
+  payload    String   @db.LongText
+  created_at DateTime @default(now()) @db.DateTime(0)
+  rule       String?  @db.VarChar(45)
+  user_id    Int?
+  username   String?  @db.VarChar(256)
+
+  @@index([document], map: "doc_index")
+  @@index([user_id], map: "user_index")
 }

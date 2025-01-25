@@ -1,6 +1,7 @@
 import "dotenv/config";
 import prisma from "./db.connection"
 import { ISOFT_INPUT } from "@prisma/client";
+import axios from "axios";
 
 
 
@@ -39,19 +40,118 @@ export class DbController {
                 discount_code as DISCOUNT_CODE,
                 nip as NIP,
                 billgroup as BILLGROUP,
-                CONTRACT_ID as 'contract_id'
+                CONTRACT_ID as 'contract_id',
+                area_code
             FROM
                 ISOFT_INPUT
             WHERE
                 port_type_id IN (4, 5)
-            AND ESTADO_FTP = 1
+            AND STEP = 5
             AND SERIE_DE_SIMCARD REGEXP '^[0-9]+$';`;
 
         const mapped = query.map((item: any) => item);
         return mapped as []
     }
 
+    async updateLineStep(lines: any[]): Promise<any> {
+        return new Promise((resolve, reject) => {
+            const queue = []
 
+            for (const line of lines) {
+
+                const query = `UPDATE ISOFT_INPUT SET STEP = 6 WHERE CONTRACTID = ${line.CONTRACTID};`
+
+                queue.push(prisma.$queryRaw`${query}`)
+
+            }
+
+            Promise.allSettled(queue).then((results) => {
+                resolve(results)
+            }).catch((e) => {
+                reject(e)
+            })
+
+        })
+
+
+    }
+
+    async sendToLiberate(lines: { transaction_id: number, file_content: string }[]) {
+
+        return new Promise(async (resolve, reject) => {
+            try {
+
+                if (!process.env.LIBERATE_WS_NOTIFICATION_P2P) {
+                    reject("Liberate WS Notification is not defined")
+                    return;
+                }
+
+                if (!process.env.LIBERATE_WS_APIKEY) {
+                    reject("Liberate WS ApiKey is not defined")
+                    return;
+                }
+
+                const headers = {
+                    apikey: process.env.LIBERATE_WS_APIKEY
+
+                }
+
+                if (!lines.length) {
+                    resolve("No lines to send")
+                    return;
+                }
+
+                console.log("Sending to liberate", lines)
+                const query = await axios.post(process.env.LIBERATE_WS_NOTIFICATION_P2P, {
+                    in: lines
+                }, { headers })
+
+                const result = query.data
+                console.log(JSON.stringify(result))
+                if (result.response === 1) {
+                    resolve(result)
+                } else {
+                    reject(result)
+                }
+
+            } catch (e) {
+                reject(e)
+            }
+
+
+        })
+
+    }
+
+    async updateLine(lines: any[]): Promise<any> {
+        return new Promise((resolve, reject) => {
+
+            const queue = []
+
+            for (const line of lines) {
+          
+                const query = prisma.iSOFT_INPUT.updateMany({
+                    where: {
+                        CONTRACT_ID: line.contract_id
+                    },
+                    data: {
+                        file_content: line.liberateLine,
+                        STEP: 6
+                    }
+                })
+
+                queue.push(query)
+            }
+            prisma.$transaction(queue)
+                .then((results) => {
+                    resolve(results)
+                }).catch((e) => {
+                    reject(e)
+                })
+        })
+
+
+    }
 
     async updateLineP2P(lines: any[]): Promise<any> {
         return new Promise((resolve, reject) => {
