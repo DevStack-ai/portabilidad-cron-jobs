@@ -12,7 +12,7 @@ const print = new Printer("p2p-activation-controller");
 
 const access: PoolOptions = {
     user: process.env.DATABASE_USER,
-    database: process.env.DATABASE_NAME,
+    database: "PORTABILIDAD_DES",
     password: process.env.DATABASE_PASS,
     host: process.env.DATABASE_HOST,
     port: Number(process.env.DATABASE_PORT),
@@ -912,5 +912,5 @@ export class Pre2PostController {
         console.log("DISCONNECTING")
         await conn?.end();
     }
-    
+
 }
