@@ -312,7 +312,7 @@ const task = async (ORACLE_STATUS: number = 0) => {
         })
         // await db.sendToLiberate(lines);
         print.log(`STEP 5 | Converted to CSV and update`);
-        await  db.updateLine(lines);
+        await db.updateLine(lines);
 
         print.log(`End of generate contract ===================================================================`)
         await db.disconnect();

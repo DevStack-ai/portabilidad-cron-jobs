@@ -4,6 +4,7 @@ import { ISOFT_INPUT } from "@prisma/client";
 import axios from "axios";
 
 
+import { PrismaClient } from '@prisma/client'
 
 export class DbController {
 
@@ -47,7 +48,10 @@ export class DbController {
             WHERE
                 port_type_id IN (4, 5)
             AND STEP = 5
-            AND SERIE_DE_SIMCARD REGEXP '^[0-9]+$';`;
+            AND SERIE_DE_SIMCARD REGEXP '^[0-9]+$'
+            AND enviado_oracle = 0
+            AND FECHA_REGISTRO > '2024-07-04'
+            `;
 
         const mapped = query.map((item: any) => item);
         return mapped as []
@@ -124,31 +128,31 @@ export class DbController {
     }
 
     async updateLine(lines: any[]): Promise<any> {
-        return new Promise((resolve, reject) => {
-
+        return new Promise(async (resolve, reject) => {
+            const client = new PrismaClient()
             const queue = []
 
             for (const line of lines) {
 
-                const query = prisma.iSOFT_INPUT.updateMany({
+                const query = await client.iSOFT_INPUT.updateMany({
                     where: {
                         CONTRACT_ID: line.contract_id
                     },
                     data: {
-                        file_content: line.liberateLine,
-                        STEP: 6
+                        STEP: 6,
+                        file_content: line.liberateLine
                     }
                 })
-
+                // console.log(`UPDATE ISOFT_INPUT 
+                //             SET STEP = 6,  file_content = \'${line.liberateLine}\'
+                //             WHERE CONTRACT_ID = ${line.contract_id};`)
                 queue.push(query)
             }
-            prisma.$transaction(queue)
-                .then((results) => {
-                    resolve(results)
-                }).catch((e) => {
-                    reject(e)
-                })
+
+            client.$disconnect()
+            resolve(queue)
         })
+
 
 
     }
