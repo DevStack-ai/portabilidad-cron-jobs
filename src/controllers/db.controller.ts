@@ -34,8 +34,8 @@ export class DbController {
                 provincia,
                 distrito,
                 barriada,
-                SUBSTRING(DIRECCION_CLIENTE , 1, 40) as address,
-                SUBSTRING(DIRECCION_CLIENTE, 41, LENGTH(DIRECCION_CLIENTE)) as address2,
+                SUBSTRING(REPLACE(DIRECCION_CLIENTE,',', ''), 1, 40) as address,
+                SUBSTRING(REPLACE(DIRECCION_CLIENTE,',', ''), 41, LENGTH(DIRECCION_CLIENTE)) as address2,
                 NOMBRE_DEL_PLAN AS 'nombre_del_plan',
                 discount_code as DISCOUNT_CODE,
                 nip as NIP,
@@ -129,7 +129,7 @@ export class DbController {
             const queue = []
 
             for (const line of lines) {
-          
+
                 const query = prisma.iSOFT_INPUT.updateMany({
                     where: {
                         CONTRACT_ID: line.contract_id
