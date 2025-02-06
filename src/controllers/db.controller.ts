@@ -129,12 +129,11 @@ export class DbController {
 
     async updateLine(lines: any[]): Promise<any> {
         return new Promise(async (resolve, reject) => {
-            const client = new PrismaClient()
             const queue = []
 
             for (const line of lines) {
 
-                const query = client.iSOFT_INPUT.updateMany({
+                const query = prisma.iSOFT_INPUT.updateMany({
                     where: {
                         CONTRACT_ID: line.contract_id
                     },
@@ -150,8 +149,7 @@ export class DbController {
             }
 
             try {
-                await client.$transaction(queue)
-                client.$disconnect()
+                await prisma.$transaction(queue)
                 resolve(queue)
             } catch (e) {
                 reject(e)
