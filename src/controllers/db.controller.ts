@@ -134,7 +134,7 @@ export class DbController {
 
             for (const line of lines) {
 
-                const query = await client.iSOFT_INPUT.updateMany({
+                const query = client.iSOFT_INPUT.updateMany({
                     where: {
                         CONTRACT_ID: line.contract_id
                     },
@@ -149,8 +149,14 @@ export class DbController {
                 queue.push(query)
             }
 
-            client.$disconnect()
-            resolve(queue)
+            try {
+                await client.$transaction(queue)
+                client.$disconnect()
+                resolve(queue)
+            } catch (e) {
+                reject(e)
+            }
+
         })
 
 
