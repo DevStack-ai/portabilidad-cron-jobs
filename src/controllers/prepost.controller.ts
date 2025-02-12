@@ -12,7 +12,7 @@ const print = new Printer("p2p-paperless-controller");
 
 const access: PoolOptions = {
     user: process.env.DATABASE_USER,
-    database: "PORTABILIDAD_DES",
+    database: "PORTABILIDAD",
     password: process.env.DATABASE_PASS,
     host: process.env.DATABASE_HOST,
     port: Number(process.env.DATABASE_PORT),

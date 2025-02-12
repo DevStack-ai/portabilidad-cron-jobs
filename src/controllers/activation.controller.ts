@@ -12,7 +12,7 @@ const print = new Printer("p2p-activation-controller");
 
 const access: PoolOptions = {
     user: process.env.DATABASE_USER,
-    database: "PORTABILIDAD_DES",
+    database: "PORTABILIDAD",
     password: process.env.DATABASE_PASS,
     host: process.env.DATABASE_HOST,
     port: Number(process.env.DATABASE_PORT),
@@ -246,7 +246,7 @@ export class Pre2PostController {
 
     async updateReport(ids: number[], filename: string): Promise<void> {
         return new Promise(async (resolve, reject) => {
-            const query = `UPDATE PORTABILIDAD_DES.AP_ISOFT_INPUT_POSTPAID SET LIB_FILE_SENT = NOW(), LIB_FILE = "${filename}" WHERE CONTRACTID IN (${ids.join(",")});`
+            const query = `UPDATE PORTABILIDAD.AP_ISOFT_INPUT_POSTPAID SET LIB_FILE_SENT = NOW(), LIB_FILE = "${filename}" WHERE CONTRACTID IN (${ids.join(",")});`
             conn?.query(query, (err, results) => {
                 if (err) {
                     reject(err)
@@ -260,7 +260,7 @@ export class Pre2PostController {
 
     async updateReportActivations(ids: number[], filename: string): Promise<void> {
         return new Promise(async (resolve, reject) => {
-            const query = `UPDATE PORTABILIDAD_DES.AP_ISOFT_INPUT_POSTPAID SET LIB_FILE_SENT = NOW(), LIB_FILE = "${filename}", STATUS = 2, REMARKS = "PROCESSING" WHERE CONTRACTID IN (${ids.join(",")});`
+            const query = `UPDATE PORTABILIDAD.AP_ISOFT_INPUT_POSTPAID SET LIB_FILE_SENT = NOW(), LIB_FILE = "${filename}", STATUS = 2, REMARKS = "PROCESSING" WHERE CONTRACTID IN (${ids.join(",")});`
             conn?.query(query, (err, results) => {
                 if (err) {
                     reject(err)
