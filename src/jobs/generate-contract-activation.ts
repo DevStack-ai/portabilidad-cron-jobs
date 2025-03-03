@@ -9,7 +9,7 @@ const print = new Printer("generate-contract");
 
 const task = async (ORACLE_STATUS: number = 0) => {
     try {
-        const pre2post = new Pre2PostController();
+        const pre2post = new Pre2PostController(true);
 
         print.log(`Starting generate contract ===================================================================`);
         const rows = await pre2post.getDataWithoutContract(ORACLE_STATUS);
@@ -179,30 +179,31 @@ const task = async (ORACLE_STATUS: number = 0) => {
 
 
         print.log("STEP 3 | UPLOAD AUTH PDF ============================")
-        const toUploadInvoice = await pre2post.getDataByStep(3, ORACLE_STATUS);
-        print.log(`STEP 3 | DATA TO LOAD AUTH PDF: ${toUploadInvoice.length}`)
+        const toUploadAuth = await pre2post.getDataByStep(3, ORACLE_STATUS);
+        print.log(`STEP 3 | DATA TO LOAD AUTH PDF: ${toUploadAuth.length}`)
 
         const queue_auth = [];
         print.log("-----------------")
-        for (const item of toUploadInvoice) {
+        for (const item of toUploadAuth) {
 
             if (item.CONTRACTID === null) {
                 print.log(`STEP 3 | ${item.TRANSACTION_ID} no tiene CONTRACTID`)
                 queue_auth.push(Promise.reject({ code: 'NO_CONTRACT' }))
                 continue;
             }
-            // if (item.s3_auth_pdf_path === null) {
-            //     print.log(`STEP 4 | ${item.TRANSACTION_ID} no tiene s3_auth_pdf_path`)
-            //     queue_auth.push(Promise.reject({ code: 'NO_AUTH_CONTRACT' }))
-            //     continue;
-            // }
-            print.log(`STEP 4 | PROCESS ${item.TRANSACTION_ID} - ${item.CONTRACTID}`)
-            // const query = pre2post.uploadAuthContract(item.CONTRACTID, item.s3_auth_pdf_path);
-            //skipo
-            const query = Promise.resolve({ status: 'fulfilled', item: item })
-            queue_auth.push(query);
-
+            if (item.s3_apc_path) {
+                print.log(`STEP 4 | PROCESS ${item.TRANSACTION_ID} - ${item.CONTRACTID}`)
+                const query = pre2post.uploadAuthContract(item.CONTRACTID, item.s3_apc_path);
+                queue_auth.push(query);
+            } else if (item.apc_signature) {
+                const query = pre2post.generateAuthContract(item.CONTRACTID, item.TRANSACTION_ID)
+                queue_auth.push(query);
+            } else {
+                print.log(`STEP 3 | ${item.TRANSACTION_ID} no tiene s3_apc_path o apc_signature`)
+                queue_auth.push(Promise.reject({ code: 'NO_APC_AUTH' }))
+            }
         }
+
         print.log("-----------------")
         const responses_invoice = await Promise.allSettled(queue_auth);
         const success_invoice: Pre2Post[] = [];
@@ -211,15 +212,13 @@ const task = async (ORACLE_STATUS: number = 0) => {
 
         responses_invoice.forEach((response, index) => {
             if (response.status === 'fulfilled') {
-                success_invoice.push(toUploadInvoice[index]);
-                print.log(`STEP 3 | SUCCESS ${toUploadInvoice[index].TRANSACTION_ID} - ${toUploadInvoice[index].CONTRACTID}`)
-
+                success_invoice.push(toUploadAuth[index]);
+                print.log(`STEP 3 | SUCCESS ${toUploadAuth[index].TRANSACTION_ID} - ${toUploadAuth[index].CONTRACTID}`)
             } else {
                 const error_message = `${response?.reason?.code} ${JSON.stringify(response.reason?.response?.data || response)}`
-                update_msg_invoice.push(pre2post.updateField(toUploadInvoice[index].TRANSACTION_ID, 'paperless_message', error_message));
-                error_invoice.push(toUploadInvoice[index]);
-                print.error(`STEP 3 | ERROR ${toUploadInvoice[index].TRANSACTION_ID} - ${toUploadInvoice[index].CONTRACTID} ${error_message}`)
-
+                update_msg_invoice.push(pre2post.updateField(toUploadAuth[index].TRANSACTION_ID, 'paperless_message', error_message));
+                error_invoice.push(toUploadAuth[index]);
+                print.error(`STEP 3 | ERROR ${toUploadAuth[index].TRANSACTION_ID} - ${toUploadAuth[index].CONTRACTID} ${error_message}`)
             }
         });
         print.log("-----------------")
@@ -291,7 +290,7 @@ const task = async (ORACLE_STATUS: number = 0) => {
 
         print.log("-----------------")
 
-        const db = new P2PController();
+        const db = new P2PController(true);
         print.log(`STEP 5 | Fetch from database`);
         const activations = await db.getReportActivations();
         print.log(`STEP 5 | Fetched v1: ${activations.length} records`);
