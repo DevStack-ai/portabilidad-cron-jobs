@@ -148,7 +148,7 @@ export function generateXMLTemplateP2P(data: contractP2P, type?: any) {
                     <imei>000000000000000</imei>
                     <phone_number>${data.MSISDN}</phone_number>
                     <contract_duration>18</contract_duration>
-                    <plan_name>Mas Control VYD LDI 500 DATA Sin Limites</plan_name>
+                    <plan_name>${data.plan_name}</plan_name>
                     <monthly_plan_charge>${Number(data.plan_month_charge).toFixed(2)}</monthly_plan_charge>
                     <credit_limit>${data.plan_credit_limit}</credit_limit>
                     <minutes_included>${data.plan_min_included}</minutes_included>
@@ -209,7 +209,7 @@ export function generateXMLTemplateP2P(data: contractP2P, type?: any) {
 
 export function generateTemplateActivation(data: contractP2P) {
     const date = moment(data.ADDED_ON)
-    console.log(data.client_name)
+    
     const firstname = data.client_name.split('{|}')[0].trim()
     const lastname = data.client_name.split('{|}')[1].trim()
     const template = `<?xml version="1.0" encoding="UTF-8"?>
@@ -229,7 +229,7 @@ export function generateTemplateActivation(data: contractP2P) {
                     <distribution_code>999</distribution_code>
                     <workplace></workplace>
                     <email_p>${data.email}</email_p>
-                    <phone>${data.contact_phone}</phone>
+                    <phone>${data.MSISDN}</phone>
                     <fax></fax>
                     <province>${data.provincia_name}</province>
                     <district>${data.distrito_name}</district>
@@ -244,7 +244,7 @@ export function generateTemplateActivation(data: contractP2P) {
                     <imei>000000000000000</imei>
                     <services_number>${data.MSISDN}</services_number>
                     <contract_duration>18</contract_duration>
-                    <plan_name>Mas Control VYD LDI 500 DATA Sin Limites</plan_name>
+                    <plan_name>${data.plan_name}</plan_name>
                     <monthly_plan_charge>${Number(data.plan_month_charge).toFixed(2)}</monthly_plan_charge>
                     <credit_limit>${data.plan_credit_limit}</credit_limit>
                     <minutes_included>${data.plan_min_included}</minutes_included>

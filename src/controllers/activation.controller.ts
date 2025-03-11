@@ -814,44 +814,23 @@ export class Pre2PostController {
         });
     }
 
-    generateAuthContract(contractId: number, transaction_id: any) {
-        return new Promise(async (resolve, reject) => {
-            try {
+    async generateAuthContract(transaction_id: any): Promise<string> {
+        try {
 
-                const headers = {
-                    'Content-Type': 'multipart/form-data',
-                    'Accept': 'application/json',
-                    'X-API-Token': `${process.env.CONTRACT_API_KEY}`
-                }
+            if (process.env.CONTRACT_API_URL === undefined) throw new Error('CONTRACT_API_URL is not defined');
 
-                if (process.env.CONTRACT_API_URL === undefined) throw new Error('CONTRACT_API_URL is not defined');
+            const query = await axios.post(`${process.env.BASE_API_URL}/porta-request/apc-contract/${transaction_id}`);
 
-                const form = new FormData();
-
-                const fileType = "application/pdf"
-                const filename = `contract_apc.pdf`
-
-                const fetchFile = await axios.post(`${process.env.BASE_API_URL}/porta-request/apc-contract/${transaction_id}`, { responseType: 'arraybuffer' });
-                const file = fetchFile.data
-                const contract = new Blob([file], { type: fileType });
-
-                form.append("file", contract, filename);
-                form.append('name', "Authorization");
-                form.append('type', "authorization");
-
-                const request_time = new Date().toJSON().slice(0, 19)
-                const params = `request_time=${request_time}-06:00`;
-
-                const url = `${process.env.CONTRACT_API_URL}/api/v2/contracts/${contractId}/attachments?${params}`;
-
-                const query = await axios.post(url, form, { headers: headers });
-                resolve(query);
-                fs.unlinkSync(filename);
-
-            } catch (e) {
-                reject(e);
+            if (query.status === 200) {
+                return query.data.url;
+            } else {
+                return "ERROR";
             }
-        });
+
+        } catch (e) {
+            print.log(e);
+            return "ERROR";
+        }
     }
 
 
