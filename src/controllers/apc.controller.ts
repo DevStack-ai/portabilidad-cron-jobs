@@ -88,7 +88,7 @@ export class DbController {
 
                 const form = new FormData();
                 const str = generateXMLTemplate(contract);
-                const filename = `TESTPREPAGOISOFT${contract.request_number}.xml`
+                const filename = `APC_${contract.id}.xml`
                 const dir = `${process.env.TMP_DIR}/${filename}`
 
                 fs.writeFileSync(dir, str);

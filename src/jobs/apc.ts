@@ -38,7 +38,7 @@ const task = async () => {
                 const error_message = `${response?.reason?.code} ${JSON.stringify(response.reason?.response?.data || response)}`
                 update_contract.push(db.updateField(rows[index].id, 'error_reason', error_message));
                 error_base.push(rows[index]);
-                print.error(`STEP 0 | ERROR ${rows[index].IDISOFT} ${error_message}`)
+                print.error(`STEP 0 | ERROR ${rows[index].id} ${error_message}`)
             }
         });
 
