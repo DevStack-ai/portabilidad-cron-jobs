@@ -41,7 +41,8 @@ export class DbController {
                 nip as NIP,
                 billgroup as BILLGROUP,
                 CONTRACT_ID as 'contract_id',
-                area_code
+                area_code,
+                TRANSACTION_ID 
             FROM
                 ISOFT_INPUT
             WHERE
