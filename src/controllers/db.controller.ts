@@ -45,8 +45,13 @@ export class DbController {
             FROM
                 ISOFT_INPUT
             WHERE
-                IDISOFT = 1050117
+                port_type_id IN (4, 5)
+            AND STEP = 5
+            AND SERIE_DE_SIMCARD REGEXP '^[0-9]+$'
+            AND enviado_oracle = 0
+            AND FECHA_REGISTRO > '2024-07-04'
             `;
+
 
         const mapped = query.map((item: any) => item);
         return mapped as []
@@ -422,7 +427,7 @@ export class DbController {
             const todayDate = moment().format('YYYY-MM-DD');
             const fileName = `${process.env.TMP_DIR}/billgroup-${todayDate}.csv`
 
-            const dir = path.join(__dirname, fileName)  
+            const dir = path.join(__dirname, fileName)
             console.log(dir)
             if (fs.existsSync(dir)) {
                 const data = fs.readFileSync(dir, 'utf8').trim()
@@ -438,12 +443,12 @@ export class DbController {
                     const request = await axios.post(`http://35.223.175.142:8080/api/bd/consultar`, query)
                     const response = request.data
                     console.log('Billgroup from API', response)
-                    if (response.valid) {   
+                    if (response.valid) {
                         const [result]: string[] = Object.values(response.result[0])
                         //create file
                         fs.writeFileSync(dir, result);
                         resolve(result)
-                    }else {
+                    } else {
                         reject(response)
                     }
                 } catch (e) {
