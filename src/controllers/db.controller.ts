@@ -107,6 +107,7 @@ export class DbController {
                 }
 
                 console.log("Sending to liberate", lines)
+                console.log("Liberate WS Notification", process.env.LIBERATE_WS_NOTIFICATION_P2P)
                 const query = await axios.post(process.env.LIBERATE_WS_NOTIFICATION_P2P, {
                     in: lines
                 }, { headers })
