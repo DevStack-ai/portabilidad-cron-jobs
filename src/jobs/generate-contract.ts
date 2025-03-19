@@ -295,13 +295,20 @@ const task = async (ORACLE_STATUS: number = 0) => {
         print.log("-----------------")
         print.log(`STEP 5 | Fetch from database`);
         const data = await db.getReport();
+        const billgroup = await db.getBillGroup();
+
         print.log(`STEP 5 | Fetched: ${data.length} records`);
 
         const lines = data.map((item: any) => {
             const copy = { ...item }
+
             delete copy.TRANSACTION_ID
-            let line = json2csv([{ ...copy }])
-            //if last character is a comma, remove it
+            delete copy.plan_type
+
+            copy.BILLGROUP = billgroup
+
+            // let proxy = "&"//plan_type
+            let line = `${json2csv([{ ...copy }])}`          //if last character is a comma, remove it
             if (line.slice(-1) === ',') {
                 line = line.slice(0, -1)
             }

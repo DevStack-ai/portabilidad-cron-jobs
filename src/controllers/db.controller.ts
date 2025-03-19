@@ -2,10 +2,9 @@ import "dotenv/config";
 import prisma from "./db.connection"
 import { ISOFT_INPUT } from "@prisma/client";
 import axios from "axios";
-
-
-import { PrismaClient } from '@prisma/client'
-
+import moment from "moment";
+import path from "path";
+import fs from "fs";
 export class DbController {
 
 
@@ -420,5 +419,46 @@ export class DbController {
     async disconnect(): Promise<void> {
         console.log("DISCONNECTING")
         await prisma.$disconnect()
+    }
+
+    getBillGroup = async (): Promise<string> => {
+        return new Promise(async (resolve, reject) => {
+            const todayDate = moment().format('YYYY-MM-DD');
+            const fileName = `${process.env.TMP_DIR}/billgroup-${todayDate}.csv`
+
+            const dir = path.join(__dirname, fileName)  
+            console.log(dir)
+            if (fs.existsSync(dir)) {
+                const data = fs.readFileSync(dir, 'utf8').trim()
+                console.log('Billgroup from file', data)
+                resolve(data)
+            } else {
+                try {
+
+                    const query = {
+                        query: "SELECT  UNICORN.getbillgroup(sysdate) from dual",
+                        params: []
+                    }
+                    const request = await axios.post(`http://35.223.175.142:8080/api/bd/consultar`, query)
+                    const response = request.data
+                    console.log('Billgroup from API', response)
+                    if (response.valid) {   
+                        const [result]: string[] = Object.values(response.result[0])
+                        //create file
+                        fs.writeFileSync(dir, result);
+                        resolve(result)
+                    }
+                } catch (e) {
+                    reject(e)
+                }
+            }
+
+            const tmpDi: string = process.env.TMP_DIR || ""
+            fs.readdirSync(tmpDi).forEach(file => {
+                if (file.includes('billgroup') && file !== `billgroup-${todayDate}.txt`) {
+                    fs.unlinkSync(`${process.env.TMP_DIR}/${file}`)
+                }
+            })
+        })
     }
 }
