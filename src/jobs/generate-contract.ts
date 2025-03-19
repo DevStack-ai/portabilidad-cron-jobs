@@ -317,7 +317,7 @@ const task = async (ORACLE_STATUS: number = 0) => {
                 ...item,
                 TRANSACTION_ID: Number(item.TRANSACTION_ID),
                 transaction_id: Number(item.TRANSACTION_ID),
-                liberateLine: line
+                file_content: line
             }
         })
         await db.sendToLiberate(lines);
