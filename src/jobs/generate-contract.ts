@@ -322,7 +322,7 @@ const task = async (ORACLE_STATUS: number = 0) => {
                 liberateLine: line
             }
         })
-        await db.sendToLiberate(lines);
+        // await db.sendToLiberate(lines);
         print.log(`STEP 5 | Converted to CSV and update`);
         await db.updateLine(lines);
 
