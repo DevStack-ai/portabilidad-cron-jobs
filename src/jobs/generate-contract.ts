@@ -317,7 +317,7 @@ const task = async (ORACLE_STATUS: number = 0) => {
                 ...item,
                 TRANSACTION_ID: Number(item.TRANSACTION_ID),
                 transaction_id: Number(item.TRANSACTION_ID),
-                contractid: Number(item.CONTRACT_ID),
+                contractid: Number(item.contract_id),
                 file_content: line
             }
         })
