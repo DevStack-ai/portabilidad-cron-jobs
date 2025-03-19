@@ -315,7 +315,8 @@ const task = async (ORACLE_STATUS: number = 0) => {
             console.log(line)
             return {
                 ...item,
-                transaction_id: item.TRANSACTION_ID,
+                TRANSACTION_ID: Number(item.TRANSACTION_ID),
+                transaction_id: Number(item.TRANSACTION_ID),
                 liberateLine: line
             }
         })
