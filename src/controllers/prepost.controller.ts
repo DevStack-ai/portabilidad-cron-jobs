@@ -8,6 +8,7 @@ import Printer from "../utils/utils"
 import moment from "moment";
 import axios from "axios";
 import fs from "fs";
+import path from "path";
 const print = new Printer("p2p-paperless-controller");
 
 const access: PoolOptions = {
@@ -232,13 +233,15 @@ export class Pre2PostController {
                         "" as nip,
                         BILLGROUP,
                         CONTRACTID,
-                        IFNULL(lsa.area_code, "") as area
+                        IFNULL(lsa.area_code, "") as area,
+                        pt.liberate_value as plan_type
                     FROM
                         AP_ISOFT_INPUT_POSTPAID act
                         join location l1 on l1.id = provincia
                         join location l2 on l2.id = distrito
                         join location l3 on l3.id = corregimiento
                         join postpaid_plan pp on pp.id = post_paid_plan_id
+                        join plan_types pt on pt.id  = pp.plan_type 
                         join user u on u.id = act.user_id 
                         join area a on a.id = u.area_id 
                         left join liberate_source_app lsa on lsa.id = a.liberate_source_app_id
