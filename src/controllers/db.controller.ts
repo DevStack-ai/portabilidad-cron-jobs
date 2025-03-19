@@ -427,7 +427,7 @@ export class DbController {
             const todayDate = moment().format('YYYY-MM-DD');
             const fileName = `${process.env.TMP_DIR}/billgroup-${todayDate}.csv`
 
-            const dir = path.join(__dirname, fileName)
+            const dir = fileName
             console.log(dir)
             if (fs.existsSync(dir)) {
                 const data = fs.readFileSync(dir, 'utf8').trim()
@@ -456,8 +456,8 @@ export class DbController {
                 }
             }
 
-            const tmpDi: string = process.env.TMP_DIR || ""
-            fs.readdirSync(tmpDi).forEach(file => {
+            const tmpDir: string = process.env.TMP_DIR || ""
+            fs.readdirSync(tmpDir).forEach(file => {
                 if (file.includes('billgroup') && file !== `billgroup-${todayDate}.csv`) {
                     fs.unlinkSync(`${process.env.TMP_DIR}/${file}`)
                 }
