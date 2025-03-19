@@ -304,8 +304,8 @@ const task = async (ORACLE_STATUS: number = 0) => {
             delete copy.TRANSACTION_ID
             delete copy.plan_type
 
-            let proxy = "&"//plan_type
-            let line = `${json2csv([{ ...copy }])},,,,,,,0,0,N,12,R,${proxy},0`
+            // let proxy = "&"//plan_type
+            let line = `${json2csv([{ ...copy }])}`
             //if last character is a comma, remove it
             return {
                 ...item,
