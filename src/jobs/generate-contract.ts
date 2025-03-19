@@ -312,12 +312,13 @@ const task = async (ORACLE_STATUS: number = 0) => {
             if (line.slice(-1) === ',') {
                 line = line.slice(0, -1)
             }
+            console.log(line)
             return {
                 ...item,
                 liberateLine: line
             }
         })
-        // await db.sendToLiberate(lines);
+        await db.sendToLiberate(lines);
         print.log(`STEP 5 | Converted to CSV and update`);
         await db.updateLine(lines);
 

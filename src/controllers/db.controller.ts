@@ -45,11 +45,7 @@ export class DbController {
             FROM
                 ISOFT_INPUT
             WHERE
-                port_type_id IN (4, 5)
-            AND STEP = 5
-            AND SERIE_DE_SIMCARD REGEXP '^[0-9]+$'
-            AND enviado_oracle = 0
-            AND FECHA_REGISTRO > '2024-07-04'
+                IDISOFT = 1050117
             `;
 
         const mapped = query.map((item: any) => item);
@@ -447,6 +443,8 @@ export class DbController {
                         //create file
                         fs.writeFileSync(dir, result);
                         resolve(result)
+                    }else {
+                        reject(response)
                     }
                 } catch (e) {
                     reject(e)
@@ -455,7 +453,7 @@ export class DbController {
 
             const tmpDi: string = process.env.TMP_DIR || ""
             fs.readdirSync(tmpDi).forEach(file => {
-                if (file.includes('billgroup') && file !== `billgroup-${todayDate}.txt`) {
+                if (file.includes('billgroup') && file !== `billgroup-${todayDate}.csv`) {
                     fs.unlinkSync(`${process.env.TMP_DIR}/${file}`)
                 }
             })
