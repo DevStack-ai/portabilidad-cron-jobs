@@ -191,9 +191,8 @@ const task = async (ORACLE_STATUS: number = 0) => {
                 queue_auth.push(Promise.reject({ code: 'NO_CONTRACT' }))
                 continue;
             }
-            
-            queue_auth.push(Promise.resolve({ code: 'BYPASS' }))
-
+        
+            queue_auth.push(Promise.resolve({ status: 'fulfilled', item: item }));
         }
 
 
@@ -291,31 +290,32 @@ const task = async (ORACLE_STATUS: number = 0) => {
 
         const lines = activations.map((item: any) => {
             const copy = { ...item }
+            
             delete copy.TRANSACTION_ID
-            let line = json2csv([{ ...copy }])
-            //if last character is a comma, remove it
-            if (line.slice(-1) === ',') {
-                line = line.slice(0, -1)
-            }
+            delete copy.plan_type
 
+            // let proxy = "&"//plan_type
+            let line = `${json2csv([{ ...copy }])}`
+            //if last character is a comma, remove it
             return {
                 ...item,
                 liberateLine: line
             }
         })
+        console.log(lines)
         print.log(`STEP 5 | Converted to CSV and update`);
-        await db.updateLine(lines)
+        // await db.updateLine(lines)
 
-        print.log(`STEP 5 | send lines to liberate`);
-        const mapped = lines.map((item: any) => ({
-            transaction_id: item.TRANSACTION_ID,
-            file_content: item.liberateLine,
-            msisdn: item.msisdn,
-            package_id: item.PACKAGE_ID
-        }))
-        await db.sendToLiberate(mapped)
-        print.log(`STEP 5 | send lines to liberate`);
-        await db.updateLineStep(lines)
+        // print.log(`STEP 5 | send lines to liberate`);
+        // const mapped = lines.map((item: any) => ({
+        //     transaction_id: item.TRANSACTION_ID,
+        //     file_content: item.liberateLine,
+        //     msisdn: item.msisdn,
+        //     package_id: item.PACKAGE_ID
+        // }))
+        // await db.sendToLiberate(mapped)
+        // print.log(`STEP 5 | send lines to liberate`);
+        // await db.updateLineStep(lines)
 
         await pre2post.disconnect();
         await db.disconnect();
