@@ -293,6 +293,7 @@ const task = async (ORACLE_STATUS: number = 0) => {
 
         const lines = activations.map((item: any) => {
             const copy = { ...item }
+
             delete copy.TRANSACTION_ID
             let line = `${json2csv([{ ...copy }])},,,,,,,0,0,0,N,12,R,&,0`   
             //if last character is a comma, remove it
