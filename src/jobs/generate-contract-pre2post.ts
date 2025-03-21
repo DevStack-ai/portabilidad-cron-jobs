@@ -290,12 +290,11 @@ const task = async (ORACLE_STATUS: number = 0) => {
         print.log(`STEP 5 | Fetch from database`);
         const activations = await pre2post.getReportPortasPre2Post();
         print.log(`STEP 5 | Fetched v1: ${activations.length} records`);
-        // const idsActivations = activations.map((item: any) => item.CONTRACTID)
 
         const lines = activations.map((item: any) => {
             const copy = { ...item }
             delete copy.TRANSACTION_ID
-            let line = json2csv([{ ...copy }])
+            let line = `${json2csv([{ ...copy }])},,,,,,,0,0,0,N,12,R,&,0`   
             //if last character is a comma, remove it
             if (line.slice(-1) === ',') {
                 line = line.slice(0, -1)
