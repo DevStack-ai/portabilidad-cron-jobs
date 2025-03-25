@@ -9,7 +9,7 @@ const print = new Printer("generate-contract");
 
 const task = async (ORACLE_STATUS: number = 0) => {
     try {
-        const pre2post = new Pre2PostController();
+        const pre2post = new Pre2PostController(true);
 
         print.log(`Starting generate contract ===================================================================`);
         const rows = await pre2post.getDataWithoutContract(ORACLE_STATUS);
@@ -191,10 +191,20 @@ const task = async (ORACLE_STATUS: number = 0) => {
                 queue_auth.push(Promise.reject({ code: 'NO_CONTRACT' }))
                 continue;
             }
-        
-            queue_auth.push(Promise.resolve({ status: 'fulfilled', item: item }));
-        }
+            if (item.s3_apc_path) {
+                print.log(`STEP 4 | PROCESS ${item.TRANSACTION_ID} - ${item.CONTRACTID}`)
+                const query = pre2post.uploadAuthContract(item.CONTRACTID, item.s3_apc_path);
+                queue_auth.push(query);
+            } else if (item.apc_signature) {
+                const url_generated = await pre2post.generateAuthContract(item.TRANSACTION_ID)
+                const query = pre2post.uploadAuthContract(item.CONTRACTID, url_generated);
 
+                queue_auth.push(query);
+            } else {
+                print.log(`STEP 3 | ${item.TRANSACTION_ID} no tiene s3_apc_path o apc_signature`)
+                queue_auth.push(Promise.resolve({ code: 'NO_APC_AUTH' }))
+            }
+        }
 
         print.log("-----------------")
         const responses_invoice = await Promise.allSettled(queue_auth);

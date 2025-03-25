@@ -191,6 +191,7 @@ const task = async (ORACLE_STATUS: number = 0) => {
 
         const queue_invoice = [];
         print.log("-----------------")
+
         for (const item of toUploadInvoice) {
             if (item.port_type_id === 3 || item.port_type_id === 5) {
                 queue_invoice.push(Promise.resolve({ status: 'fulfilled', item: item }))
@@ -205,7 +206,23 @@ const task = async (ORACLE_STATUS: number = 0) => {
                 }
             }
         }
+        const queue_auth2 = [];
+        for (const item of toUploadInvoice) {
+
+            if (item.CONTRACT_ID === null) {
+                print.log(`STEP 3.5 | ${item.TRANSACTION_ID} no tiene CONTRACTID`)
+                queue_auth2.push(Promise.reject({ code: 'NO_CONTRACT' }))
+                continue;
+            }
+
+            const url_generated = await paperless.generateAuthContract(item.IDISOFT, 3)
+            const query = paperless.uploadAuthApcContract(item.CONTRACT_ID, url_generated);
+
+            queue_auth2.push(query);
+
+        }
         print.log("-----------------")
+        await Promise.allSettled(queue_auth2)
         const responses_invoice = await Promise.allSettled(queue_invoice);
         const success_invoice: ISOFT_INPUT[] = [];
         const error_invoice: ISOFT_INPUT[] = [];

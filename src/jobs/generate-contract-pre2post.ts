@@ -7,7 +7,7 @@ const print = new Printer("generate-contract");
 
 const task = async (ORACLE_STATUS: number = 0) => {
     try {
-        const pre2post = new Pre2PostController();
+        const pre2post = new Pre2PostController(true);
 
         print.log(`Starting generate contract ===================================================================`);
         const rows = await pre2post.getDataWithoutContract(ORACLE_STATUS);
@@ -194,12 +194,35 @@ const task = async (ORACLE_STATUS: number = 0) => {
                 queue_auth.push(Promise.reject({ code: 'NO_AUTH_CONTRACT' }))
                 continue;
             }
-            print.log(`STEP 4 | PROCESS ${item.TRANSACTION_ID} - ${item.CONTRACTID}`)
+            print.log(`STEP 3 | PROCESS ${item.TRANSACTION_ID} - ${item.CONTRACTID}`)
             const query = pre2post.uploadAuthContract(item.CONTRACTID, item.s3_auth_pdf_path);
             queue_auth.push(query);
 
         }
+        const queue_auth2 = [];
+        for (const item of toUploadInvoice) {
+
+            if (item.CONTRACTID === null) {
+                print.log(`STEP 3.5 | ${item.TRANSACTION_ID} no tiene CONTRACTID`)
+                queue_auth2.push(Promise.reject({ code: 'NO_CONTRACT' }))
+                continue;
+            }
+            if (item.s3_apc_path) {
+                print.log(`STEP 3.5 | PROCESS ${item.TRANSACTION_ID} - ${item.CONTRACTID}`)
+                const query = pre2post.uploadAuthApcContract(item.CONTRACTID, item.s3_apc_path);
+                queue_auth2.push(query);
+            } else if (item.apc_signature) {
+                const url_generated = await pre2post.generateAuthContract(item.TRANSACTION_ID, 2)
+                const query = pre2post.uploadAuthApcContract(item.CONTRACTID, url_generated);
+
+                queue_auth2.push(query);
+            } else {
+                print.log(`STEP 3.5 | ${item.TRANSACTION_ID} no tiene s3_apc_path o apc_signature`)
+                queue_auth2.push(Promise.resolve({ code: 'NO_APC_AUTH' }))
+            }
+        }
         print.log("-----------------")
+        await Promise.allSettled(queue_auth2);
         const responses_invoice = await Promise.allSettled(queue_auth);
         const success_invoice: Pre2Post[] = [];
         const error_invoice: Pre2Post[] = [];
@@ -293,13 +316,13 @@ const task = async (ORACLE_STATUS: number = 0) => {
 
         const lines = activations.map((item: any) => {
             const copy = { ...item }
-            
+
             const liberate_value = copy.liberate_value
 
             delete copy.TRANSACTION_ID
             delete copy.liberate_value
 
-            let line = `${json2csv([{ ...copy }])},,,,,,,0,0,0,N,12,R,${liberate_value},0`   
+            let line = `${json2csv([{ ...copy }])},,,,,,,0,0,0,N,12,R,${liberate_value},0`
             //if last character is a comma, remove it
             if (line.slice(-1) === ',') {
                 line = line.slice(0, -1)

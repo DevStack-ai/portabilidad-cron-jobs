@@ -103,6 +103,8 @@ export interface Pre2Post {
     FIRMA_VENDEDOR: string;
     DONOR_OP: string;
     s3_contract_path: string;
+    s3_apc_path?: string;
+    apc_signature?: string;
 }
 
 let conn: mysql.Pool | null = null
@@ -270,7 +272,10 @@ export class Pre2PostController {
                 p2p.TRANSACTION_ID,
                 p2p.msisdn,
                 'Y',
-                p2p.ICCID_N,
+                CASE
+                    WHEN p2p.simcard IS NOT NULL THEN p2p.simcard
+                    ELSE p2p.ICCID_N
+                END as ICCID_N,
                 TRIM(SUBSTRING_INDEX(p2p.name, '{|}', 1)) as name,
                 TRIM(SUBSTRING_INDEX(p2p.name, '{|}', -1)) as lastname,
                 CASE
@@ -1150,6 +1155,65 @@ export class Pre2PostController {
 
         })
 
+    }
+    uploadAuthApcContract(contractId: number, filePath: string) {
+        return new Promise(async (resolve, reject) => {
+            try {
+
+                const headers = {
+                    'Content-Type': 'multipart/form-data',
+                    'Accept': 'application/json',
+                    'X-API-Token': `${process.env.CONTRACT_API_KEY}`
+                }
+
+                if (process.env.CONTRACT_API_URL === undefined) throw new Error('CONTRACT_API_URL is not defined');
+
+                const form = new FormData();
+
+                const exntesion = filePath.split('.').pop();
+                const fileType = exntesion === "pdf" ? "application/pdf" : `image/${exntesion}`;
+
+                const filename = `contract.${exntesion}`
+                const fetchFile = await axios.get(filePath, { responseType: 'arraybuffer' });
+                const file = fetchFile.data
+                const contract = new Blob([file], { type: fileType });
+
+                form.append("file", contract, filename);
+                form.append('name', "Authorization");
+                form.append('type', "authorization");
+
+                const request_time = new Date().toJSON().slice(0, 19)
+                const params = `request_time=${request_time}-06:00`;
+
+                const url = `${process.env.CONTRACT_API_URL}/api/v2/contracts/${contractId}/attachments?${params}`;
+
+                const query = await axios.post(url, form, { headers: headers });
+                resolve(query);
+                fs.unlinkSync(filename);
+
+            } catch (e) {
+                reject(e);
+            }
+        });
+    }
+
+    async generateAuthContract(transaction_id: any, type: number = 1): Promise<string> {
+        try {
+
+            if (process.env.CONTRACT_API_URL === undefined) throw new Error('CONTRACT_API_URL is not defined');
+
+            const query = await axios.post(`${process.env.BASE_API_URL}/porta-request/apc-contract/${transaction_id}`, { type: type });
+
+            if (query.status === 200) {
+                return query.data.url;
+            } else {
+                return "ERROR";
+            }
+
+        } catch (e) {
+            print.log(e);
+            return "ERROR";
+        }
     }
 
 
