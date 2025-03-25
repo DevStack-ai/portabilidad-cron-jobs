@@ -42,7 +42,8 @@ export class DbController {
                 billgroup as BILLGROUP,
                 CONTRACT_ID as 'contract_id',
                 area_code,
-                TRANSACTION_ID 
+                TRANSACTION_ID,
+                liberate_value
             FROM
                 ISOFT_INPUT
             WHERE

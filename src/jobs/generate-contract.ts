@@ -302,13 +302,16 @@ const task = async (ORACLE_STATUS: number = 0) => {
         const lines = data.map((item: any) => {
             const copy = { ...item }
 
+            const liberate_value = copy.liberate_value
+
             delete copy.TRANSACTION_ID
             delete copy.plan_type
+            delete copy.liberate_value
 
             copy.BILLGROUP = billgroup
 
             // let proxy = "&"//plan_type
-            let line = `${json2csv([{ ...copy }])},,,,,,,0,0,0,N,12,R,&,0`          //if last character is a comma, remove it
+            let line = `${json2csv([{ ...copy }])},,,,,,,0,0,0,N,12,R,${liberate_value},0`          //if last character is a comma, remove it
             if (line.slice(-1) === ',') {
                 line = line.slice(0, -1)
             }

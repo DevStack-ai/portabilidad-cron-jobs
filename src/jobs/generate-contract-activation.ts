@@ -291,11 +291,13 @@ const task = async (ORACLE_STATUS: number = 0) => {
         const lines = activations.map((item: any) => {
             const copy = { ...item }
             
+            const liberate_value = copy.liberate_value
+
             delete copy.TRANSACTION_ID
-            delete copy.plan_type
+            delete copy.liberate_value
 
             // let proxy = "&"//plan_type
-            let line = `${json2csv([{ ...copy }])},,,,,,,0,0,0,N,12,R,&,0`
+            let line = `${json2csv([{ ...copy }])},,,,,,,0,0,0,N,12,R,${liberate_value},0`
             //if last character is a comma, remove it
             return {
                 ...item,
@@ -304,18 +306,18 @@ const task = async (ORACLE_STATUS: number = 0) => {
         })
         console.log(lines)
         print.log(`STEP 5 | Converted to CSV and update`);
-        // await db.updateLine(lines)
+        await db.updateLine(lines)
 
-        // print.log(`STEP 5 | send lines to liberate`);
-        // const mapped = lines.map((item: any) => ({
-        //     transaction_id: item.TRANSACTION_ID,
-        //     file_content: item.liberateLine,
-        //     msisdn: item.msisdn,
-        //     package_id: item.PACKAGE_ID
-        // }))
-        // await db.sendToLiberate(mapped)
-        // print.log(`STEP 5 | send lines to liberate`);
-        // await db.updateLineStep(lines)
+        print.log(`STEP 5 | send lines to liberate`);
+        const mapped = lines.map((item: any) => ({
+            transaction_id: item.TRANSACTION_ID,
+            file_content: item.liberateLine,
+            msisdn: item.msisdn,
+            package_id: item.PACKAGE_ID
+        }))
+        await db.sendToLiberate(mapped)
+        print.log(`STEP 5 | send lines to liberate`);
+        await db.updateLineStep(lines)
 
         await pre2post.disconnect();
         await db.disconnect();

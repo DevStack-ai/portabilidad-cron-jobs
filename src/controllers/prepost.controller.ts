@@ -232,7 +232,8 @@ export class Pre2PostController {
                         "" as nip,
                         BILLGROUP,
                         CONTRACTID,
-                        IFNULL(lsa.area_code, "") as area
+                        IFNULL(lsa.area_code, "") as area,
+                        pt.liberate_value
                     FROM
                         AP_ISOFT_INPUT_POSTPAID act
                         join location l1 on l1.id = provincia
@@ -242,6 +243,7 @@ export class Pre2PostController {
                         join user u on u.id = act.user_id 
                         join area a on a.id = u.area_id 
                         left join liberate_source_app lsa on lsa.id = a.liberate_source_app_id
+                        join plan_types pt on pt.id  = pp.plan_type
                     WHERE 
                         act.CONTRACTID is not null
                     AND act.STEP = 5
@@ -291,7 +293,8 @@ export class Pre2PostController {
                 discount_code,
                 BILLGROUP,
                 CONTRACTID,
-                IFNULL(lsa.area_code, "") as area
+                IFNULL(lsa.area_code, "") as area,
+                pt.liberate_value
             FROM
                 PRE2POST_ISOFT_INPUT_INTPORT p2p
                 join location l1 on l1.id = provincia
@@ -301,6 +304,7 @@ export class Pre2PostController {
                 join user u on u.id = p2p.user_id 
                 join area a on a.id = u.area_id 
                 left join liberate_source_app lsa on lsa.id = a.liberate_source_app_id 
+                join plan_types pt on pt.id = pp.plan_type 
             WHERE 
                 p2p.CONTRACTID is not null
             AND p2p.STATUS in (1,2)
