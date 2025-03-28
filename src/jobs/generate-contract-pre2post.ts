@@ -318,9 +318,19 @@ const task = async (ORACLE_STATUS: number = 0) => {
             const copy = { ...item }
 
             const liberate_value = copy.liberate_value
+            const source = copy.source
+            const simcard = copy.simcard
+            const mrc = copy.mrc
+            const mrc_n = copy.mrc_n
+            const mrc_amount = copy.mrc_amount
 
             delete copy.TRANSACTION_ID
             delete copy.liberate_value
+            delete copy.source
+            delete copy.simcard
+            delete copy.mrc
+            delete copy.mrc_n
+            delete copy.mrc_amount
 
             let line = `${json2csv([{ ...copy }])},,,,,,,0,0,0,N,12,R,${liberate_value},0`
             //if last character is a comma, remove it
@@ -330,6 +340,11 @@ const task = async (ORACLE_STATUS: number = 0) => {
 
             return {
                 ...item,
+                source: source,
+                simcard: simcard,
+                mrc: mrc,
+                mrc_n: mrc_n,
+                mrc_amount: mrc_amount,
                 liberateLine: line
             }
         })
@@ -338,11 +353,18 @@ const task = async (ORACLE_STATUS: number = 0) => {
 
         print.log(`STEP 5 | send lines to liberate`);
         const mapped = lines.map((item: any) => ({
+            source: item.source,
+            simcard: item.simcard,
+            mrc: item.mrc,
+            mrc_n: item.mrc_n,
+            mrc_amount: item.mrc_amount,
             transaction_id: item.TRANSACTION_ID,
             file_content: item.liberateLine,
             msisdn: item.msisdn,
             contractid: item.CONTRACTID
         }))
+        console.log(mapped)
+
         await pre2post.sendToLiberateP2P(mapped)
         print.log(`STEP 5 | send lines to liberate`);
         await pre2post.updateLineStepP2P(lines)

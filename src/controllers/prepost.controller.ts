@@ -235,7 +235,12 @@ export class Pre2PostController {
                         BILLGROUP,
                         CONTRACTID,
                         IFNULL(lsa.area_code, "") as area,
-                        pt.liberate_value
+                        pt.liberate_value,
+                        act.source,
+                        act.simcard,
+                        act.mrc,
+                        act.mrc_n,
+                        act.mrc_amount 
                     FROM
                         AP_ISOFT_INPUT_POSTPAID act
                         join location l1 on l1.id = provincia
@@ -299,7 +304,12 @@ export class Pre2PostController {
                 BILLGROUP,
                 CONTRACTID,
                 IFNULL(lsa.area_code, "") as area,
-                pt.liberate_value
+                pt.liberate_value,
+                p2p.source,
+                p2p.simcard,
+                p2p.mrc,
+                p2p.mrc_n,
+                p2p.mrc_amount 
             FROM
                 PRE2POST_ISOFT_INPUT_INTPORT p2p
                 join location l1 on l1.id = provincia
