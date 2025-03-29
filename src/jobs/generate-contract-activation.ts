@@ -192,10 +192,12 @@ const task = async (ORACLE_STATUS: number = 0) => {
                 continue;
             }
             if (item.s3_apc_path) {
-                print.log(`STEP 4 | PROCESS ${item.TRANSACTION_ID} - ${item.CONTRACTID}`)
+                print.log(`STEP 3 | PROCESS s3_apc_path ${item.TRANSACTION_ID} - ${item.CONTRACTID}`)
                 const query = pre2post.uploadAuthContract(item.CONTRACTID, item.s3_apc_path);
                 queue_auth.push(query);
             } else if (item.apc_signature) {
+                print.log(`STEP 3 | PROCESS apc_signature ${item.TRANSACTION_ID} - ${item.CONTRACTID}`)
+
                 const url_generated = await pre2post.generateAuthContract(item.TRANSACTION_ID)
                 const query = pre2post.uploadAuthContract(item.CONTRACTID, url_generated);
 
@@ -218,7 +220,6 @@ const task = async (ORACLE_STATUS: number = 0) => {
                 print.log(`STEP 3 | SUCCESS ${toUploadAuth[index].TRANSACTION_ID} - ${toUploadAuth[index].CONTRACTID}`)
             } else {
                 const error_message = `${response?.reason?.code} ${JSON.stringify(response.reason?.response?.data || response)}`
-                update_msg_invoice.push(pre2post.updateField(toUploadAuth[index].TRANSACTION_ID, 'paperless_message', error_message));
                 error_invoice.push(toUploadAuth[index]);
                 print.error(`STEP 3 | ERROR ${toUploadAuth[index].TRANSACTION_ID} - ${toUploadAuth[index].CONTRACTID} ${error_message}`)
             }
