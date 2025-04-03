@@ -277,9 +277,9 @@ export class Pre2PostController {
                 p2p.TRANSACTION_ID,
                 p2p.msisdn,
                 'Y',
-                CASE
-                    WHEN p2p.simcard IS NOT NULL THEN p2p.simcard
-                    ELSE p2p.ICCID_N
+                 CASE
+                    WHEN p2p.simcard IS NULL OR TRIM(p2p.simcard) = "" THEN p2p.ICCID_N 
+                    ELSE p2p.simcard
                 END as ICCID_N,
                 TRIM(SUBSTRING_INDEX(p2p.name, '{|}', 1)) as name,
                 TRIM(SUBSTRING_INDEX(p2p.name, '{|}', -1)) as lastname,
