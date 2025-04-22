@@ -338,8 +338,9 @@ export class PaperlessController {
         try {
 
             if (process.env.CONTRACT_API_URL === undefined) throw new Error('CONTRACT_API_URL is not defined');
+            const url =`${process.env.BASE_API_URL}/porta-request/apc-contract/${transaction_id}`
 
-            const query = await axios.post(`${process.env.BASE_API_URL}/porta-request/apc-contract/${transaction_id}`, { type: type });
+            const query = await axios.post(url, { type: type });
 
             if (query.status === 200) {
                 return query.data.url;
@@ -349,7 +350,7 @@ export class PaperlessController {
 
         } catch (e) {
             print.log(e);
-            return "ERROR";
+            return "";
         }
     }
 

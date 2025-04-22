@@ -215,11 +215,14 @@ const task = async (ORACLE_STATUS: number = 0) => {
                 continue;
             }
 
-            const url_generated = await paperless.generateAuthContract(item.IDISOFT, 3)
-            const query = paperless.uploadAuthApcContract(item.CONTRACT_ID, url_generated);
-
-            queue_auth2.push(query);
-
+            const url_generated = await paperless.generateAuthContract(item.TRANSACTION_ID, 3)
+            if(url_generated){
+                const query = paperless.uploadAuthApcContract(item.CONTRACT_ID, url_generated);   
+                queue_auth2.push(query);
+            }else{
+                print.log(`STEP 3.5 | ${item.TRANSACTION_ID} no tiene s3_apc_path o apc_signature`)
+                queue_auth2.push(Promise.resolve({ code: 'NO_APC_AUTH' }))
+            }
         }
         print.log("-----------------")
         await Promise.allSettled(queue_auth2)
@@ -320,30 +323,41 @@ const task = async (ORACLE_STATUS: number = 0) => {
             const copy = { ...item }
 
             const liberate_value = copy.liberate_value
+            const source = copy.source
+            const mrc = copy.mrc
+            const mrc_n = copy.mrc_n
+            const mrc_amount = copy.mrc_amount
 
             delete copy.TRANSACTION_ID
             delete copy.plan_type
             delete copy.liberate_value
+            delete copy.source
+            delete copy.mrc
+            delete copy.mrc_n
+            delete copy.mrc_amount
 
             copy.BILLGROUP = billgroup
-
+            copy.area_code = copy.area_code || 'W3'
             // let proxy = "&"//plan_type
             let line = `${json2csv([{ ...copy }])},,,,,,,0,0,0,N,12,R,${liberate_value},0`          //if last character is a comma, remove it
             if (line.slice(-1) === ',') {
                 line = line.slice(0, -1)
             }
-            console.log(copy)
-            console.log(line)
+
             return {
                 ...item,
                 TRANSACTION_ID: Number(item.TRANSACTION_ID),
                 transaction_id: Number(item.TRANSACTION_ID),
                 contractid: Number(item.contract_id),
+                source: source,
+                mrc: mrc,
+                mrc_n: mrc_n,
+                mrc_amount: mrc_amount,
                 file_content: line,
                 liberateLine: line
             }
         })
-        // await db.sendToLiberate(lines);
+        console.log(lines)
         print.log(`STEP 5 | Converted to CSV and update`);
         await db.updateLine(lines);
 
