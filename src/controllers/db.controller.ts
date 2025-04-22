@@ -54,7 +54,7 @@ export class DbController {
                 port_type_id IN (4, 5)
             AND STEP = 5
             AND SERIE_DE_SIMCARD REGEXP '^[0-9]+$'
-            AND enviado_oracle = 20
+            AND enviado_oracle = 0
             AND FECHA_REGISTRO > '2024-07-04'
             `;
 
