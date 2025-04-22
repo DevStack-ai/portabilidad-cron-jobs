@@ -345,7 +345,6 @@ const task = async (ORACLE_STATUS: number = 0) => {
             msisdn: item.msisdn,
             package_id: item.PACKAGE_ID
         }))
-        console.log(mapped)
 
         await db.sendToLiberate(mapped)
         print.log(`STEP 5 | send lines to liberate`);
