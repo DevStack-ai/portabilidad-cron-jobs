@@ -7,7 +7,7 @@ const print = new Printer("generate-contract");
 
 const task = async (ORACLE_STATUS: number = 0) => {
     try {
-        const pre2post = new Pre2PostController();
+        const pre2post = new Pre2PostController(true);
 
         print.log(`Starting generate contract ===================================================================`);
         const rows = await pre2post.getDataWithoutContract(ORACLE_STATUS);
@@ -194,12 +194,35 @@ const task = async (ORACLE_STATUS: number = 0) => {
                 queue_auth.push(Promise.reject({ code: 'NO_AUTH_CONTRACT' }))
                 continue;
             }
-            print.log(`STEP 4 | PROCESS ${item.TRANSACTION_ID} - ${item.CONTRACTID}`)
+            print.log(`STEP 3 | PROCESS ${item.TRANSACTION_ID} - ${item.CONTRACTID}`)
             const query = pre2post.uploadAuthContract(item.CONTRACTID, item.s3_auth_pdf_path);
             queue_auth.push(query);
 
         }
+        const queue_auth2 = [];
+        for (const item of toUploadInvoice) {
+
+            if (item.CONTRACTID === null) {
+                print.log(`STEP 3.5 | ${item.TRANSACTION_ID} no tiene CONTRACTID`)
+                queue_auth2.push(Promise.reject({ code: 'NO_CONTRACT' }))
+                continue;
+            }
+            if (item.s3_apc_path) {
+                print.log(`STEP 3.5 | PROCESS ${item.TRANSACTION_ID} - ${item.CONTRACTID}`)
+                const query = pre2post.uploadAuthApcContract(item.CONTRACTID, item.s3_apc_path);
+                queue_auth2.push(query);
+            } else if (item.apc_signature) {
+                const url_generated = await pre2post.generateAuthContract(item.TRANSACTION_ID, 2)
+                const query = pre2post.uploadAuthApcContract(item.CONTRACTID, url_generated);
+
+                queue_auth2.push(query);
+            } else {
+                print.log(`STEP 3.5 | ${item.TRANSACTION_ID} no tiene s3_apc_path o apc_signature`)
+                queue_auth2.push(Promise.resolve({ code: 'NO_APC_AUTH' }))
+            }
+        }
         print.log("-----------------")
+        await Promise.allSettled(queue_auth2);
         const responses_invoice = await Promise.allSettled(queue_auth);
         const success_invoice: Pre2Post[] = [];
         const error_invoice: Pre2Post[] = [];
@@ -290,12 +313,26 @@ const task = async (ORACLE_STATUS: number = 0) => {
         print.log(`STEP 5 | Fetch from database`);
         const activations = await pre2post.getReportPortasPre2Post();
         print.log(`STEP 5 | Fetched v1: ${activations.length} records`);
-        // const idsActivations = activations.map((item: any) => item.CONTRACTID)
 
         const lines = activations.map((item: any) => {
             const copy = { ...item }
+
+            const liberate_value = copy.liberate_value
+            const source = copy.source
+            const simcard = copy.simcard
+            const mrc = copy.mrc
+            const mrc_n = copy.mrc_n
+            const mrc_amount = copy.mrc_amount
+
             delete copy.TRANSACTION_ID
-            let line = json2csv([{ ...copy }])
+            delete copy.liberate_value
+            delete copy.source
+            delete copy.simcard
+            delete copy.mrc
+            delete copy.mrc_n
+            delete copy.mrc_amount
+
+            let line = `${json2csv([{ ...copy }])},,,,,,,0,0,0,N,12,R,${liberate_value},0`
             //if last character is a comma, remove it
             if (line.slice(-1) === ',') {
                 line = line.slice(0, -1)
@@ -303,6 +340,11 @@ const task = async (ORACLE_STATUS: number = 0) => {
 
             return {
                 ...item,
+                source: source,
+                simcard: simcard,
+                mrc: mrc,
+                mrc_n: mrc_n,
+                mrc_amount: mrc_amount,
                 liberateLine: line
             }
         })
@@ -311,11 +353,18 @@ const task = async (ORACLE_STATUS: number = 0) => {
 
         print.log(`STEP 5 | send lines to liberate`);
         const mapped = lines.map((item: any) => ({
+            source: item.source,
+            simcard: item.simcard,
+            mrc: item.mrc,
+            mrc_n: item.mrc_n,
+            mrc_amount: item.mrc_amount,
             transaction_id: item.TRANSACTION_ID,
             file_content: item.liberateLine,
             msisdn: item.msisdn,
             contractid: item.CONTRACTID
         }))
+        console.log(mapped)
+
         await pre2post.sendToLiberateP2P(mapped)
         print.log(`STEP 5 | send lines to liberate`);
         await pre2post.updateLineStepP2P(lines)

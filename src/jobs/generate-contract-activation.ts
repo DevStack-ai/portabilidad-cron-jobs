@@ -191,10 +191,22 @@ const task = async (ORACLE_STATUS: number = 0) => {
                 queue_auth.push(Promise.reject({ code: 'NO_CONTRACT' }))
                 continue;
             }
-        
-            queue_auth.push(Promise.resolve({ status: 'fulfilled', item: item }));
-        }
+            if (item.s3_apc_path) {
+                print.log(`STEP 3 | PROCESS s3_apc_path ${item.TRANSACTION_ID} - ${item.CONTRACTID}`)
+                const query = pre2post.uploadAuthContract(item.CONTRACTID, item.s3_apc_path);
+                queue_auth.push(query);
+            } else if (item.apc_signature) {
+                print.log(`STEP 3 | PROCESS apc_signature ${item.TRANSACTION_ID} - ${item.CONTRACTID}`)
 
+                const url_generated = await pre2post.generateAuthContract(item.TRANSACTION_ID)
+                const query = pre2post.uploadAuthContract(item.CONTRACTID, url_generated);
+
+                queue_auth.push(query);
+            } else {
+                print.log(`STEP 3 | ${item.TRANSACTION_ID} no tiene s3_apc_path o apc_signature`)
+                queue_auth.push(Promise.resolve({ code: 'NO_APC_AUTH' }))
+            }
+        }
 
         print.log("-----------------")
         const responses_invoice = await Promise.allSettled(queue_auth);
@@ -208,7 +220,6 @@ const task = async (ORACLE_STATUS: number = 0) => {
                 print.log(`STEP 3 | SUCCESS ${toUploadAuth[index].TRANSACTION_ID} - ${toUploadAuth[index].CONTRACTID}`)
             } else {
                 const error_message = `${response?.reason?.code} ${JSON.stringify(response.reason?.response?.data || response)}`
-                update_msg_invoice.push(pre2post.updateField(toUploadAuth[index].TRANSACTION_ID, 'paperless_message', error_message));
                 error_invoice.push(toUploadAuth[index]);
                 print.error(`STEP 3 | ERROR ${toUploadAuth[index].TRANSACTION_ID} - ${toUploadAuth[index].CONTRACTID} ${error_message}`)
             }
@@ -290,29 +301,51 @@ const task = async (ORACLE_STATUS: number = 0) => {
 
         const lines = activations.map((item: any) => {
             const copy = { ...item }
-            
+
+            const liberate_value = copy.liberate_value
+
+            const source = copy.source
+            const simcard = copy.simcard
+            const mrc = copy.mrc
+            const mrc_n = copy.mrc_n
+            const mrc_amount = copy.mrc_amount
+
             delete copy.TRANSACTION_ID
-            delete copy.plan_type
+            delete copy.liberate_value
+            delete copy.source
+            delete copy.simcard
+            delete copy.mrc
+            delete copy.mrc_n
+            delete copy.mrc_amount
 
             // let proxy = "&"//plan_type
-            let line = `${json2csv([{ ...copy }])}`
+            let line = `${json2csv([{ ...copy }])},,,,,,,0,0,0,N,12,R,${liberate_value},0`
             //if last character is a comma, remove it
             return {
                 ...item,
+                source: source,
+                simcard: simcard,
+                mrc: mrc,
+                mrc_n: mrc_n,
+                mrc_amount: mrc_amount,
                 liberateLine: line
             }
         })
-        console.log(lines)
         print.log(`STEP 5 | Converted to CSV and update`);
         await db.updateLine(lines)
-
         print.log(`STEP 5 | send lines to liberate`);
         const mapped = lines.map((item: any) => ({
+            source: item.source,
+            simcard: item.simcard,
+            mrc: item.mrc,
+            mrc_n: item.mrc_n,
+            mrc_amount: item.mrc_amount,
             transaction_id: item.TRANSACTION_ID,
             file_content: item.liberateLine,
             msisdn: item.msisdn,
             package_id: item.PACKAGE_ID
         }))
+
         await db.sendToLiberate(mapped)
         print.log(`STEP 5 | send lines to liberate`);
         await db.updateLineStep(lines)

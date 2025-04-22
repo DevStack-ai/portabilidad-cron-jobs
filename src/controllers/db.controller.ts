@@ -42,14 +42,19 @@ export class DbController {
                 billgroup as BILLGROUP,
                 CONTRACT_ID as 'contract_id',
                 area_code,
-                TRANSACTION_ID 
+                TRANSACTION_ID,
+                liberate_value,
+                source,
+                mrc,
+                mrc_amount,
+                mrc_n
             FROM
                 ISOFT_INPUT
             WHERE
                 port_type_id IN (4, 5)
             AND STEP = 5
             AND SERIE_DE_SIMCARD REGEXP '^[0-9]+$'
-            AND enviado_oracle = 0
+            AND enviado_oracle = 20
             AND FECHA_REGISTRO > '2024-07-04'
             `;
 
