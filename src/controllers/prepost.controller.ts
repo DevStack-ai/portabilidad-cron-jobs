@@ -220,7 +220,7 @@ export class Pre2PostController {
                         END as doc_type,
                         CASE
                             WHEN act.document_type = 1 THEN TRIM(concat(act.c_provincia,'-',act.c_folio,'-',act.c_asiento))
-                            WHEN act.document_type = 2 THEN TRIM)act.passport)
+                            WHEN act.document_type = 2 THEN TRIM(act.passport)
                             ELSE 'C'
                         END as document,
                         REPLACE(act.email, ',', '') as email,
