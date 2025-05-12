@@ -27,6 +27,8 @@ export class DbController {
                 CASE
                     WHEN document_type = 1 THEN 'C'
                     WHEN document_type = 2 THEN 'PP'
+                    WHEN document_type = "C" THEN 'C'
+                    WHEN document_type = "PP" THEN 'PP'
                     ELSE 'C'
                 END as doc_type,
                 TRIM(CEDULA),
