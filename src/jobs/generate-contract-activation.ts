@@ -293,7 +293,7 @@ const task = async (ORACLE_STATUS: number = 0) => {
 
         print.log("-----------------")
 
-        const db = new P2PController();
+        const db = new P2PController(true);
         print.log(`STEP 5 | Fetch from database`);
         const activations = await db.getReportActivations();
         print.log(`STEP 5 | Fetched v1: ${activations.length} records`);
