@@ -62,7 +62,6 @@ const task = async (ORACLE_STATUS: number = 0) => {
                 }
             } else {
                 const error_message = `${response?.reason?.code} ${JSON.stringify(response.reason?.response?.data || response)}`
-                update_msg_base.push(pre2post.updateField(rows[index].TRANSACTION_ID, 'paperless_message', error_message));
                 error_base.push(rows[index]);
                 print.error(`STEP 0 | ERROR ${rows[index].TRANSACTION_ID} ${error_message}`)
             }
@@ -105,7 +104,6 @@ const task = async (ORACLE_STATUS: number = 0) => {
                 print.log(`STEP 1 | SUCCESS ${withoutSPN[index].TRANSACTION_ID} - ${withoutSPN[index].CONTRACTID}`)
             } else {
                 const error_message = `${response?.reason?.code} ${JSON.stringify(response.reason?.response?.data || response)}`
-                update_msg_spn.push(pre2post.updateField(withoutSPN[index].TRANSACTION_ID, 'paperless_message', error_message));
                 error_spn.push(withoutSPN[index]);
                 print.error(`STEP 1 | ERROR ${withoutSPN[index].TRANSACTION_ID} - ${withoutSPN[index].CONTRACTID} ${error_message}`)
 
@@ -159,7 +157,6 @@ const task = async (ORACLE_STATUS: number = 0) => {
 
             } else {
                 const error_message = `${response?.reason?.code} ${JSON.stringify(response.reason?.response?.data || response)}`
-                update_msg_id.push(pre2post.updateField(withId[index].TRANSACTION_ID, 'paperless_message', error_message));
                 error_id.push(withId[index]);
                 print.error(`STEP 2 | ERROR ${withId[index].TRANSACTION_ID} - ${withId[index].CONTRACTID} ${error_message}`)
 
