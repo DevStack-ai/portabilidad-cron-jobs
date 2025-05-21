@@ -216,11 +216,15 @@ export class Pre2PostController {
                         CASE
                             WHEN act.document_type = 1 THEN 'C'
                             WHEN act.document_type = 2 THEN 'PP'
+                            WHEN act.document_type = "C" THEN 'C'
+                            WHEN act.document_type = "PP" THEN 'PP'
                             ELSE 'C'
                         END as doc_type,
                         CASE
-                            WHEN act.document_type = 1 THEN concat(act.c_provincia,'-',act.c_folio,'-',act.c_asiento)
-                            WHEN act.document_type = 2 THEN act.passport
+                            WHEN act.document_type = 1 THEN TRIM(CONCAT(COALESCE(act.c_letra, act.c_provincia),'-',act.c_folio,'-',act.c_asiento))
+                            WHEN act.document_type = 2 THEN TRIM(act.passport)
+                            WHEN act.document_type = "C" THEN TRIM(CONCAT(COALESCE(act.c_letra, act.c_provincia),'-',act.c_folio,'-',act.c_asiento))
+                            WHEN act.document_type = "PP" THEN TRIM(act.passport)
                             ELSE 'C'
                         END as document,
                         REPLACE(act.email, ',', '') as email,
@@ -230,7 +234,7 @@ export class Pre2PostController {
                         SUBSTRING(REPLACE(act.address, ',', ''), 1, 40) as address,
                         SUBSTRING(REPLACE(act.address, ',', ''), 41, LENGTH(act.address)) as address2,
                         act.PACKAGE_ID,
-                        discount_code,
+                        TRIM(discount_code),
                         "" as nip,
                         BILLGROUP,
                         CONTRACTID,
@@ -286,11 +290,15 @@ export class Pre2PostController {
                 CASE
                     WHEN p2p.document_type = 1 THEN 'C'
                     WHEN p2p.document_type = 2 THEN 'PP'
+                    WHEN act.document_type = "C" THEN 'C'
+                    WHEN act.document_type = "PP" THEN 'PP'
                     ELSE 'C'
                 END as doc_type,
                 CASE
-                    WHEN p2p.document_type = 1 THEN concat(p2p.c_provincia,'-',p2p.c_folio,'-',p2p.c_asiento)
-                    WHEN p2p.document_type = 2 THEN p2p.passport
+                    WHEN p2p.document_type = 1 THEN TRIM(CONCAT(COALESCE(p2p.c_letra, p2p.c_provincia),'-',p2p.c_folio,'-',p2p.c_asiento))
+                    WHEN p2p.document_type = 2 THEN TRIM(p2p.passport)
+                    WHEN p2p.document_type = "C" THEN TRIM(CONCAT(COALESCE(p2p.c_letra, p2p.c_provincia),'-',p2p.c_folio,'-',p2p.c_asiento))
+                    WHEN p2p.document_type = "PP" THEN TRIM(p2p.passport)
                     ELSE 'C'
                 END as document,
                 REPLACE(p2p.email, ',', '') as email,
@@ -300,7 +308,7 @@ export class Pre2PostController {
                 SUBSTRING(REPLACE(p2p.address ,',', ''), 1, 40) as address,
                 SUBSTRING(REPLACE(p2p.address ,',', ''), 41, LENGTH(p2p.address)) as address2,
                 pp.code as plan,
-                discount_code,
+                TRIM(discount_code),
                 BILLGROUP,
                 CONTRACTID,
                 IFNULL(lsa.area_code, "") as area,

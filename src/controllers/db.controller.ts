@@ -27,17 +27,19 @@ export class DbController {
                 CASE
                     WHEN document_type = 1 THEN 'C'
                     WHEN document_type = 2 THEN 'PP'
+                    WHEN document_type = "C" THEN 'C'
+                    WHEN document_type = "PP" THEN 'PP'
                     ELSE 'C'
                 END as doc_type,
-                CEDULA,
-                EMAIL_DEL_CLIENTE,
+                TRIM(CEDULA),
+                TRIM(EMAIL_DEL_CLIENTE),
                 provincia,
                 distrito,
                 barriada,
                 SUBSTRING(REPLACE(DIRECCION_CLIENTE,',', ''), 1, 40) as address,
                 SUBSTRING(REPLACE(DIRECCION_CLIENTE,',', ''), 41, LENGTH(DIRECCION_CLIENTE)) as address2,
                 NOMBRE_DEL_PLAN AS 'nombre_del_plan',
-                discount_code as DISCOUNT_CODE,
+                TRIM(discount_code) as DISCOUNT_CODE,
                 nip as NIP,
                 billgroup as BILLGROUP,
                 CONTRACT_ID as 'contract_id',
@@ -452,6 +454,7 @@ export class DbController {
                     console.log('Billgroup from API', response)
                     if (response.valid) {
                         const [result]: string[] = Object.values(response.result[0])
+                        console.log('Read from billgroup', result)
                         //create file
                         fs.writeFileSync(dir, result);
                         resolve(result)
