@@ -290,8 +290,8 @@ export class Pre2PostController {
                 CASE
                     WHEN p2p.document_type = 1 THEN 'C'
                     WHEN p2p.document_type = 2 THEN 'PP'
-                    WHEN act.document_type = "C" THEN 'C'
-                    WHEN act.document_type = "PP" THEN 'PP'
+                    WHEN p2p.document_type = "C" THEN 'C'
+                    WHEN p2p.document_type = "PP" THEN 'PP'
                     ELSE 'C'
                 END as doc_type,
                 CASE
