@@ -6,7 +6,7 @@ const print = new Printer("generate-contract");
 
 const task = async () => {
     try {
-        const db = new DbController(true);
+        const db = new DbController();
 
         print.log(`Starting generate contract ===================================================================`);
         const rows = await db.getDataWithoutContract();
