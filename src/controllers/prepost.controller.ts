@@ -221,9 +221,9 @@ export class Pre2PostController {
                             ELSE 'C'
                         END as doc_type,
                         CASE
-                            WHEN act.document_type = 1 THEN TRIM(CONCAT(COALESCE(act.c_letra, act.c_provincia),'-',act.c_folio,'-',act.c_asiento))
+                            WHEN act.document_type = 1 THEN TRIM(CONCAT(Concat(ifnull(act.c_letra,''), act.c_provincia),'-',act.c_folio,'-',act.c_asiento))
                             WHEN act.document_type = 2 THEN TRIM(act.passport)
-                            WHEN act.document_type = "C" THEN TRIM(CONCAT(COALESCE(act.c_letra, act.c_provincia),'-',act.c_folio,'-',act.c_asiento))
+                            WHEN act.document_type = "C" THEN TRIM(CONCAT(concat(ifnull(act.c_letra,''), act.c_provincia),'-',act.c_folio,'-',act.c_asiento))
                             WHEN act.document_type = "PP" THEN TRIM(act.passport)
                             ELSE 'C'
                         END as document,
@@ -295,9 +295,9 @@ export class Pre2PostController {
                     ELSE 'C'
                 END as doc_type,
                 CASE
-                    WHEN p2p.document_type = 1 THEN TRIM(CONCAT(COALESCE(p2p.c_letra, p2p.c_provincia),'-',p2p.c_folio,'-',p2p.c_asiento))
+                    WHEN p2p.document_type = 1 THEN TRIM(CONCAT(Concat(ifnull(p2p.c_letra,''), p2p.c_provincia),'-',p2p.c_folio,'-',p2p.c_asiento))
                     WHEN p2p.document_type = 2 THEN TRIM(p2p.passport)
-                    WHEN p2p.document_type = "C" THEN TRIM(CONCAT(COALESCE(p2p.c_letra, p2p.c_provincia),'-',p2p.c_folio,'-',p2p.c_asiento))
+                    WHEN p2p.document_type = "C" THEN TRIM(CONCAT(concat(ifnull(p2p.c_letra,''), p2p.c_provincia),'-',p2p.c_folio,'-',p2p.c_asiento))
                     WHEN p2p.document_type = "PP" THEN TRIM(p2p.passport)
                     ELSE 'C'
                 END as document,
