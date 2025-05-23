@@ -181,7 +181,8 @@ export class PaperlessController {
         return new Promise(async (resolve, reject) => {
             try {
                 if (typeof porta.s3_invoice_path !== "string") {
-                    throw new Error('s3_invoice_path is not defined')
+                   resolve({ code: "error uploadLastContract", message: "s3_invoice_path is not a string" });
+                    return;
                 }
                 const headers = {
                     'Content-Type': 'multipart/form-data',
@@ -329,7 +330,7 @@ export class PaperlessController {
                 fs.unlinkSync(filename);
 
             } catch (e) {
-                reject(e);
+                reject({ code: "error uploadAuthApcContract", message: e });
             }
         });
     }
@@ -338,7 +339,7 @@ export class PaperlessController {
         try {
 
             if (process.env.CONTRACT_API_URL === undefined) throw new Error('CONTRACT_API_URL is not defined');
-            const url =`${process.env.BASE_API_URL}/porta-request/apc-contract/${transaction_id}`
+            const url = `${process.env.BASE_API_URL}/porta-request/apc-contract/${transaction_id}`
 
             const query = await axios.post(url, { type: type });
 

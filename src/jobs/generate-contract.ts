@@ -12,68 +12,68 @@ const task = async (ORACLE_STATUS: number = 0) => {
         const db = new DbController();
         const paperless = new PaperlessController();
 
-        print.log(`Starting generate contract ===================================================================`);
-        const rows = await db.getDataWithoutContract(ORACLE_STATUS);
-        print.log(`STEP 0 | DATA WITHOUT CONTRACT: ${rows.length}`)
-        print.log("STEP 0 | GENERATE CONTRACT")
-        const queue_base = [];
-        print.log("-----------------")
+        // print.log(`Starting generate contract ===================================================================`);
+        // const rows = await db.getDataWithoutContract(ORACLE_STATUS);
+        // print.log(`STEP 0 | DATA WITHOUT CONTRACT: ${rows.length}`)
+        // print.log("STEP 0 | GENERATE CONTRACT")
+        // const queue_base = [];
+        // print.log("-----------------")
 
-        for (const row of rows) {
-            const contract = {
-                request_number: row.IDISOFT,
-                date: row.FECHA_REGISTRO,
-                client_name: row.NOMBRE_DE_CLIENTE,
-                id: row.CEDULA,
-                address: row.DIRECCION_CLIENTE,
-                ctn: row.MSISDN,
-                email: row.EMAIL_DEL_CLIENTE,
-                type: "POST"//row.PRE_POST
-            }
+        // for (const row of rows) {
+        //     const contract = {
+        //         request_number: row.IDISOFT,
+        //         date: row.FECHA_REGISTRO,
+        //         client_name: row.NOMBRE_DE_CLIENTE,
+        //         id: row.CEDULA,
+        //         address: row.DIRECCION_CLIENTE,
+        //         ctn: row.MSISDN,
+        //         email: row.EMAIL_DEL_CLIENTE,
+        //         type: "POST"//row.PRE_POST
+        //     }
 
-            print.log(`STEP 0 | PROCESS ${row.IDISOFT}`)
-            const query = paperless.generateContract(contract);
-            queue_base.push(query);
-        }
-        print.log("-----------------")
+        //     print.log(`STEP 0 | PROCESS ${row.IDISOFT}`)
+        //     const query = paperless.generateContract(contract);
+        //     queue_base.push(query);
+        // }
+        // print.log("-----------------")
 
 
-        const responses_base = await Promise.allSettled(queue_base);
-        const success_base: any = [];
-        const error_base: ISOFT_INPUT[] = [];
-        const update_msg_base: any = [];
+        // const responses_base = await Promise.allSettled(queue_base);
+        // const success_base: any = [];
+        // const error_base: ISOFT_INPUT[] = [];
+        // const update_msg_base: any = [];
 
-        const update_contract: Promise<void>[] = [];
-        responses_base.forEach((response, index) => {
-            if (response.status === 'fulfilled') {
-                if (typeof response.value === 'number') {
-                    success_base.push({ ...rows[index], CONTRACT_ID: response.value });
-                    const update = db.updateField(rows[index].IDISOFT, 'CONTRACT_ID', String(response.value));
-                    update_contract.push(update);
-                    const updateContract = db.updateField(rows[index].IDISOFT, 'CONTRATO_GENERADO', 1);
-                    update_contract.push(updateContract);
-                    print.log(`STEP 0 | SUCCESS ${rows[index].IDISOFT} - ${response.value} `)
-                }
-            } else {
-                const error_message = `${response?.reason?.code} ${JSON.stringify(response.reason?.response?.data || response)}`
-                update_msg_base.push(db.updateField(rows[index].IDISOFT, 'paperless_message', error_message));
-                error_base.push(rows[index]);
-                print.error(`STEP 0 | ERROR ${rows[index].IDISOFT} ${error_message}`)
-            }
-        });
+        // const update_contract: Promise<void>[] = [];
+        // responses_base.forEach((response, index) => {
+        //     if (response.status === 'fulfilled') {
+        //         if (typeof response.value === 'number') {
+        //             success_base.push({ ...rows[index], CONTRACT_ID: response.value });
+        //             const update = db.updateField(rows[index].IDISOFT, 'CONTRACT_ID', String(response.value));
+        //             update_contract.push(update);
+        //             const updateContract = db.updateField(rows[index].IDISOFT, 'CONTRATO_GENERADO', 1);
+        //             update_contract.push(updateContract);
+        //             print.log(`STEP 0 | SUCCESS ${rows[index].IDISOFT} - ${response.value} `)
+        //         }
+        //     } else {
+        //         const error_message = `${response?.reason?.code} ${JSON.stringify(response.reason?.response?.data || response)}`
+        //         update_msg_base.push(db.updateField(rows[index].IDISOFT, 'paperless_message', error_message));
+        //         error_base.push(rows[index]);
+        //         print.error(`STEP 0 | ERROR ${rows[index].IDISOFT} ${error_message}`)
+        //     }
+        // });
 
-        print.log("-----------------")
-        print.log(`STEP 0 | TOTAL SUCCESS: ${success_base.length}`);
-        print.log(`STEP 0 | TOTAL ERROR: ${responses_base.length - success_base.length}`);
+        // print.log("-----------------")
+        // print.log(`STEP 0 | TOTAL SUCCESS: ${success_base.length}`);
+        // print.log(`STEP 0 | TOTAL ERROR: ${responses_base.length - success_base.length}`);
 
-        await Promise.all([
-            ...update_contract,
-            ...update_msg_base,
-            db.successStep(success_base.map((item: any) => item.IDISOFT), 1),
-            db.failedProcess(error_base.map((item: any) => item.IDISOFT))
-        ])
-        print.log(`STEP 0 | UPDATE ${success_base.length} ROWS TO STEP 1`)
-        print.log("-----------------")
+        // await Promise.all([
+        //     ...update_contract,
+        //     ...update_msg_base,
+        //     db.successStep(success_base.map((item: any) => item.IDISOFT), 1),
+        //     db.failedProcess(error_base.map((item: any) => item.IDISOFT))
+        // ])
+        // print.log(`STEP 0 | UPDATE ${success_base.length} ROWS TO STEP 1`)
+        // print.log("-----------------")
 
         print.log("STEP 1 | STEP UPLOAD FILES CONTRACT  ============================")
 
@@ -112,10 +112,17 @@ const task = async (ORACLE_STATUS: number = 0) => {
                 success_spn.push(withoutSPN[index]);
                 print.log(`STEP 1 | SUCCESS ${withoutSPN[index].IDISOFT} - ${withoutSPN[index].CONTRACT_ID}`)
             } else {
-                const error_message = `${response?.reason?.code} ${JSON.stringify(response.reason?.response?.data || response)}`
-                update_msg_spn.push(db.updateField(withoutSPN[index].IDISOFT, 'paperless_message', error_message));
-                error_spn.push(withoutSPN[index]);
-                print.error(`STEP 1 | ERROR ${withoutSPN[index].IDISOFT} - ${withoutSPN[index].CONTRACT_ID} ${error_message}`)
+                const is_error_recognized = response.reason?.response?.data?.message?.includes('Duplicate attachments for contracts are not allowed');
+
+                if (is_error_recognized) {
+                    print.log(`STEP 1 | ${withoutSPN[index].IDISOFT} - ${withoutSPN[index].CONTRACT_ID} ya tiene el SPN`)
+                    success_spn.push(withoutSPN[index]);
+                } else {
+                    const error_message = `${response?.reason?.code} ${JSON.stringify(response.reason?.response?.data || response)}`
+                    update_msg_spn.push(db.updateField(withoutSPN[index].IDISOFT, 'paperless_message', error_message));
+                    error_spn.push(withoutSPN[index]);
+                    print.error(`STEP 1 | ERROR ${withoutSPN[index].IDISOFT} - ${withoutSPN[index].CONTRACT_ID} ${error_message}`)
+                }
 
             }
         });
@@ -165,11 +172,17 @@ const task = async (ORACLE_STATUS: number = 0) => {
                 print.log(`STEP 2 | SUCCESS ${withId[index].IDISOFT} - ${withId[index].CONTRACT_ID}`)
 
             } else {
-                const error_message = `${response?.reason?.code} ${JSON.stringify(response.reason?.response?.data || response)}`
-                update_msg_id.push(db.updateField(withId[index].IDISOFT, 'paperless_message', error_message));
-                error_id.push(withId[index]);
-                print.error(`STEP 2 | ERROR ${withId[index].IDISOFT} - ${withId[index].CONTRACT_ID} ${error_message}`)
+                const is_error_recognized = response.reason?.response?.data?.message?.includes('Duplicate attachments for contracts are not allowed');
 
+                if (is_error_recognized) {
+                    print.log(`STEP 2 | ${withId[index].IDISOFT} - ${withId[index].CONTRACT_ID} ya tiene el ID`)
+                    success_id.push(withId[index]);
+                } else {
+                    const error_message = `${response?.reason?.code} ${JSON.stringify(response.reason?.response?.data || response)}`
+                    update_msg_id.push(db.updateField(withId[index].IDISOFT, 'paperless_message', error_message));
+                    error_id.push(withId[index]);
+                    print.error(`STEP 2 | ERROR ${withId[index].IDISOFT} - ${withId[index].CONTRACT_ID} ${error_message}`)
+                }
             }
         });
         print.log("-----------------")
@@ -216,10 +229,10 @@ const task = async (ORACLE_STATUS: number = 0) => {
             }
 
             const url_generated = await paperless.generateAuthContract(item.TRANSACTION_ID, 3)
-            if(url_generated){
-                const query = paperless.uploadAuthApcContract(item.CONTRACT_ID, url_generated);   
+            if (url_generated) {
+                const query = paperless.uploadAuthApcContract(item.CONTRACT_ID, url_generated);
                 queue_auth2.push(query);
-            }else{
+            } else {
                 print.log(`STEP 3.5 | ${item.TRANSACTION_ID} no tiene s3_apc_path o apc_signature`)
                 queue_auth2.push(Promise.resolve({ code: 'NO_APC_AUTH' }))
             }
@@ -237,10 +250,17 @@ const task = async (ORACLE_STATUS: number = 0) => {
                 print.log(`STEP 3 | SUCCESS ${toUploadInvoice[index].IDISOFT} - ${toUploadInvoice[index].CONTRACT_ID}`)
 
             } else {
-                const error_message = `${response?.reason?.code} ${JSON.stringify(response.reason?.response?.data || response)}`
-                update_msg_invoice.push(db.updateField(toUploadInvoice[index].IDISOFT, 'paperless_message', error_message));
-                error_invoice.push(toUploadInvoice[index]);
-                print.error(`STEP 3 | ERROR ${toUploadInvoice[index].IDISOFT} - ${toUploadInvoice[index].CONTRACT_ID} ${error_message}`)
+
+                const is_error_recognized = response.reason?.response?.data?.message?.includes('Duplicate attachments for contracts are not allowed');
+                if (is_error_recognized) {
+                    print.log(`STEP 3 | ${toUploadInvoice[index].IDISOFT} - ${toUploadInvoice[index].CONTRACT_ID} ya tiene la factura`)
+                    success_invoice.push(toUploadInvoice[index]);
+                } else {
+                    const error_message = `${response?.reason?.code} ${JSON.stringify(response.reason?.response?.data || response)}`
+                    update_msg_invoice.push(db.updateField(toUploadInvoice[index].IDISOFT, 'paperless_message', error_message));
+                    error_invoice.push(toUploadInvoice[index]);
+                    print.error(`STEP 3 | ERROR ${toUploadInvoice[index].IDISOFT} - ${toUploadInvoice[index].CONTRACT_ID} ${error_message}`)
+                }
 
             }
         });
@@ -295,8 +315,14 @@ const task = async (ORACLE_STATUS: number = 0) => {
                 print.log(`STEP 4 | SUCCESS ${toUploadContract[index].IDISOFT} - ${toUploadContract[index].CONTRACT_ID}`)
 
             } else {
-                error_contract.push(toUploadContract[index]);
-                print.error(`STEP 4 | ERROR ${toUploadContract[index].IDISOFT} - ${toUploadContract[index].CONTRACT_ID} ${response.reason?.code} ${JSON.stringify(response.reason?.response?.data || response)}`)
+                const is_error_recognized = response.reason?.response?.data?.message?.includes('Duplicate attachments for contracts are not allowed');
+                if (is_error_recognized) {
+                    print.log(`STEP 4 | ${toUploadContract[index].IDISOFT} - ${toUploadContract[index].CONTRACT_ID} ya tiene el contrato`)
+                    success_contract.push(toUploadContract[index]);
+                } else {
+                    error_contract.push(toUploadContract[index]);
+                    print.error(`STEP 4 | ERROR ${toUploadContract[index].IDISOFT} - ${toUploadContract[index].CONTRACT_ID} ${response.reason?.code} ${JSON.stringify(response.reason?.response?.data || response)}`)
+                }
             }
         });
 

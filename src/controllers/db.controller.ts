@@ -310,7 +310,8 @@ export class DbController {
                 ENVIADO_ORACLE_FECHA: null,
                 CONTRACT_ATTEMPTS: {
                     lt: 3
-                }
+                },
+
             },
             // orderBy: {
             //     IDISOFT: "desc"
@@ -333,13 +334,13 @@ export class DbController {
                 ERROR: 0,
                 ENVIADO_ORACLE_FECHA: null,
                 ENVIADO_ORACLE: estado_oracle,
-                // PRE_POST: 'POST',
+                PRE_POST: 'POST',
                 CONTRACT_ATTEMPTS: {
                     lt: 3
                 },
                 ORIGEN: {
                     in: [1, 4]
-                }
+                },
             },
             // orderBy: {
             //     IDISOFT: "desc"
