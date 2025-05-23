@@ -12,68 +12,68 @@ const task = async (ORACLE_STATUS: number = 0) => {
         const db = new DbController();
         const paperless = new PaperlessController();
 
-        // print.log(`Starting generate contract ===================================================================`);
-        // const rows = await db.getDataWithoutContract(ORACLE_STATUS);
-        // print.log(`STEP 0 | DATA WITHOUT CONTRACT: ${rows.length}`)
-        // print.log("STEP 0 | GENERATE CONTRACT")
-        // const queue_base = [];
-        // print.log("-----------------")
+        print.log(`Starting generate contract ===================================================================`);
+        const rows = await db.getDataWithoutContract(ORACLE_STATUS);
+        print.log(`STEP 0 | DATA WITHOUT CONTRACT: ${rows.length}`)
+        print.log("STEP 0 | GENERATE CONTRACT")
+        const queue_base = [];
+        print.log("-----------------")
 
-        // for (const row of rows) {
-        //     const contract = {
-        //         request_number: row.IDISOFT,
-        //         date: row.FECHA_REGISTRO,
-        //         client_name: row.NOMBRE_DE_CLIENTE,
-        //         id: row.CEDULA,
-        //         address: row.DIRECCION_CLIENTE,
-        //         ctn: row.MSISDN,
-        //         email: row.EMAIL_DEL_CLIENTE,
-        //         type: "POST"//row.PRE_POST
-        //     }
+        for (const row of rows) {
+            const contract = {
+                request_number: row.IDISOFT,
+                date: row.FECHA_REGISTRO,
+                client_name: row.NOMBRE_DE_CLIENTE,
+                id: row.CEDULA,
+                address: row.DIRECCION_CLIENTE,
+                ctn: row.MSISDN,
+                email: row.EMAIL_DEL_CLIENTE,
+                type: "POST"//row.PRE_POST
+            }
 
-        //     print.log(`STEP 0 | PROCESS ${row.IDISOFT}`)
-        //     const query = paperless.generateContract(contract);
-        //     queue_base.push(query);
-        // }
-        // print.log("-----------------")
+            print.log(`STEP 0 | PROCESS ${row.IDISOFT}`)
+            const query = paperless.generateContract(contract);
+            queue_base.push(query);
+        }
+        print.log("-----------------")
 
 
-        // const responses_base = await Promise.allSettled(queue_base);
-        // const success_base: any = [];
-        // const error_base: ISOFT_INPUT[] = [];
-        // const update_msg_base: any = [];
+        const responses_base = await Promise.allSettled(queue_base);
+        const success_base: any = [];
+        const error_base: ISOFT_INPUT[] = [];
+        const update_msg_base: any = [];
 
-        // const update_contract: Promise<void>[] = [];
-        // responses_base.forEach((response, index) => {
-        //     if (response.status === 'fulfilled') {
-        //         if (typeof response.value === 'number') {
-        //             success_base.push({ ...rows[index], CONTRACT_ID: response.value });
-        //             const update = db.updateField(rows[index].IDISOFT, 'CONTRACT_ID', String(response.value));
-        //             update_contract.push(update);
-        //             const updateContract = db.updateField(rows[index].IDISOFT, 'CONTRATO_GENERADO', 1);
-        //             update_contract.push(updateContract);
-        //             print.log(`STEP 0 | SUCCESS ${rows[index].IDISOFT} - ${response.value} `)
-        //         }
-        //     } else {
-        //         const error_message = `${response?.reason?.code} ${JSON.stringify(response.reason?.response?.data || response)}`
-        //         update_msg_base.push(db.updateField(rows[index].IDISOFT, 'paperless_message', error_message));
-        //         error_base.push(rows[index]);
-        //         print.error(`STEP 0 | ERROR ${rows[index].IDISOFT} ${error_message}`)
-        //     }
-        // });
+        const update_contract: Promise<void>[] = [];
+        responses_base.forEach((response, index) => {
+            if (response.status === 'fulfilled') {
+                if (typeof response.value === 'number') {
+                    success_base.push({ ...rows[index], CONTRACT_ID: response.value });
+                    const update = db.updateField(rows[index].IDISOFT, 'CONTRACT_ID', String(response.value));
+                    update_contract.push(update);
+                    const updateContract = db.updateField(rows[index].IDISOFT, 'CONTRATO_GENERADO', 1);
+                    update_contract.push(updateContract);
+                    print.log(`STEP 0 | SUCCESS ${rows[index].IDISOFT} - ${response.value} `)
+                }
+            } else {
+                const error_message = `${response?.reason?.code} ${JSON.stringify(response.reason?.response?.data || response)}`
+                update_msg_base.push(db.updateField(rows[index].IDISOFT, 'paperless_message', error_message));
+                error_base.push(rows[index]);
+                print.error(`STEP 0 | ERROR ${rows[index].IDISOFT} ${error_message}`)
+            }
+        });
 
-        // print.log("-----------------")
-        // print.log(`STEP 0 | TOTAL SUCCESS: ${success_base.length}`);
-        // print.log(`STEP 0 | TOTAL ERROR: ${responses_base.length - success_base.length}`);
+        print.log("-----------------")
+        print.log(`STEP 0 | TOTAL SUCCESS: ${success_base.length}`);
+        print.log(`STEP 0 | TOTAL ERROR: ${responses_base.length - success_base.length}`);
 
-        // await Promise.all([
-        //     ...update_contract,
-        //     ...update_msg_base,
-        //     db.successStep(success_base.map((item: any) => item.IDISOFT), 1),
-        //     db.failedProcess(error_base.map((item: any) => item.IDISOFT))
-        // ])
-        // print.log(`STEP 0 | UPDATE ${success_base.length} ROWS TO STEP 1`)
-        // print.log("-----------------")
+        await Promise.all([
+            ...update_contract,
+            ...update_msg_base,
+            db.successStep(success_base.map((item: any) => item.IDISOFT), 1),
+            db.failedProcess(error_base.map((item: any) => item.IDISOFT))
+        ])
+        print.log(`STEP 0 | UPDATE ${success_base.length} ROWS TO STEP 1`)
+        print.log("-----------------")
 
         print.log("STEP 1 | STEP UPLOAD FILES CONTRACT  ============================")
 
