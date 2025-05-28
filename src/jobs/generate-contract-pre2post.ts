@@ -323,7 +323,7 @@ const task = async (ORACLE_STATUS: number = 0) => {
             const mrc = copy.mrc
             const mrc_n = copy.mrc_n
             const mrc_amount = copy.mrc_amount
-            const fcm_account = copy.fcm_account
+            const fmc_account = copy.fmc_account
 
             delete copy.TRANSACTION_ID
             delete copy.liberate_value
@@ -332,9 +332,9 @@ const task = async (ORACLE_STATUS: number = 0) => {
             delete copy.mrc
             delete copy.mrc_n
             delete copy.mrc_amount
-            delete copy.fcm_account
+            delete copy.fmc_account
 
-            let line = `${json2csv([{ ...copy }])},,,,,,,0,0,0,N,12,R,${liberate_value},0,${fcm_account}`
+            let line = `${json2csv([{ ...copy }])},,,,,,,0,0,0,N,12,R,${liberate_value},0,${fmc_account}`
             //if last character is a comma, remove it
             if (line.slice(-1) === ',') {
                 line = line.slice(0, -1)
