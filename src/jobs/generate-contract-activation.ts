@@ -9,7 +9,7 @@ const print = new Printer("generate-contract");
 
 const task = async (ORACLE_STATUS: number = 0) => {
     try {
-        const pre2post = new Pre2PostController();
+        const pre2post = new Pre2PostController(true);
 
         print.log(`Starting generate contract ===================================================================`);
         const rows = await pre2post.getDataWithoutContract(ORACLE_STATUS);
@@ -290,7 +290,7 @@ const task = async (ORACLE_STATUS: number = 0) => {
 
         print.log("-----------------")
 
-        const db = new P2PController();
+        const db = new P2PController(true);
         print.log(`STEP 5 | Fetch from database`);
         const activations = await db.getReportActivations();
         print.log(`STEP 5 | Fetched v1: ${activations.length} records`);
@@ -306,6 +306,7 @@ const task = async (ORACLE_STATUS: number = 0) => {
             const mrc = copy.mrc
             const mrc_n = copy.mrc_n
             const mrc_amount = copy.mrc_amount
+            const fcm_account = copy.fcm_account
 
             delete copy.TRANSACTION_ID
             delete copy.liberate_value
@@ -314,9 +315,10 @@ const task = async (ORACLE_STATUS: number = 0) => {
             delete copy.mrc
             delete copy.mrc_n
             delete copy.mrc_amount
+            delete copy.fcm_account
 
             // let proxy = "&"//plan_type
-            let line = `${json2csv([{ ...copy }])},,,,,,,0,0,0,N,12,R,${liberate_value},0`
+            let line = `${json2csv([{ ...copy }])},,,,,,,0,0,0,N,12,R,${liberate_value},0,${fcm_account}`
             //if last character is a comma, remove it
             return {
                 ...item,

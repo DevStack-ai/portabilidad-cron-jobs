@@ -244,7 +244,8 @@ export class Pre2PostController {
                         act.simcard,
                         act.mrc,
                         act.mrc_n,
-                        act.mrc_amount 
+                        act.mrc_amount,
+                        act.fcm_account
                     FROM
                         AP_ISOFT_INPUT_POSTPAID act
                         join location l1 on l1.id = provincia
@@ -317,7 +318,8 @@ export class Pre2PostController {
                 p2p.simcard,
                 p2p.mrc,
                 p2p.mrc_n,
-                p2p.mrc_amount 
+                p2p.mrc_amount,
+                p2p.fcm_account
             FROM
                 PRE2POST_ISOFT_INPUT_INTPORT p2p
                 join location l1 on l1.id = provincia
