@@ -307,6 +307,11 @@ const task = async (ORACLE_STATUS: number = 0) => {
             const mrc_n = copy.mrc_n
             const mrc_amount = copy.mrc_amount
             const fmc_account = copy.fmc_account
+            const fmc_type = copy.fmc_type
+            const calculated_amount = copy.calculated_amount
+            const fmc_order = copy.fmc_order
+            const apc_ws_amount = copy.apc_ws_amount
+
 
             delete copy.TRANSACTION_ID
             delete copy.liberate_value
@@ -322,6 +327,11 @@ const task = async (ORACLE_STATUS: number = 0) => {
             //if last character is a comma, remove it
             return {
                 ...item,
+                fmc_account,
+                fmc_type,
+                calculated_amount,
+                apc_ws_amount,
+                fmc_order: fmc_order,
                 source: source,
                 simcard: simcard,
                 mrc: mrc,
