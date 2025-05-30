@@ -352,7 +352,12 @@ const task = async (ORACLE_STATUS: number = 0) => {
             transaction_id: item.TRANSACTION_ID,
             file_content: item.liberateLine,
             msisdn: item.msisdn,
-            package_id: item.PACKAGE_ID
+            package_id: item.PACKAGE_ID,
+            fmc_type: item.fmc_type,
+            fmc_account: item.fmc_account,
+            calculated_amount: item.calculated_amount,
+            apc_ws_amount: item.apc_ws_amount,
+            fmc_order: item.fmc_order,
         }))
 
         await db.sendToLiberate(mapped)
