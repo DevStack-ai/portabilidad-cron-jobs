@@ -1152,7 +1152,7 @@ export class Pre2PostController {
                     resolve("No lines to send")
                     return;
                 }
-
+                console.log("Sending to: ", process.env.LIBERATE_WS_NOTIFICATION)
                 console.log("Sending to liberate", lines)
                 const query = await axios.post(process.env.LIBERATE_WS_NOTIFICATION, {
                     in: lines
@@ -1259,8 +1259,9 @@ export class Pre2PostController {
                     resolve("No lines to send")
                     return;
                 }
-
+                console.log("Sending to liberate url:", process.env.LIBERATE_WS_NOTIFICATION_P2P)
                 console.log("Sending to liberate", lines)
+
                 const query = await axios.post(process.env.LIBERATE_WS_NOTIFICATION_P2P, {
                     in: lines
                 }, { headers })
