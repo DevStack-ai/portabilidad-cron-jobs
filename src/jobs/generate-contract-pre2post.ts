@@ -342,7 +342,7 @@ const task = async (ORACLE_STATUS: number = 0) => {
             delete copy.calculated_amount
             delete copy.apc_ws_amount
 
-            let line = `${json2csv([{ ...copy }])},,,,,,,0,0,0,N,12,R,${liberate_value},${fmc_account}`
+            let line = `${json2csv([{ ...copy }])},,,,,,,0,0,0,N,12,R,${liberate_value},${fmc_account || 0}`
             //if last character is a comma, remove it
             if (line.slice(-1) === ',') {
                 line = line.slice(0, -1)
