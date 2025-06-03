@@ -366,10 +366,11 @@ const task = async (ORACLE_STATUS: number = 0) => {
             delete copy.mrc
             delete copy.mrc_n
             delete copy.mrc_amount
-            delete copy.mrc
-            delete copy.mrc_n
-            delete copy.mrc_amount
             delete copy.fmc_account
+            delete copy.fmc_type
+            delete copy.calculated_amount
+            delete copy.apc_ws_amount
+            delete copy.fmc_order
 
             copy.BILLGROUP = billgroup
             copy.area_code = copy.area_code || 'W3'
