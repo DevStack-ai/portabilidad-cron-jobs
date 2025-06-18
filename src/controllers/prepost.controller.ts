@@ -214,17 +214,17 @@ export class Pre2PostController {
                         TRIM(SUBSTRING_INDEX(REPLACE(act.name, ',', ''), '{|}', 1)) as name,
                         TRIM(SUBSTRING_INDEX(REPLACE(act.name, ',', ''), '{|}', - 1)) as lastname,
                         CASE
-                            WHEN act.document_type = 1 THEN 'C'
-                            WHEN act.document_type = 2 THEN 'PP'
-                            WHEN act.document_type = "C" THEN 'C'
-                            WHEN act.document_type = "PP" THEN 'PP'
+                            WHEN act.document_type IN (1, 'C') THEN 'C'
+                            WHEN act.document_type IN (2, 'PP') THEN 'PP'
                             ELSE 'C'
                         END as doc_type,
                         CASE
-                            WHEN act.document_type = 1 THEN TRIM(CONCAT(Concat(ifnull(act.c_letra,''), act.c_provincia),'-',act.c_folio,'-',act.c_asiento))
-                            WHEN act.document_type = 2 THEN TRIM(act.passport)
-                            WHEN act.document_type = "C" THEN TRIM(CONCAT(concat(ifnull(act.c_letra,''), act.c_provincia),'-',act.c_folio,'-',act.c_asiento))
-                            WHEN act.document_type = "PP" THEN TRIM(act.passport)
+                            WHEN act.document_type IN (1, 'C') THEN TRIM(
+                                CONCAT(
+                                    CASE WHEN act.c_letra IS NOT NULL AND TRIM(act.c_letra) != '' THEN act.c_letra ELSE act.c_provincia END, '-', act.c_folio, '-', act.c_asiento
+                                )
+                            )
+                            WHEN act.document_type IN (2, 'PP') THEN TRIM(act.passport)
                             ELSE 'C'
                         END as document,
                         REPLACE(act.email, ',', '') as email,
@@ -288,17 +288,17 @@ export class Pre2PostController {
                 TRIM(SUBSTRING_INDEX(p2p.name, '{|}', 1)) as name,
                 TRIM(SUBSTRING_INDEX(p2p.name, '{|}', -1)) as lastname,
                 CASE
-                    WHEN p2p.document_type = 1 THEN 'C'
-                    WHEN p2p.document_type = 2 THEN 'PP'
-                    WHEN p2p.document_type = "C" THEN 'C'
-                    WHEN p2p.document_type = "PP" THEN 'PP'
+                    WHEN p2p.document_type IN (1, 'C') THEN 'C'
+                    WHEN p2p.document_type IN (2, 'PP') THEN 'PP'
                     ELSE 'C'
                 END as doc_type,
                 CASE
-                    WHEN p2p.document_type = 1 THEN TRIM(CONCAT(Concat(ifnull(p2p.c_letra,''), p2p.c_provincia),'-',p2p.c_folio,'-',p2p.c_asiento))
-                    WHEN p2p.document_type = 2 THEN TRIM(p2p.passport)
-                    WHEN p2p.document_type = "C" THEN TRIM(CONCAT(concat(ifnull(p2p.c_letra,''), p2p.c_provincia),'-',p2p.c_folio,'-',p2p.c_asiento))
-                    WHEN p2p.document_type = "PP" THEN TRIM(p2p.passport)
+                    WHEN p2p.document_type IN (1, 'C') THEN TRIM(
+                        CONCAT(
+                            CASE WHEN p2p.c_letra IS NOT NULL AND TRIM(p2p.c_letra) != '' THEN p2p.c_letra ELSE p2p.c_provincia END, '-', p2p.c_folio, '-', p2p.c_asiento
+                        )
+                    )
+                    WHEN p2p.document_type IN (2, 'PP') THEN TRIM(p2p.passport)
                     ELSE 'C'
                 END as document,
                 REPLACE(p2p.email, ',', '') as email,
