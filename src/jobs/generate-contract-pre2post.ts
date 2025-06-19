@@ -7,7 +7,7 @@ const print = new Printer("generate-contract");
 
 const task = async (ORACLE_STATUS: number = 0) => {
     try {
-        const pre2post = new Pre2PostController(true);
+        const pre2post = new Pre2PostController();
 
         print.log(`Starting generate contract ===================================================================`);
         const rows = await pre2post.getDataWithoutContract(ORACLE_STATUS);
