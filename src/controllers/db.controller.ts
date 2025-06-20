@@ -24,11 +24,9 @@ export class DbController {
                 ICCID,
                 TRIM(SUBSTRING_INDEX(NOMBRE_DE_CLIENTE, '{|}', 1)) as nombre,
                 TRIM(SUBSTRING_INDEX(NOMBRE_DE_CLIENTE, '{|}', -1)) as apellido,
-                CASE
-                    WHEN document_type = 1 THEN 'C'
-                    WHEN document_type = 2 THEN 'PP'
-                    WHEN document_type = "C" THEN 'C'
-                    WHEN document_type = "PP" THEN 'PP'
+                 CASE
+                    WHEN document_type IN (1, 'C') THEN 'C'
+                    WHEN document_type IN (2, 'PP') THEN 'PP'
                     ELSE 'C'
                 END as doc_type,
                 TRIM(CEDULA),
