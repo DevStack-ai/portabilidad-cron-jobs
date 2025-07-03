@@ -47,7 +47,12 @@ export class DbController {
                 source,
                 mrc,
                 mrc_amount,
-                mrc_n
+                mrc_n,
+                fmc_type,
+                fmc_account,
+                calculated_amount,
+                apc_ws_amount,
+                fmc_order
             FROM
                 ISOFT_INPUT
             WHERE

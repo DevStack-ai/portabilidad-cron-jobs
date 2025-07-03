@@ -181,7 +181,7 @@ export class PaperlessController {
         return new Promise(async (resolve, reject) => {
             try {
                 if (typeof porta.s3_invoice_path !== "string") {
-                   resolve({ code: "error uploadLastContract", message: "s3_invoice_path is not a string" });
+                    resolve({ code: "error uploadLastContract", message: "s3_invoice_path is not a string" });
                     return;
                 }
                 const headers = {
@@ -341,9 +341,11 @@ export class PaperlessController {
             if (process.env.CONTRACT_API_URL === undefined) throw new Error('CONTRACT_API_URL is not defined');
             const url = `${process.env.BASE_API_URL}/porta-request/apc-contract/${transaction_id}`
 
+            console.log(`STEP 3.5 | ${transaction_id} - APC Contract generation  with type:`, type);
             const query = await axios.post(url, { type: type });
 
             if (query.status === 200) {
+                console.log(`STEP 3.5 | ${transaction_id} - APC Contract generated successfully`, query.data.url);
                 return query.data.url;
             } else {
                 return "ERROR";
@@ -351,6 +353,7 @@ export class PaperlessController {
 
         } catch (e) {
             print.log(e);
+            console.log(`STEP 3.5 | ${transaction_id} - APC Contract generation failed`, e);
             return "";
         }
     }

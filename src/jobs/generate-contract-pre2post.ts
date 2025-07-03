@@ -311,10 +311,10 @@ const task = async (ORACLE_STATUS: number = 0) => {
         print.log("-----------------")
 
         print.log(`STEP 5 | Fetch from database`);
-        const activations = await pre2post.getReportPortasPre2Post();
-        print.log(`STEP 5 | Fetched v1: ${activations.length} records`);
+        const p2pRows = await pre2post.getReportPortasPre2Post();
+        print.log(`STEP 5 | Fetched v1: ${p2pRows.length} records`);
 
-        const lines = activations.map((item: any) => {
+        const lines = p2pRows.map((item: any) => {
             const copy = { ...item }
 
             const liberate_value = copy.liberate_value
@@ -323,6 +323,11 @@ const task = async (ORACLE_STATUS: number = 0) => {
             const mrc = copy.mrc
             const mrc_n = copy.mrc_n
             const mrc_amount = copy.mrc_amount
+            const fmc_account = copy.fmc_account
+            const fmc_type = copy.fmc_type
+            const fmc_order = copy.fmc_order
+            const calculated_amount = copy.calculated_amount
+            const apc_ws_amount = copy.apc_ws_amount
 
             delete copy.TRANSACTION_ID
             delete copy.liberate_value
@@ -331,8 +336,13 @@ const task = async (ORACLE_STATUS: number = 0) => {
             delete copy.mrc
             delete copy.mrc_n
             delete copy.mrc_amount
+            delete copy.fmc_account
+            delete copy.fmc_type
+            delete copy.fmc_order
+            delete copy.calculated_amount
+            delete copy.apc_ws_amount
 
-            let line = `${json2csv([{ ...copy }])},,,,,,,0,0,0,N,12,R,${liberate_value},0`
+            let line = `${json2csv([{ ...copy }])},,,,,,,0,0,0,N,12,R,${liberate_value},${fmc_account || 0}`
             //if last character is a comma, remove it
             if (line.slice(-1) === ',') {
                 line = line.slice(0, -1)
@@ -340,6 +350,11 @@ const task = async (ORACLE_STATUS: number = 0) => {
 
             return {
                 ...item,
+                fmc_account,
+                fmc_order: fmc_order,
+                fmc_type: fmc_type,
+                calculated_amount: calculated_amount,
+                apc_ws_amount: apc_ws_amount,
                 source: source,
                 simcard: simcard,
                 mrc: mrc,
@@ -361,7 +376,12 @@ const task = async (ORACLE_STATUS: number = 0) => {
             transaction_id: item.TRANSACTION_ID,
             file_content: item.liberateLine,
             msisdn: item.msisdn,
-            contractid: item.CONTRACTID
+            contractid: item.CONTRACTID,
+            fmc_type: item.fmc_type,
+            fmc_account: item.fmc_account,
+            calculated_amount: item.calculated_amount,
+            apc_ws_amount: item.apc_ws_amount,
+            fmc_order: item.fmc_order,
         }))
         console.log(mapped)
 

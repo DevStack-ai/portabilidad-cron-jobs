@@ -306,6 +306,12 @@ const task = async (ORACLE_STATUS: number = 0) => {
             const mrc = copy.mrc
             const mrc_n = copy.mrc_n
             const mrc_amount = copy.mrc_amount
+            const fmc_account = copy.fmc_account
+            const fmc_type = copy.fmc_type
+            const calculated_amount = copy.calculated_amount
+            const fmc_order = copy.fmc_order
+            const apc_ws_amount = copy.apc_ws_amount
+
 
             delete copy.TRANSACTION_ID
             delete copy.liberate_value
@@ -314,12 +320,23 @@ const task = async (ORACLE_STATUS: number = 0) => {
             delete copy.mrc
             delete copy.mrc_n
             delete copy.mrc_amount
+            delete copy.fmc_account
+            delete copy.fmc_type
+            delete copy.calculated_amount
+            delete copy.fmc_order
+            delete copy.apc_ws_amount
+            
 
             // let proxy = "&"//plan_type
-            let line = `${json2csv([{ ...copy }])},,,,,,,0,0,0,N,12,R,${liberate_value},0`
+            let line = `${json2csv([{ ...copy }])},,,,,,,0,0,0,N,12,R,${liberate_value},${fmc_account || 0}`
             //if last character is a comma, remove it
             return {
                 ...item,
+                fmc_account,
+                fmc_type,
+                calculated_amount,
+                apc_ws_amount,
+                fmc_order: fmc_order,
                 source: source,
                 simcard: simcard,
                 mrc: mrc,
@@ -340,7 +357,12 @@ const task = async (ORACLE_STATUS: number = 0) => {
             transaction_id: item.TRANSACTION_ID,
             file_content: item.liberateLine,
             msisdn: item.msisdn,
-            package_id: item.PACKAGE_ID
+            package_id: item.PACKAGE_ID,
+            fmc_type: item.fmc_type,
+            fmc_account: item.fmc_account,
+            calculated_amount: item.calculated_amount,
+            apc_ws_amount: item.apc_ws_amount,
+            fmc_order: item.fmc_order,
         }))
 
         await db.sendToLiberate(mapped)
