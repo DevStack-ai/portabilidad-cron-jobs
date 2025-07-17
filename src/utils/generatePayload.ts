@@ -133,7 +133,7 @@ export function generateXMLTemplateP2P(data: contractP2P, type?: any) {
                     <distribution_code>999</distribution_code>
                     <workplace></workplace>
                     <email_p>${data.email}</email_p>
-                    <phone>${data.contact_phone}</phone>
+                    <phone>${data.MSISDN}</phone>
                     <fax></fax>
                     <province>${data.provincia_name}</province>
                     <district>${data.distrito_name}</district>
@@ -146,7 +146,7 @@ export function generateXMLTemplateP2P(data: contractP2P, type?: any) {
                     <brand>NA</brand>
                     <model>NA</model>
                     <imei>000000000000000</imei>
-                    <phone_number>${data.MSISDN}</phone_number>
+                    <phone_number>${data.contact_phone}</phone_number>contact_phone
                     <contract_duration>18</contract_duration>
                     <plan_name>${data.plan_name}</plan_name>
                     <monthly_plan_charge>${Number(data.plan_month_charge).toFixed(2)}</monthly_plan_charge>
