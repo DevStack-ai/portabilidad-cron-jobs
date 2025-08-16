@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bienvenido a +Móvil</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+    }
+
+    h1 {
+      color: #FF4500;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: #ffffff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .header {
+      background-color: #FF4500;
+      padding: 20px;
+      height: 50px;
+      text-align: right;
+    }
+
+    .header img {
+      height: 40px;
+    }
+
+    .content {
+      padding: 20px;
+    }
+
+    .section-title {
+      background-color: #F8F8F8;
+      color: #DA1B70;
+      padding: 10px 20px;
+      border-radius: 5px;
+      font-size: 1.2em;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+    }
+
+    .section-title.red {
+      background-color: #FF4500;
+      color: white;
+    }
+
+    .section-title span {
+      margin-right: 10px;
+      font-size: 1.5em;
+    }
+
+    .important-section {
+      background-color: #f9f9f9;
+      border-left: 4px solid #DA1B70;
+      padding: 15px;
+      margin-top: 20px;
+    }
+
+    .steps ol {
+      padding-left: 20px;
+    }
+
+    .steps ol li {
+      margin-bottom: 10px;
+    }
+
+    .qr-section {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .qr-section img {
+      width: 150px;
+      height: 150px;
+    }
+
+    .help-section {
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-around;
+      text-align: center;
+      padding: 20px 0;
+      background-color: #f7f7f7;
+      border-top: 1px solid #e0e0e0;
+    }
+
+    .help-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-decoration: none;
+      color: #333;
+    }
+
+    .help-item > span {
+        color: #333;
+    }
+    .help-icon {
+      font-size: 2em;
+      margin-bottom: 5px;
+    }
+
+    .phone-number {
+      font-weight: bold;
+      font-size: 1.1em;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="header">
+      <img src="https://promociones.cwpanama.com/assets/images/mas_movil.png" alt="+Móvil">
+    </div>
+    <div class="content">
+      <h1>Hola, <%= name %></h1>
+      <p>¡Gracias por contratar tu plan pospago con nosotros!</p>
+      <p>Te damos la bienvenida y te compartimos el código QR necesario para activar tu <b>eSIM</b> y comenzar a disfrutar de tu nuevo plan +Móvil.</p>
+      <p>Número cuenta para pagos</p>
+      <p><strong><%= numeroCuenta %></strong></p>
+
+      <div class="section-title">
+        <span>🔗</span> ¿Qué debes hacer?
+      </div>
+      <div class="steps">
+        <ol>
+          <li>Abre la configuración de tu dispositivo compatible con eSIM.</li>
+          <li>Selecciona la opción para agregar un nuevo plan móvil o eSIM.</li>
+          <li>Escanea el código QR que encontrarás adjunto a este correo.</li>
+          <li>Sigue las instrucciones en pantalla para completar la activación.</li>
+          <li>Si tienes un equipo iOS, solamente mantén presionado el código QR por algunos segundos y automáticamente se cargará tu eSIM.</li>
+        </ol>
+      </div>
+
+      <div class="section-title">
+        <span>❗</span> Importante
+      </div>
+      <div class="steps">
+        <ul>
+          <li>Asegúrate de estar conectado a Wi-Fi durante la activación.</li>
+          <li>Este código QR es <b>de uso único</b> y está vinculado exclusivamente a tu línea contratada.</li>
+          <li>En caso de presentar inconvenientes, no dudes en contactarnos.</li>
+        </ul>
+      </div>
+
+      <p>Adjunto encontrarás el documento con tu <b>código QR</b>.</p>
+
+      <div class="qr-section">
+        <img src="<%= qrCodeUrl %>" alt="Código QR">
+      </div>
+
+      <div style="background-color: #ede4f1; border-radius: 5px; padding: 10px; margin-top: 20px; font-size: 0.9em; display: flex; align-items: center;">
+        <span style="font-size: 1.2em; margin-right: 10px;">ℹ️</span>
+        <span>Si tienes alguna duda de cómo activar tu eSIM en un iOS o Android nuestros agentes canales presenciales o call center te apoyaran en todo el proceso.</span>
+      </div>
+
+    </div>
+    <div class="section-title red">
+      ¿Necesitas ayuda?
+    </div>
+    <div class="help-section">
+      <a href="#" class="help-item">
+        <!-- <img src="https://example.com/whatsapp_icon.png" alt="WhatsApp" width="40" height="40"> -->
+        <span class="phone-number">6330-0033</span>
+      </a>
+      <a href="#" class="help-item">
+        <!-- <img src="https://example.com/help_icon.png" alt="Centro de ayuda" width="40" height="40"> -->
+        <span>Centro de ayuda</span>
+      </a>
+      <a href="#" class="help-item">
+        <!-- <img src="https://example.com/phone_icon.png" alt="Llámanos" width="40" height="40"> -->
+        <span>Llámanos al 161</span>
+      </a>
+    </div>
+  </div>
+</body>
+
+</html>
