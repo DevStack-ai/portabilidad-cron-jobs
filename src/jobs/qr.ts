@@ -21,7 +21,7 @@ const task = async () => {
             //qr.getQrRequest("porta_request"),
             qr.getQrRequest("AP_ISOFT_INPUT_POSTPAID"),
             qr.getQrRequest("PRE2POST_ISOFT_INPUT_INTPORT"),
-            qr.getQrRequest("SIMSWAP5G_ISOFT_PREPAID_SIMSWAP",{
+            qr.getQrRequest("SIMSWAP5G_ISOFT_PREPAID_SIMSWAP", {
                 orderBy: 'ADDED_ON',
             }),
         ]);
@@ -32,18 +32,18 @@ const task = async () => {
             ref_field: "id",
             orders: portaRequest
         }, */{
-            table: "AP_ISOFT_INPUT_POSTPAID",
-            ref_field: "TRANSACTION_ID",
-            orders: inputPostpaid
-        }, {
-            table: "PRE2POST_ISOFT_INPUT_INTPORT",
-            ref_field: "TRANSACTION_ID",
-            orders: pre2PostIntport
-        }, {
-            table: "SIMSWAP5G_ISOFT_PREPAID_SIMSWAP",
-            ref_field: "TRANSACTION_ID",
-            orders: simswap5gPrepaid
-        }];
+                table: "AP_ISOFT_INPUT_POSTPAID",
+                ref_field: "TRANSACTION_ID",
+                orders: inputPostpaid
+            }, {
+                table: "PRE2POST_ISOFT_INPUT_INTPORT",
+                ref_field: "TRANSACTION_ID",
+                orders: pre2PostIntport
+            }, {
+                table: "SIMSWAP5G_ISOFT_PREPAID_SIMSWAP",
+                ref_field: "TRANSACTION_ID",
+                orders: simswap5gPrepaid
+            }];
 
         const options: any = {
             accessKeyId: config.ses_key_id,
@@ -60,8 +60,9 @@ const task = async () => {
 
             for (const order of orders) {
                 const templateString = fs.readFileSync(__dirname + "/templates/qr.ejs", 'utf-8');
+                const customerName = order.name || "";
                 const content = ejs.render(templateString, {
-                    name: order.name || "",
+                    name: customerName.replace("{|}", ""),
                     numeroCuenta: config.esim_number,
                     //@todo: move this to .env
                     qrCodeUrl: `http://164.92.87.2:9005/api/v1/qr?simcardData=${order.esim_qr_data}`
@@ -70,7 +71,7 @@ const task = async () => {
                 const mailOptions = {
                     from: config.ses_email_from,
                     to: order.validated_email,
-                    subject: 'Tu eSIM ya está lista – Activa tu línea con el código QR adjunto',
+                    subject: 'Tu eSIM ya está lista - Activa tu línea con el código QR adjunto',
                     html: content
                 };
 
