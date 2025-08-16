@@ -8,6 +8,14 @@ import moment from "moment";
 import axios from "axios";
 import fs from "fs";
 
+type QrTableColumns = {
+    esim?: string;       // por defecto: 'esim'
+    status?: string;     // por defecto: 'status'
+    sentDate?: string;   // por defecto: 'qr_sent_date'
+    orderBy?: string;    // por defecto: 'id' (ajusta si prefieres 'created' o 'created_at')
+    readyValue?: number; // por defecto: 3
+};
+
 const access: PoolOptions = {
     user: process.env.DATABASE_USER,
     database: "PORTABILIDAD",
@@ -54,28 +62,34 @@ export class QrController {
         })
     }
 
-    async getQrRequest(table: string): Promise<any> {
-        return new Promise(async (resolve, reject) => {
+    async getQrRequest(table: string, cols: QrTableColumns = {}): Promise<any> {
+        const {
+            esim = 'esim',
+            status = 'status',
+            sentDate = 'qr_sent_date',
+            orderBy = 'created_at',
+            readyValue = 3,
+        } = cols;
 
+        return new Promise(async (resolve, reject) => {
             const query = `
                 SELECT  *
                 FROM ${table} t
-                WHERE t.esim = 1 
-                AND t.status = 3
-                AND t.qr_sent_date IS NULL
-                ORDER BY t.created_at DESC
-                LIMIT 30
-            `
-            console.log("Executing query:", query);
-            conn?.query(query, (err, results) => {
+                WHERE t.${esim} = 1
+                  AND t.${status} = ${readyValue}
+                  AND t.${sentDate} IS NULL
+                ORDER BY t.${orderBy} DESC
+                    LIMIT 30
+            `;
+
+            conn?.query(query, (err: any, results: any) => {
                 if (err) {
-                    reject(err)
+                    reject(err);
                     return;
                 }
-                const rows = results as []
-                resolve(rows)
-            })
-        })
+                resolve(results);
+            });
+        });
     }
 
     async markEmailSent(table: string, ref_field: string, orderId: number) {
