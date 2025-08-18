@@ -17,7 +17,7 @@ const task = async () => {
         const config = await qr.getConfig();
 
 
-        const [portaRequest, inputPostpaid, pre2PostIntport, simswap5gPrepaid] = await Promise.all([
+        const [portaRequest, inputPostpaid, pre2PostIntport, simswap5gPrepaid, simswap5gPostpaid, activacionPrepago] = await Promise.all([
             qr.getQrRequest("ISOFT_INPUT", { status: "STATUS", orderBy: "ADDED_ON" }),
             qr.getQrRequest("AP_ISOFT_INPUT_POSTPAID"),
             qr.getQrRequest("PRE2POST_ISOFT_INPUT_INTPORT"),
@@ -47,6 +47,16 @@ const task = async () => {
                 ref_field: "TRANSACTION_ID",
                 orders: simswap5gPrepaid
             },
+            {
+                table: "SIMSWAP5GPOST_ISOFT_POSTPAID_SIMSWAP",
+                ref_field: "TRANSACTION_ID",
+                orders: simswap5gPostpaid
+            },
+            {
+                table: "AP_ACTIVACION_PREPAGO",
+                ref_field: "IDACTIVPRE",
+                orders: activacionPrepago
+            }
         ];
 
         const options: any = {
