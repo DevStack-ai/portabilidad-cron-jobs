@@ -105,39 +105,51 @@ export class QrController {
     }
 
     async markEmailSent(table: string, ref_field: string, orderId: number) {
-        if(table === "ISOFT_INPUT") {
-            // Handle specific logic for ISOFT_INPUT
-            const query = await prisma.iSOFT_INPUT.updateMany({
-                where: {
-                    IDISOFT: orderId
-                },
-                data: {
-                    qr_sent_date: new Date()
-                }
-            });
-            return
-        }
+        try {
 
-        return new Promise((resolve, reject) => {
-            const query = `
+            if (table === "ISOFT_INPUT") {
+                // Handle specific logic for ISOFT_INPUT
+                await prisma.iSOFT_INPUT.updateMany({
+                    where: {
+                        IDISOFT: orderId
+                    },
+                    data: {
+                        qr_sent_date: new Date()
+                    }
+                });
+                return
+            }
+
+            return new Promise((resolve, reject) => {
+                const query = `
                 UPDATE ${table}
                 SET qr_sent_date = NOW()
                 WHERE ${ref_field} = ?
-            `
-            console.log("Executing query:", query);
-            conn?.query(query, [orderId], (err, results) => {
-                if (err) {
-                    reject(err)
-                    return;
+            `;
+                if (!conn || conn === null) {
+                    throw new Error("Database connection is not established");
                 }
-                resolve(results)
+                console.log("Executing query:", query);
+                conn.query(query, [orderId], (err, results) => {
+                    if (err) {
+                        reject(err)
+                        return;
+                    }
+                    resolve(results)
+
+                })
             })
-        })
+        } catch (error) {
+            console.error("Error marking email as sent:", error);
+            return []
+        }
     }
 
     async disconnect() {
-        console.log("DISCONNECTING")
-        await conn?.end();
+        if (conn) {
+            conn.end();
+            console.log("DISCONNECTING")
+        }
     }
 
 }
