@@ -69,6 +69,7 @@ export class QrController {
 
 
         if (table === "ISOFT_INPUT") {
+            await prisma.$connect();
             const query = await prisma.iSOFT_INPUT.findMany({
                 where: {
                     esim: 1,
@@ -80,6 +81,7 @@ export class QrController {
                 },
                 take: 30
             })
+            await prisma.$disconnect();
             return query;
         }
 
@@ -109,6 +111,7 @@ export class QrController {
 
             if (table === "ISOFT_INPUT") {
                 // Handle specific logic for ISOFT_INPUT
+                await prisma.$connect();
                 await prisma.iSOFT_INPUT.updateMany({
                     where: {
                         IDISOFT: orderId
@@ -117,6 +120,7 @@ export class QrController {
                         qr_sent_date: new Date()
                     }
                 });
+                await prisma.$disconnect();
                 return
             }
 
@@ -148,6 +152,7 @@ export class QrController {
     async disconnect() {
         if (conn) {
             conn.end();
+            prisma.$disconnect();
             console.log("DISCONNECTING")
         }
     }
