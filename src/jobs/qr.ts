@@ -22,6 +22,8 @@ const task = async () => {
             qr.getQrRequest("AP_ISOFT_INPUT_POSTPAID"),
             qr.getQrRequest("PRE2POST_ISOFT_INPUT_INTPORT"),
             qr.getQrRequest("SIMSWAP5G_ISOFT_PREPAID_SIMSWAP", { orderBy: 'ADDED_ON' }),
+            qr.getQrRequest("SIMSWAP5GPOST_ISOFT_POSTPAID_SIMSWAP ", { orderBy: 'ADDED_ON' }),
+            qr.getQrRequest("AP_ACTIVACION_PREPAGO ", { orderBy: 'ADDED_ON' }),
         ]);
 
         const sources = [
@@ -44,7 +46,7 @@ const task = async () => {
                 table: "SIMSWAP5G_ISOFT_PREPAID_SIMSWAP",
                 ref_field: "TRANSACTION_ID",
                 orders: simswap5gPrepaid
-            }
+            },
         ];
 
         const options: any = {
