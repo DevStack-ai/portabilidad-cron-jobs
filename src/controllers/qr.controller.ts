@@ -1,12 +1,7 @@
 import "dotenv/config";
-import prisma from "./db.connection"
 import mysql, { PoolOptions } from 'mysql2';
-import { generateXMLTemplateP2P } from "../utils/generatePayload";
-import sharp from "sharp";
-import Printer from "../utils/utils"
-import moment from "moment";
-import axios from "axios";
-import fs from "fs";
+import prisma from "./db.connection"
+
 
 type QrTableColumns = {
     esim?: string;       // por defecto: 'esim'
@@ -71,6 +66,23 @@ export class QrController {
             readyValue = 3,
         } = cols;
 
+
+
+        if (table === "ISOFT_INPUT") {
+            const query = await prisma.iSOFT_INPUT.findMany({
+                where: {
+                    esim: 1,
+                    STATUS: readyValue.toString(),
+                    qr_sent_date: null
+                },
+                orderBy: {
+                    ADDED_ON: 'desc'
+                },
+                take: 30
+            })
+            return query;
+        }
+
         return new Promise(async (resolve, reject) => {
             const query = `
                 SELECT  *
@@ -93,6 +105,19 @@ export class QrController {
     }
 
     async markEmailSent(table: string, ref_field: string, orderId: number) {
+        if(table === "ISOFT_INPUT") {
+            // Handle specific logic for ISOFT_INPUT
+            const query = await prisma.iSOFT_INPUT.updateMany({
+                where: {
+                    IDISOFT: orderId
+                },
+                data: {
+                    qr_sent_date: new Date()
+                }
+            });
+            return
+        }
+
         return new Promise((resolve, reject) => {
             const query = `
                 UPDATE ${table}

@@ -94,6 +94,10 @@ model ISOFT_INPUT {
   calculated_amount      Float?    @default(0)
   apc_ws_amount          String?   @db.VarChar(45)
   fmc_order              String?   @db.VarChar(45)
+  validated_email        String?   @db.VarChar(255)
+  esim                   Int?      @db.TinyInt
+  qr_sent_date           DateTime? @db.DateTime(0)
+  esim_qr_data           String?   @db.LongText
 
   @@index([ENVIADO_ORACLE], map: "ISOFT_INPUT_ENVIADO_ORACLE_IDX")
   @@index([ESTADO_FTP], map: "ISOFT_INPUT_ESTADO_FTP_IDX")

@@ -17,33 +17,35 @@ const task = async () => {
         const config = await qr.getConfig();
 
 
-        const [/*portaRequest, */inputPostpaid, pre2PostIntport, simswap5gPrepaid] = await Promise.all([
-            //qr.getQrRequest("porta_request"),
+        const [portaRequest, inputPostpaid, pre2PostIntport, simswap5gPrepaid] = await Promise.all([
+            qr.getQrRequest("ISOFT_INPUT", { status: "STATUS", orderBy: "ADDED_ON" }),
             qr.getQrRequest("AP_ISOFT_INPUT_POSTPAID"),
             qr.getQrRequest("PRE2POST_ISOFT_INPUT_INTPORT"),
-            qr.getQrRequest("SIMSWAP5G_ISOFT_PREPAID_SIMSWAP", {
-                orderBy: 'ADDED_ON',
-            }),
+            qr.getQrRequest("SIMSWAP5G_ISOFT_PREPAID_SIMSWAP", { orderBy: 'ADDED_ON' }),
         ]);
 
-        const sources = [/*{
-            ///@todo: move this to isoft_input
-            table: "porta_request",
-            ref_field: "id",
-            orders: portaRequest
-        }, */{
+        const sources = [
+            {
+                table: "ISOFT_INPUT",
+                ref_field: "IDISOFT",
+                orders: portaRequest
+            },
+            {
                 table: "AP_ISOFT_INPUT_POSTPAID",
                 ref_field: "TRANSACTION_ID",
                 orders: inputPostpaid
-            }, {
+            },
+            {
                 table: "PRE2POST_ISOFT_INPUT_INTPORT",
                 ref_field: "TRANSACTION_ID",
                 orders: pre2PostIntport
-            }, {
+            },
+            {
                 table: "SIMSWAP5G_ISOFT_PREPAID_SIMSWAP",
                 ref_field: "TRANSACTION_ID",
                 orders: simswap5gPrepaid
-            }];
+            }
+        ];
 
         const options: any = {
             accessKeyId: config.ses_key_id,
