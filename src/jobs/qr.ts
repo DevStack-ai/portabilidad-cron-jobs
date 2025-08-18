@@ -79,7 +79,7 @@ const task = async () => {
                     name: customerName.replace("{|}", ""),
                     numeroCuenta: config.esim_number,
                     //@todo: move this to .env
-                    qrCodeUrl: `http://164.92.87.2:9005/api/v1/qr?simcardData=${order.esim_qr_data}`
+                    qrCodeUrl: `https://isoft-test-v2.me/api/v1/qr?simcardData=${order.esim_qr_data}`
                 });
 
                 const mailOptions = {
