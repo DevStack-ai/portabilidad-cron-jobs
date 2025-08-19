@@ -23,7 +23,7 @@ const task = async () => {
             qr.getQrRequest("PRE2POST_ISOFT_INPUT_INTPORT"),
             qr.getQrRequest("SIMSWAP5G_ISOFT_PREPAID_SIMSWAP", { orderBy: 'ADDED_ON' }),
             qr.getQrRequest("SIMSWAP5GPOST_ISOFT_POSTPAID_SIMSWAP ", { orderBy: 'ADDED_ON' }),
-            qr.getQrRequest("AP_ACTIVACION_PREPAGO ", { orderBy: 'ADDED_ON' }),
+            qr.getQrRequest("AP_ACTIVACION_PREPAGO ", { orderBy: 'ADDED_ON', readyValue: 4 }),
         ]);
 
         const sources = [
