@@ -7,7 +7,7 @@ import nodemailer from "nodemailer";
 import ses from "nodemailer-ses-transport";
 import fs from "fs";
 
-const print = new Printer("sent qr");
+const print = new Printer("qr_sent");
 
 const task = async () => {
     try {
