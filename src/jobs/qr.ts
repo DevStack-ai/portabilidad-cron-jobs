@@ -67,12 +67,14 @@ const task = async () => {
         const transporter = nodemailer.createTransport(ses(options));
 
         for (const source of sources) {
+            print.log("Evaluating source: ",source);
 
             const queue = []
             const update = []
             const orders = source.orders;
 
             for (const order of orders) {
+                print.log("Evaluating order: ",order);
                 const templateString = fs.readFileSync(__dirname + "/templates/qr.ejs", 'utf-8');
                 const customerName = order.name || "";
                 const content = ejs.render(templateString, {
