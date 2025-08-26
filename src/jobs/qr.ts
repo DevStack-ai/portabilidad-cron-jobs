@@ -2,10 +2,11 @@ import "dotenv/config";
 import { QrController } from "../controllers/qr.controller";
 import cron from "node-cron";
 import Printer from "../utils/utils";
-import ejs, { name } from "ejs";
+import ejs from "ejs";
 import nodemailer from "nodemailer";
 import ses from "nodemailer-ses-transport";
 import fs from "fs";
+import axios from "axios";
 
 const print = new Printer("sent qr");
 
@@ -73,23 +74,42 @@ const task = async () => {
             const orders = source.orders;
 
             for (const order of orders) {
-                const templateString = fs.readFileSync(__dirname + "/templates/qr.ejs", 'utf-8');
-                const customerName = order.name || "";
-                const content = ejs.render(templateString, {
-                    name: customerName.replace("{|}", ""),
-                    numeroCuenta: config.esim_number,
-                    //@todo: move this to .env
-                    qrCodeUrl: `https://isoft-test-v2.me/api/v1/qr?simcardData=${order.esim_qr_data}`
+
+                const item = new Promise(async (resolve, reject) => {
+                    try {
+
+                        const templateString = fs.readFileSync(__dirname + "/templates/qr.ejs", 'utf-8');
+                        const customerName = order.name || "";
+                        const qrUrl = `https://isoft-test-v2.me/api/v1/qr?simcardData=${order.esim_qr_data}`;
+
+                        const queryBuffer = await axios.get(qrUrl, { responseType: 'arraybuffer' });
+                        const qrCodeImage = queryBuffer.data;
+
+                        const content = ejs.render(templateString, {
+                            name: customerName.replace("{|}", ""),
+                            numeroCuenta: config.esim_number,
+                            qrCodeUrl: qrUrl
+                        });
+
+                        resolve(transporter.sendMail({
+                            from: config.ses_email_from,
+                            to: order.validated_email,
+                            subject: 'Tu eSIM ya está lista - Activa tu línea con el código QR adjunto',
+                            html: content,
+                            attachments: [
+                                {
+                                    filename: 'qr-code.png',
+                                    content: qrCodeImage,
+                                    cid: 'qr-code'
+                                }
+                            ]
+                        }));
+                    } catch (error) {
+                        reject(error);
+                    }
                 });
 
-                const mailOptions = {
-                    from: config.ses_email_from,
-                    to: order.validated_email,
-                    subject: 'Tu eSIM ya está lista - Activa tu línea con el código QR adjunto',
-                    html: content
-                };
-
-                queue.push(transporter.sendMail(mailOptions));
+                queue.push(item);
             }
 
             const result = await Promise.allSettled(queue);
