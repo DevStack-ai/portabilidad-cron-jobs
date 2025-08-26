@@ -8,7 +8,7 @@ import ses from "nodemailer-ses-transport";
 import fs from "fs";
 import axios from "axios";
 
-const print = new Printer("sent qr");
+const print = new Printer("qr_sent");
 
 const task = async () => {
     try {
@@ -24,7 +24,7 @@ const task = async () => {
             qr.getQrRequest("PRE2POST_ISOFT_INPUT_INTPORT"),
             qr.getQrRequest("SIMSWAP5G_ISOFT_PREPAID_SIMSWAP", { orderBy: 'ADDED_ON' }),
             qr.getQrRequest("SIMSWAP5GPOST_ISOFT_POSTPAID_SIMSWAP ", { orderBy: 'ADDED_ON' }),
-            qr.getQrRequest("AP_ACTIVACION_PREPAGO ", { orderBy: 'ADDED_ON' }),
+            qr.getQrRequest("AP_ACTIVACION_PREPAGO ", { orderBy: 'ADDED_ON', readyValue: 4,  status: 'IDESTADO'}),
         ]);
 
         const sources = [
@@ -68,6 +68,7 @@ const task = async () => {
         const transporter = nodemailer.createTransport(ses(options));
 
         for (const source of sources) {
+            print.log("Evaluating source: ",source);
 
             const queue = []
             const update = []
