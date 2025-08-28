@@ -24,7 +24,7 @@ const task = async () => {
             qr.getQrRequest("PRE2POST_ISOFT_INPUT_INTPORT"),
             qr.getQrRequest("SIMSWAP5G_ISOFT_PREPAID_SIMSWAP", { orderBy: 'ADDED_ON' }),
             qr.getQrRequest("SIMSWAP5GPOST_ISOFT_POSTPAID_SIMSWAP ", { orderBy: 'ADDED_ON' }),
-            qr.getQrRequest("AP_ACTIVACION_PREPAGO ", { orderBy: 'ADDED_ON', readyValue: 4,  status: 'IDESTADO'}),
+            qr.getQrRequest("AP_ACTIVACION_PREPAGO ", { orderBy: 'ADDED_ON', readyValue: 4, status: 'IDESTADO' }),
         ]);
 
         const sources = [
@@ -68,7 +68,7 @@ const task = async () => {
         const transporter = nodemailer.createTransport(ses(options));
 
         for (const source of sources) {
-            print.log("Evaluating source: ",source);
+            console.log("Evaluating source: ", source);
 
             const queue = []
             const update = []
@@ -81,6 +81,8 @@ const task = async () => {
 
                         const templateString = fs.readFileSync(__dirname + "/templates/qr.ejs", 'utf-8');
                         const customerName = order.name || "";
+                        const phoneNumber = order.phone || order.PHONE || order.MSISDN;
+
                         const qrUrl = `https://isoft-test-v2.me/api/v1/qr?simcardData=${order.esim_qr_data}`;
 
                         const queryBuffer = await axios.get(qrUrl, { responseType: 'arraybuffer' });
@@ -88,6 +90,7 @@ const task = async () => {
 
                         const content = ejs.render(templateString, {
                             name: customerName.replace("{|}", ""),
+                            phone: phoneNumber,
                             numeroCuenta: config.esim_number,
                             qrCodeUrl: qrUrl
                         });
