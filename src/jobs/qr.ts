@@ -79,8 +79,8 @@ const task = async () => {
                     try {
 
                         const templateString = fs.readFileSync(__dirname + "/templates/qr.ejs", 'utf-8');
-                        const customerName = order.name || order.NOMBRE_DE_CLIENTE  || "";
-                        const phoneNumber = order.phone || order.PHONE || order.MSISDN;
+                        const customerName = order.name || order.NOMBRE_DE_CLIENTE || order.lib_name || order.LIB_NAME || "";
+                        const phoneNumber = order.phone || order.PHONE || order.MSISDN || order.msisdn || order.numero || order.NUMERO || "";
 
                         const qrUrl = `https://isoft-test-v2.me/api/v1/qr?simcardData=${order.esim_qr_data}`;
 
