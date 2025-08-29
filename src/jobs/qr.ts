@@ -68,7 +68,6 @@ const task = async () => {
         const transporter = nodemailer.createTransport(ses(options));
 
         for (const source of sources) {
-            console.log("Evaluating source: ", source);
 
             const queue = []
             const update = []
@@ -96,7 +95,7 @@ const task = async () => {
                         });
 
                         resolve(transporter.sendMail({
-                            from: config.ses_email_from,
+                            from: config.esim_ses_email_from,
                             to: order.validated_email,
                             subject: 'Tu eSIM ya está lista - Activa tu línea con el código QR adjunto',
                             html: content,
