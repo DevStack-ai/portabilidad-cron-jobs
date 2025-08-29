@@ -91,6 +91,7 @@ const task = async () => {
                             name: customerName.replace("{|}", ""),
                             phone: phoneNumber,
                             numeroCuenta: config.esim_number,
+                            simcardData: order.esim_qr_data,
                             qrCodeUrl: qrUrl
                         });
 
