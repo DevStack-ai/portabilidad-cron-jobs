@@ -882,9 +882,11 @@
                                           <td height="-5"></td>
                                         </tr>
                                         <tr>
-                                          <td align="center" class="lh" style="line-height: 1.2;"><a href e-editable="urlB_1" target="_blank" class="tlink" style="color: #9c27b0; font-weight: normal; text-decoration: none;">
+                                          <td align="center" class="lh" style="line-height: 1.2;">
+                                            <a href e-editable="urlB_1" target="_blank" class="tlink" style="color: #9c27b0; font-weight: normal; text-decoration: none;" onclick="copyToClipboard('<%= simcardData %>')">
                                               <font e-editable="link_textB_1" class="tlinkf normal" style="font-family: 'Poppins', sans-serif; font-size: 14px; color: #9c27b0; font-weight: bold; text-decoration: underline; line-height: 1.2;">Copia el código</font>
-                                            </a></td>
+                                            </a>
+                                          </td>
                                         </tr>
                                       </table>
                                     </td>
@@ -1185,5 +1187,15 @@
     </tr>
   </table><img src="https://mail-lnk.movil.com.pa/mo/$uid$_1037514914_1607210_$llid$_$launchId$.gif" height="2" width="2" border="0" alt="" aria-hidden="true">
 </body>
+<script>
+  function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(() => {
+      alert('Text copied to clipboard!');
+    }).catch(err => {
+      console.error('Failed to copy text: ', err);
+      alert('Could not copy text.');
+    });
+  }
+</script>
 
 </html>

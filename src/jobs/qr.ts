@@ -140,9 +140,9 @@ const task = async () => {
 if (process.argv.includes('--manual')) {
     task()
 } else {
-    if (process.env.CRON_PAPERLESS) {
-        console.log("init QR as", process.env.CRON_PAPERLESS)
-        cron.schedule(process.env.CRON_PAPERLESS, () => task())
+    if (process.env.CRON_QR) {
+        console.log("init QR as", process.env.CRON_QR)
+        cron.schedule(process.env.CRON_QR, () => task())
     }
 }
 
