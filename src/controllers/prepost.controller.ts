@@ -285,8 +285,8 @@ export class Pre2PostController {
             SELECT 
                 p2p.TRANSACTION_ID,
                 p2p.msisdn,
-                'Y',
-                 CASE
+               'Y',
+                CASE
                     WHEN p2p.simcard IS NULL OR TRIM(p2p.simcard) = "" THEN p2p.ICCID_N 
                     ELSE p2p.simcard
                 END as ICCID_N,

@@ -67,7 +67,6 @@ export class DbController {
         const mapped = query.map((item: any) => item);
         return mapped as []
     }
-
     async updateLineStep(lines: any[]): Promise<any> {
         return new Promise((resolve, reject) => {
             const queue = []
@@ -90,7 +89,6 @@ export class DbController {
 
 
     }
-
     async sendToLiberate(lines: { transaction_id: number, file_content: string }[]) {
 
         return new Promise(async (resolve, reject) => {
@@ -138,7 +136,6 @@ export class DbController {
         })
 
     }
-
     async updateLine(lines: any[]): Promise<any> {
         return new Promise(async (resolve, reject) => {
             const queue = []
@@ -172,7 +169,6 @@ export class DbController {
 
 
     }
-
     async updateLineP2P(lines: any[]): Promise<any> {
         return new Promise((resolve, reject) => {
 
@@ -253,7 +249,6 @@ export class DbController {
 
 
     }
-
     async updateField(id: number, field: string, value: any): Promise<void> {
 
         try {
@@ -272,8 +267,6 @@ export class DbController {
 
 
     }
-
-
     async getDataWithoutContract(estado_oracle: number = 0): Promise<ISOFT_INPUT[]> {
 
 
@@ -300,7 +293,6 @@ export class DbController {
 
         return query
     }
-
     async getDataByStep(step: number, estado_oracle: number = 0): Promise<ISOFT_INPUT[]> {
 
 
@@ -326,7 +318,6 @@ export class DbController {
 
         return query
     }
-
     async getDataByStepPostpaid(step: number, estado_oracle: number = 0): Promise<ISOFT_INPUT[]> {
 
 
@@ -355,7 +346,6 @@ export class DbController {
 
         return query
     }
-
     async failedProcess(ids: number[]): Promise<void> {
 
 
@@ -393,13 +383,11 @@ export class DbController {
 
 
     }
-
     async closeConnection(): Promise<void> {
 
         await prisma.$disconnect()
 
     }
-
     async getConfig(): Promise<any> {
         const query = await prisma.$queryRaw`
         SELECT 
@@ -410,7 +398,6 @@ export class DbController {
 
         return query
     }
-
     async getUserByLastLogin(date: Date): Promise<[]> {
         const users: [] = await prisma.$queryRaw`
         SELECT 
@@ -429,12 +416,10 @@ export class DbController {
         `
         return users
     }
-
     async disconnect(): Promise<void> {
         console.log("DISCONNECTING")
         await prisma.$disconnect()
     }
-
     getBillGroup = async (): Promise<string> => {
         return new Promise(async (resolve, reject) => {
             const todayDate = moment().format('YYYY-MM-DD');
@@ -478,4 +463,6 @@ export class DbController {
             })
         })
     }
+
+  
 }
