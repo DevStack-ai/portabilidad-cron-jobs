@@ -82,7 +82,7 @@ const task = async () => {
                         const customerName = order.name || order.NOMBRE_DE_CLIENTE || order.lib_name || order.LIB_NAME || "";
                         const phoneNumber = order.phone || order.PHONE || order.MSISDN || order.msisdn || order.numero || order.NUMERO || "";
 
-                        const qrUrl = `https://isoft-test-v2.me/api/v1/qr?simcardData=${order.esim_qr_data}`;
+                        const qrUrl = `https://unificadocwp.isoft-ste.com/api/v1/qr?simcardData=${order.esim_qr_data}`;
 
                         const queryBuffer = await axios.get(qrUrl, { responseType: 'arraybuffer' });
                         const qrCodeImage = queryBuffer.data;
