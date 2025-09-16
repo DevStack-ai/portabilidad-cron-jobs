@@ -9,7 +9,7 @@ const print = new Printer("generate-contract");
 
 const task = async (ORACLE_STATUS: number = 0) => {
     try {
-        const pre2post = new Pre2PostController();
+        const pre2post = new Pre2PostController(true);
 
         print.log(`Starting generate contract ===================================================================`);
         const rows = await pre2post.getDataWithoutContract(ORACLE_STATUS);
@@ -290,7 +290,7 @@ const task = async (ORACLE_STATUS: number = 0) => {
 
         print.log("-----------------")
 
-        const db = new P2PController();
+        const db = new P2PController(true);
         print.log(`STEP 5 | Fetch from database`);
         const activations = await db.getReportActivations();
         print.log(`STEP 5 | Fetched v1: ${activations.length} records`);
