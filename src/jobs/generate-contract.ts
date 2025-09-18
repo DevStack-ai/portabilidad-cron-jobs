@@ -340,7 +340,7 @@ const task = async (ORACLE_STATUS: number = 0) => {
 
         print.log("-----------------")
         print.log(`STEP 5 | Fetch from database`);
-        const data = await db.getReport();
+        const data = await db.getReport(ORACLE_STATUS);
         const billgroup = await db.getBillGroup();
 
         print.log(`STEP 5 | Fetched: ${data.length} records`);
@@ -410,7 +410,7 @@ const task = async (ORACLE_STATUS: number = 0) => {
 }
 
 if (process.argv.includes('--manual')) {
-    task(0)
+    task(20)
 } else {
     if (process.env.CRON_PAPERLESS) {
         console.log("init paperless as", process.env.CRON_PAPERLESS)

@@ -10,7 +10,7 @@ export class DbController {
 
     constructor() { }
 
-    async getReport(): Promise<[]> {
+    async getReport(enviado_oracle = 0): Promise<[]> {
 
 
         const query: [] = await prisma.$queryRaw`
@@ -59,7 +59,7 @@ export class DbController {
                 port_type_id IN (4, 5)
             AND STEP = 5
             AND SERIE_DE_SIMCARD REGEXP '^[0-9]+$'
-            AND enviado_oracle = 0
+            AND enviado_oracle = ${enviado_oracle}
             AND FECHA_REGISTRO > '2024-07-04'
             `;
 
