@@ -68,8 +68,8 @@ const task = async () => {
                         const now = moment.utc().subtract(5, 'hours');
                         const diffHours = now.diff(createdAt, 'hours');
 
-                        if (diffHours >= Number(process.env.ht_time_for_payment || 24)) {
-                            print.log(`Transaction ${transaction.id} has been in hold for more than ${process.env.ht_time_for_payment || 24} hours`);
+                        if (diffHours >= Number(config.ht_time_for_payment || 24)) {
+                            print.log(`Transaction ${transaction.id} has been in hold for more than ${config.ht_time_for_payment || 24} hours`);
                             await db.updateStatus(transaction.id, 3); // set to failed
                         }else{
                             print.log(`Transaction ${transaction.id} has been in hold for ${diffHours} hours, waiting more time`);
