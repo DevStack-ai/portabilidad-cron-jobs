@@ -80,6 +80,7 @@ const task = async () => {
                     }
 
                     await db.updateStatus(transaction.id, 2); // set to completed
+                    await axios.post(`${process.env.BASE_API_URL}/porta-request/hold-transaction/${transaction.id}/validate`)
 
                     print.log(`Response for transaction ${transaction.id}: ${JSON.stringify(checkResponse)}`);
                     resolve();
