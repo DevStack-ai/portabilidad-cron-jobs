@@ -13,7 +13,7 @@ const print = new Printer("qr_sent");
 const task = async () => {
     try {
         print.log(`Starting QR sender process ===================================================================`);
-        const qr = new QrController();
+        const qr = new QrController(true);
 
         const config = await qr.getConfig();
 
