@@ -18,16 +18,8 @@ const task = async () => {
         const config = await qr.getConfig();
 
 
-        // const [portaRequest, inputPostpaid, pre2PostIntport, simswap5gPrepaid, simswap5gPostpaid, activacionPrepago] = await Promise.all([
-        //     qr.getQrRequest("ISOFT_INPUT", { status: "STATUS", orderBy: "ADDED_ON" }),
-        //     qr.getQrRequest("AP_ISOFT_INPUT_POSTPAID"),
-        //     qr.getQrRequest("PRE2POST_ISOFT_INPUT_INTPORT"),
-        //     qr.getQrRequest("SIMSWAP5G_ISOFT_PREPAID_SIMSWAP", { orderBy: 'ADDED_ON' }),
-        //     qr.getQrRequest("SIMSWAP5GPOST_ISOFT_POSTPAID_SIMSWAP ", { orderBy: 'ADDED_ON' }),
-        //     qr.getQrRequest("AP_ACTIVACION_PREPAGO ", { orderBy: 'ADDED_ON', readyValue: 4, status: 'IDESTADO' }),
-        // ]);
-
-        const [inputPostpaid, pre2PostIntport, simswap5gPrepaid, simswap5gPostpaid, activacionPrepago] = await Promise.all([
+        const [_portaRequest, inputPostpaid, pre2PostIntport, simswap5gPrepaid, simswap5gPostpaid, activacionPrepago] = await Promise.all([
+            qr.getQrRequest("ISOFT_INPUT", { status: "STATUS", orderBy: "ADDED_ON" }),
             qr.getQrRequest("AP_ISOFT_INPUT_POSTPAID"),
             qr.getQrRequest("PRE2POST_ISOFT_INPUT_INTPORT"),
             qr.getQrRequest("SIMSWAP5G_ISOFT_PREPAID_SIMSWAP", { orderBy: 'ADDED_ON' }),
@@ -36,7 +28,11 @@ const task = async () => {
         ]);
 
         const sources = [
-
+            // {
+            //     table: "ISOFT_INPUT",
+            //     ref_field: "IDISOFT",
+            //     orders: portaRequest
+            // },
             {
                 table: "AP_ISOFT_INPUT_POSTPAID",
                 ref_field: "TRANSACTION_ID",
@@ -90,14 +86,17 @@ const task = async () => {
 
                         const queryBuffer = await axios.get(qrUrl, { responseType: 'arraybuffer' });
                         const qrCodeImage = queryBuffer.data;
-
-                        const content = ejs.render(templateString, {
+                        const template = {
                             name: customerName.replace("{|}", ""),
                             phone: phoneNumber,
                             numeroCuenta: config.esim_number,
                             simcardData: order.esim_qr_data,
                             qrCodeUrl: qrUrl
-                        });
+                        }
+
+                        console.log("Template", template)
+
+                        const content = ejs.render(templateString, template);
 
                         resolve(transporter.sendMail({
                             from: config.esim_ses_email_from,
