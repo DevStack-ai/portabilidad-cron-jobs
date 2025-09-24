@@ -15,6 +15,7 @@ interface contract {
     email: string;
     type: PayloadType;
     imei: string;
+    IMEI: string;
     device_brand: string;
     device_model: string;
     device_plu: string;
@@ -56,8 +57,8 @@ export function generateXMLTemplate(data: contract, type?: any) {
                     <plu>${data.device_plu}</plu>
                     <brand>${data.device_brand}</brand>
                     <model>${data.device_model}</model>
-                    <imei>${data.imei}</imei>
-                    <imei_serie>${data.imei}</imei_serie>
+                    <imei>${data.imei || data.IMEI}</imei>
+                    <imei_serie>${data.imei || data.IMEI}</imei_serie>
                     <equipment_list_price>${data.device_price}</equipment_list_price>
                     <price_equip_according_service_plan>${data.device_price}</price_equip_according_service_plan>
                   <more_line_true></more_line_true>
@@ -164,7 +165,7 @@ export function generateXMLTemplateP2P(data: contractP2P, type?: any) {
                     <plu>${data.device_plu}</plu>
                     <brand>${data.device_brand}</brand>
                     <model>${data.device_model}</model>
-                    <imei>${data.imei}</imei>
+                    <imei>${data.imei || data.IMEI}</imei>
                     <phone_number>${data.MSISDN}</phone_number>
                     <contract_duration>18</contract_duration>
                     <plan_name>${data.plan_name}</plan_name>
@@ -199,7 +200,7 @@ export function generateXMLTemplateP2P(data: contractP2P, type?: any) {
                     <quotas></quotas>
                     <contract_number>VCP${8000000 + data.TRANSACTION_ID}</contract_number>
                     <cellphone_number>${data.MSISDN}</cellphone_number>
-                    <imei_serie>${data.imei}</imei_serie>
+                    <imei_serie>${data.imei || data.IMEI}</imei_serie>
                     <equipment_list_price>${data.device_price}</equipment_list_price>
                     <price_equip_according_service_plan>${data.device_price}</price_equip_according_service_plan>
                     <client_name_portin>${firstname || ""}</client_name_portin>
@@ -260,7 +261,7 @@ export function generateTemplateActivation(data: contractP2P) {
                     <plu>${data.device_plu}</plu>
                     <brand>${data.device_brand}</brand>
                     <model>${data.device_model}</model>
-                    <imei>${data.imei}</imei>
+                    <imei>${data.imei || data.IMEI}</imei>
                     <services_number>${data.MSISDN}</services_number>
                     <contract_duration>18</contract_duration>
                     <plan_name>${data.plan_name}</plan_name>
@@ -295,7 +296,7 @@ export function generateTemplateActivation(data: contractP2P) {
                     <quotas></quotas>
                     <contract_number>VCP${8000000 + data.TRANSACTION_ID}</contract_number>
                     <cellphone_number>${data.MSISDN}</cellphone_number>
-                    <imei_serie>${data.imei}</imei_serie>
+                    <imei_serie>${data.imei || data.IMEI}</imei_serie>
                     <equipment_list_price>${data.device_price}</equipment_list_price>
                     <price_equip_according_service_plan>${data.device_price}</price_equip_according_service_plan>
                     <client_name_portin>${firstname || ""}</client_name_portin>
