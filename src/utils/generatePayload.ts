@@ -129,6 +129,7 @@ interface contractP2P extends Pre2Post {
     device_model?: string;
     device_plu?: string;
     device_price?: string;
+    IMEI?: string;
 }
 
 export function generateXMLTemplateP2P(data: contractP2P, type?: any) {
