@@ -249,7 +249,21 @@ export class Pre2PostController {
                         act.fmc_type,
                         act.calculated_amount,
                         act.apc_ws_amount,
-                        act.fmc_order
+                        act.fmc_order,
+                        act.product_code,
+                        act.imei,
+                        act.device_brand,
+                        act.device_model,
+                        act.device_plu,
+                        act.plu_promo_code,
+                        act.device_price,
+                        act.device_discount,
+                        act.upfront_payment,
+                        CASE
+                            WHEN act.installment_amount IS NULL OR TRIM(act.installment_amount) = "" THEN "N'
+                            ELSE "Y"
+                        END as installment,
+                        act.contract_duration
                     FROM
                         AP_ISOFT_INPUT_POSTPAID act
                         join location l1 on l1.id = provincia
@@ -327,7 +341,21 @@ export class Pre2PostController {
                 p2p.fmc_type,
                 p2p.calculated_amount,
                 p2p.apc_ws_amount,
-                p2p.fmc_order
+                p2p.fmc_order,
+                p2p.product_code
+                p2p.imei,
+                p2p.device_brand,
+                p2p.device_model,
+                p2p.device_plu,
+                p2p.plu_promo_code,
+                p2p.device_price,
+                p2p.device_discount,
+                p2p.upfront_payment,
+                CASE
+                        WHEN p2p.installment_amount IS NULL OR TRIM(p2p.installment_amount) = "" THEN "N'
+                        ELSE "Y"
+                END as installment,
+                p2p.contrp2p_duration
             FROM
                 PRE2POST_ISOFT_INPUT_INTPORT p2p
                 join location l1 on l1.id = provincia
@@ -339,7 +367,7 @@ export class Pre2PostController {
                 left join liberate_source_app lsa on lsa.id = a.liberate_source_app_id 
                 join plan_types pt on pt.id = pp.plan_type 
             WHERE 
-                p2p.CONTRACTID is not null
+                p2p.CONTRp2pID is not null
             AND p2p.STATUS in (1,2)
             AND p2p.STEP = 5
             AND LIB_FILE_SENT_ON is null;`

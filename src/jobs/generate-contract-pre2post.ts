@@ -342,7 +342,45 @@ const task = async (ORACLE_STATUS: number = 0) => {
             delete copy.calculated_amount
             delete copy.apc_ws_amount
 
-            let line = `${json2csv([{ ...copy }])},,,,,,,0,0,0,N,12,R,${liberate_value},${fmc_account || 0}`
+            const product_code = copy.product_code
+            const imei = copy.imei
+            const device_brand = copy.device_brand
+            const device_model = copy.device_model
+            const device_plu = copy.device_plu
+            const plu_promo_code = copy.plu_promo_code
+            const device_price = copy.device_price
+            const device_discount = copy.device_discount
+            const upfront_payment = copy.upfront_payment
+            const installment = copy.installment
+            const contract_duration = copy.contract_duration
+
+            delete copy.product_code
+            delete copy.imei
+            delete copy.device_brand
+            delete copy.device_model
+            delete copy.device_plu
+            delete copy.plu_promo_code
+            delete copy.device_price
+            delete copy.device_discount
+            delete copy.upfront_payment
+            delete copy.installment
+            delete copy.contract_duration
+
+            const handset_oopts = [
+                product_code,
+                imei,
+                device_brand,
+                device_model,
+                device_plu,
+                plu_promo_code,
+                device_price,
+                device_discount,
+                upfront_payment,
+                installment,
+                contract_duration
+            ].join(",")
+
+            let line = `${json2csv([{ ...copy }])},${handset_oopts},R,${liberate_value},${fmc_account || 0}`
             //if last character is a comma, remove it
             if (line.slice(-1) === ',') {
                 line = line.slice(0, -1)

@@ -14,6 +14,11 @@ interface contract {
     ctn: string;
     email: string;
     type: PayloadType;
+    imei: string;
+    device_brand: string;
+    device_model: string;
+    device_plu: string;
+    device_price: string;
 }
 export function generateXMLTemplate(data: contract, type?: any) {
 
@@ -47,6 +52,14 @@ export function generateXMLTemplate(data: contract, type?: any) {
                   <line_two></line_two>
                   <line_tre></line_tre>
                   <line_four></line_four>
+                    <equipment>${data.device_model}</equipment>
+                    <plu>${data.device_plu}</plu>
+                    <brand>${data.device_brand}</brand>
+                    <model>${data.device_model}</model>
+                    <imei>${data.imei}</imei>
+                    <imei_serie>${data.imei}</imei_serie>
+                    <equipment_list_price>${data.device_price}</equipment_list_price>
+                    <price_equip_according_service_plan>${data.device_price}</price_equip_according_service_plan>
                   <more_line_true></more_line_true>
                   <more_line_false>X</more_line_false>
                   <Current_telephone_service_dealer>Digicel Panama SA</Current_telephone_service_dealer>
@@ -109,6 +122,12 @@ interface contractP2P extends Pre2Post {
     seller_document: string;
 
     client_name: string;
+
+    imei?: string;
+    device_brand?: string;
+    device_model?: string;
+    device_plu?: string;
+    device_price?: string;
 }
 
 export function generateXMLTemplateP2P(data: contractP2P, type?: any) {
@@ -141,11 +160,11 @@ export function generateXMLTemplateP2P(data: contractP2P, type?: any) {
                     <street>${data.address}</street>
                     <home>${data.home_number}</home>
                     <payment_method>Efectivo</payment_method>
-                    <equipment>NA</equipment>
-                    <plu>NA</plu>
-                    <brand>NA</brand>
-                    <model>NA</model>
-                    <imei>000000000000000</imei>
+                    <equipment>${data.device_model}</equipment>
+                    <plu>${data.device_plu}</plu>
+                    <brand>${data.device_brand}</brand>
+                    <model>${data.device_model}</model>
+                    <imei>${data.imei}</imei>
                     <phone_number>${data.MSISDN}</phone_number>
                     <contract_duration>18</contract_duration>
                     <plan_name>${data.plan_name}</plan_name>
@@ -180,9 +199,9 @@ export function generateXMLTemplateP2P(data: contractP2P, type?: any) {
                     <quotas></quotas>
                     <contract_number>VCP${8000000 + data.TRANSACTION_ID}</contract_number>
                     <cellphone_number>${data.MSISDN}</cellphone_number>
-                    <imei_serie>000000000000000</imei_serie>
-                    <equipment_list_price>0.00</equipment_list_price>
-                    <price_equip_according_service_plan>0.00</price_equip_according_service_plan>
+                    <imei_serie>${data.imei}</imei_serie>
+                    <equipment_list_price>${data.device_price}</equipment_list_price>
+                    <price_equip_according_service_plan>${data.device_price}</price_equip_according_service_plan>
                     <client_name_portin>${firstname || ""}</client_name_portin>
                     <client_lastname_portin>${lastname || ""}</client_lastname_portin>
                     <id>${data.cedula}</id>
@@ -209,7 +228,7 @@ export function generateXMLTemplateP2P(data: contractP2P, type?: any) {
 
 export function generateTemplateActivation(data: contractP2P) {
     const date = moment(data.ADDED_ON)
-    
+
     const firstname = data.client_name.split('{|}')[0].trim()
     const lastname = data.client_name.split('{|}')[1].trim()
     const template = `<?xml version="1.0" encoding="UTF-8"?>
@@ -237,11 +256,11 @@ export function generateTemplateActivation(data: contractP2P) {
                     <street>${data.address}</street>
                     <home>${data.home_number}</home>
                     <payment_method>Efectivo</payment_method>
-                    <equipment>NA</equipment>
-                    <plu>NA</plu>
-                    <brand>NA</brand>
-                    <model>NA</model>
-                    <imei>000000000000000</imei>
+                    <equipment>${data.device_model}</equipment>
+                    <plu>${data.device_plu}</plu>
+                    <brand>${data.device_brand}</brand>
+                    <model>${data.device_model}</model>
+                    <imei>${data.imei}</imei>
                     <services_number>${data.MSISDN}</services_number>
                     <contract_duration>18</contract_duration>
                     <plan_name>${data.plan_name}</plan_name>
@@ -276,9 +295,9 @@ export function generateTemplateActivation(data: contractP2P) {
                     <quotas></quotas>
                     <contract_number>VCP${8000000 + data.TRANSACTION_ID}</contract_number>
                     <cellphone_number>${data.MSISDN}</cellphone_number>
-                    <imei_serie>000000000000000</imei_serie>
-                    <equipment_list_price>0.00</equipment_list_price>
-                    <price_equip_according_service_plan>0.00</price_equip_according_service_plan>
+                    <imei_serie>${data.imei}</imei_serie>
+                    <equipment_list_price>${data.device_price}</equipment_list_price>
+                    <price_equip_according_service_plan>${data.device_price}</price_equip_according_service_plan>
                     <client_name_portin>${firstname || ""}</client_name_portin>
                     <client_lastname_portin>${lastname || ""}</client_lastname_portin>
                     <id>${data.cedula}</id>
