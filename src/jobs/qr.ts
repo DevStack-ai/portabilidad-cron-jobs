@@ -20,10 +20,10 @@ const task = async () => {
 
         const [_portaRequest, inputPostpaid, pre2PostIntport, simswap5gPrepaid, simswap5gPostpaid, activacionPrepago] = await Promise.all([
             qr.getQrRequest("ISOFT_INPUT", { status: "STATUS", orderBy: "ADDED_ON" }),
-            qr.getQrRequest("AP_ISOFT_INPUT_POSTPAID"),
-            qr.getQrRequest("PRE2POST_ISOFT_INPUT_INTPORT"),
+            qr.getQrRequest("AP_ISOFT_INPUT_POSTPAID", { readyValue: 2 }),
+            qr.getQrRequest("PRE2POST_ISOFT_INPUT_INTPORT", { readyValue: 2 }),
             qr.getQrRequest("SIMSWAP5G_ISOFT_PREPAID_SIMSWAP", { orderBy: 'ADDED_ON' }),
-            qr.getQrRequest("SIMSWAP5GPOST_ISOFT_POSTPAID_SIMSWAP ", { orderBy: 'ADDED_ON' }),
+            qr.getQrRequest("SIMSWAP5GPOST_ISOFT_POSTPAID_SIMSWAP ", { orderBy: 'ADDED_ON', }),
             qr.getQrRequest("AP_ACTIVACION_PREPAGO ", { orderBy: 'ADDED_ON', readyValue: 4, status: 'IDESTADO' }),
         ]);
 
