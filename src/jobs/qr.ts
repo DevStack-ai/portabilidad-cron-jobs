@@ -68,7 +68,8 @@ const task = async () => {
         const transporter = nodemailer.createTransport(ses(options));
 
         for (const source of sources) {
-
+            print.log(`Processing source ${source.table} with ${source.orders.length} orders`);
+       
             const queue = []
             const update = []
             const orders = source.orders;

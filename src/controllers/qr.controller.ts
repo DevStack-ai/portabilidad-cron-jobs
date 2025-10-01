@@ -67,7 +67,6 @@ export class QrController {
         } = cols;
 
 
-
         if (table === "ISOFT_INPUT") {
             await prisma.$connect();
             const query = await prisma.iSOFT_INPUT.findMany({
